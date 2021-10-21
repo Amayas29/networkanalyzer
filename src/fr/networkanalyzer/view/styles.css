@@ -1,5 +1,5 @@
-*{
--fx-font-family: "Lucida Console";	
+* {
+  -fx-font-family: "Lucida Console";
 }
 
 #mainPanel {
@@ -10,7 +10,6 @@
   -fx-background-color: #c6dbee;
   -fx-background-radius: 50;
   -fx-opacity: 0.85;
-  
 }
 
 #topPanel {
@@ -25,25 +24,24 @@
 }
 
 .label {
-	-fx-font-size: 20;
-	-fx-text-fill: black;
+  -fx-font-size: 20;
+  -fx-text-fill: black;
 }
 
 .button {
-	-fx-font-size: 20;
-	-fx-background-color: #1d3d56;
-  	-fx-text-fill: #c6dbee;
-  	-fx-alignment: center;
-    -fx-cursor: pointer;
-    -fx-background-radius: 40;
-   
+  -fx-font-size: 20;
+  -fx-background-color: #1d3d56;
+  -fx-text-fill: #c6dbee;
+  -fx-alignment: center;
+  -fx-cursor: pointer;
+  -fx-background-radius: 40;
 }
 
 #load:hover {
-	-fx-translate-x: 10;
-	-fx-font-size: 25
+  -fx-translate-x: 10;
+  -fx-font-size: 25;
 }
 
 #filename {
-	-fx-font-size: 15
+  -fx-font-size: 15;
 }
