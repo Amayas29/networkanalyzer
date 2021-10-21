@@ -1,3 +1,49 @@
+*{
+-fx-font-family: "Lucida Console";	
+}
+
+#mainPanel {
+  -fx-background-color: #1d3d56;
+}
+
+#centredPanel {
+  -fx-background-color: #c6dbee;
+  -fx-background-radius: 50;
+  -fx-opacity: 0.85;
+  
+}
+
+#topPanel {
+  -fx-background-color: #74b6e4;
+  -fx-background-radius: 60;
+}
+
 #logo {
-	-fx-text-fill: red;
+  -fx-font-size: 40;
+  -fx-text-fill: #c6dbee;
+  -fx-alignment: center;
+}
+
+.label {
+	-fx-font-size: 20;
+	-fx-text-fill: black;
+}
+
+.button {
+	-fx-font-size: 20;
+	-fx-background-color: #1d3d56;
+  	-fx-text-fill: #c6dbee;
+  	-fx-alignment: center;
+    -fx-cursor: pointer;
+    -fx-background-radius: 40;
+   
+}
+
+#load:hover {
+	-fx-translate-x: 10;
+	-fx-font-size: 25
+}
+
+#filename {
+	-fx-font-size: 15
 }
