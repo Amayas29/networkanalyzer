@@ -3,24 +3,16 @@
 }
 
 #mainPanel {
-  -fx-background-color: #1d3d56;
+  -fx-background-image: url("../../../../resources/main_background.png");
+  -fx-background-repeat: stretch;   
+  -fx-background-position: center center;
+  -fx-border-radius: 10;
 }
 
 #centredPanel {
   -fx-background-color: #c6dbee;
   -fx-background-radius: 50;
   -fx-opacity: 0.85;
-}
-
-#topPanel {
-  -fx-background-color: #74b6e4;
-  -fx-background-radius: 60;
-}
-
-#logo {
-  -fx-font-size: 40;
-  -fx-text-fill: #c6dbee;
-  -fx-alignment: center;
 }
 
 .label {

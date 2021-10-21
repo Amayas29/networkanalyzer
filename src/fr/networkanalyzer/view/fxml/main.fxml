@@ -5,15 +5,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="889.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane id="topPanel" layoutX="626.0" layoutY="-105.0" prefHeight="341.0" prefWidth="450.0" rotate="137.0" stylesheets="@../styles.css" />
-      <Pane id="topPanel" layoutX="385.0" layoutY="5.0" prefHeight="120.0" prefWidth="371.0" rotate="137.0" stylesheets="@../styles.css" />
-      <Pane id="mainPanel" layoutX="644.0" layoutY="276.0" prefHeight="90.0" prefWidth="193.0" rotate="137.0" style="-fx-background-radius: 60;" stylesheets="@../styles.css" />
-      <Pane id="topPanel" layoutX="341.0" layoutY="205.0" prefHeight="120.0" prefWidth="616.0" rotate="137.0" stylesheets="@../styles.css" />
-      <Pane id="topPanel" layoutX="696.0" layoutY="272.0" prefHeight="120.0" prefWidth="371.0" rotate="137.0" stylesheets="@../styles.css" />
-      <Pane id="mainPanel" layoutX="518.0" layoutY="122.0" prefHeight="80.0" prefWidth="192.0" rotate="137.0" style="-fx-background-radius: 60;" stylesheets="@../styles.css" />
-      <Label id="logo" layoutX="52.0" layoutY="11.0" prefHeight="146.0" prefWidth="361.0" stylesheets="@../styles.css" text="Network Analyzer" />
       <Pane id="centredPanel" layoutX="52.0" layoutY="166.0" prefHeight="356.0" prefWidth="436.0" stylesheets="@../styles.css">
          <children>
             <Label layoutX="34.0" layoutY="55.0" prefHeight="46.0" prefWidth="250.0" styleClass=".label" stylesheets="@../styles.css" text="Choose the file to load" />

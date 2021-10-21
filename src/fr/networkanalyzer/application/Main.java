@@ -13,6 +13,7 @@ public class Main extends Application {
 			Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/main.fxml"));
 			primaryStage.setTitle("networkanalyzer");
 			primaryStage.setScene(new Scene(root));
+			primaryStage.setResizable(false);
 			primaryStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
