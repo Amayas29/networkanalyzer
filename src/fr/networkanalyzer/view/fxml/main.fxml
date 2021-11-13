@@ -5,13 +5,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="889.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="642.0" prefWidth="1162.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.networkanalyzer.controller.MainController">
    <children>
-      <Pane id="centredPanel" layoutX="52.0" layoutY="166.0" prefHeight="356.0" prefWidth="436.0" stylesheets="@../styles.css">
+      <Pane id="centredPanel" layoutX="43.0" layoutY="291.0" prefHeight="310.0" prefWidth="478.0" stylesheets="@../styles.css">
          <children>
-            <Label layoutX="34.0" layoutY="55.0" prefHeight="46.0" prefWidth="250.0" styleClass=".label" stylesheets="@../styles.css" text="Choose the file to load" />
-            <TextField id="filename" layoutX="34.0" layoutY="150.0" prefHeight="46.0" prefWidth="369.0" stylesheets="@../styles.css" />
-            <Button id="load" layoutX="83.0" layoutY="260.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="272.0" styleClass=".button" stylesheets="@../styles.css" text="Load" />
+            <Label layoutX="35.0" layoutY="39.0" prefHeight="46.0" prefWidth="250.0" styleClass=".label" stylesheets="@../styles.css" text="Choose the file to load" />
+            <TextField id="filename" fx:id="filenameInput" layoutX="26.0" layoutY="115.0" onKeyReleased="#keyReleased" prefHeight="46.0" prefWidth="369.0" stylesheets="@../styles.css" />
+            <Button id="load" fx:id="loadBtn" layoutX="84.0" layoutY="225.0" mnemonicParsing="false" onAction="#loadFile" prefHeight="54.0" prefWidth="272.0" styleClass=".button" stylesheets="@../styles.css" text="Load" />
+            <Button id="choose" fx:id="chooseBtn" layoutX="404.0" layoutY="101.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="60.0" prefWidth="60.0" stylesheets="@../styles.css" />
+            <Label id="infoLabel" fx:id="infoLabel" layoutX="26.0" layoutY="172.0" prefHeight="26.0" prefWidth="439.0" stylesheets="@../styles.css" />
          </children>
       </Pane>
    </children>

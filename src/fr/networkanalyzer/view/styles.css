@@ -4,26 +4,26 @@
 
 #mainPanel {
   -fx-background-image: url("../../../../resources/main_background.png");
-  -fx-background-repeat: stretch;   
+  -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10;
 }
 
 #centredPanel {
-  -fx-background-color: #c6dbee;
+  -fx-background-color: #d2dfee;
   -fx-background-radius: 50;
   -fx-opacity: 0.85;
 }
 
 .label {
-  -fx-font-size: 20;
+  -fx-font-size: 22;
   -fx-text-fill: black;
 }
 
 .button {
-  -fx-font-size: 20;
-  -fx-background-color: #1d3d56;
-  -fx-text-fill: #c6dbee;
+  -fx-font-size: 25;
+  -fx-background-color: #83bffb;
+  -fx-text-fill: white;
   -fx-alignment: center;
   -fx-cursor: pointer;
   -fx-background-radius: 40;
@@ -31,9 +31,27 @@
 
 #load:hover {
   -fx-translate-x: 10;
-  -fx-font-size: 25;
+}
+
+#choose {
+  -fx-background-color: transparent;
+  -fx-background-image: url("../../../../resources/choose.png");
+  -fx-background-repeat: stretch;
+  -fx-background-position: center center;
+  -fx-border-style: solid;
+  -fx-border-radius: 20;
+}
+
+#choose:hover {
+  -fx-translate-x: 2;
 }
 
 #filename {
   -fx-font-size: 15;
+}
+
+#infoLabel {
+  visibility: hidden;
+  -fx-font-size: 13;
+  -fx-text-fill: rgb(192, 49, 49);
 }
