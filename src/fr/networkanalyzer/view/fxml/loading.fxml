@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+
+<Pane id="loadingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1200.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.networkanalyzer.controller.LoadingController">
+   <children>
+      <HBox layoutX="474.0" layoutY="276.0" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <StackPane prefHeight="150.0" prefWidth="200.0">
+               <children>
+                  <Circle fx:id="topCircle" fill="#ffffff00" radius="100.0" stroke="#2a3f54" strokeType="INSIDE" strokeWidth="10.0" style="-fx-stroke-dash-array: 50;" />
+                  <Circle fx:id="meduimCircle" fill="#ffffff00" radius="70.0" stroke="#014d94" strokeType="INSIDE" strokeWidth="8.0" style="-fx-stroke-dash-array: 40;" />
+                  <Circle fx:id="bottomCircle" fill="#ffffff00" radius="40.0" stroke="#83bffb" strokeType="INSIDE" strokeWidth="5.0" style="-fx-stroke-dash-array: 40;" />
+               </children>
+            </StackPane>
+         </children>
+      </HBox>
+   </children>
+</Pane>

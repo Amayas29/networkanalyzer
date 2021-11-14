@@ -12,7 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 
-public class MainController {
+public class MainController  {
 
 	@FXML
 	private Button loadBtn;
@@ -82,4 +82,5 @@ public class MainController {
 		
 		return true;
 	}
+
 }

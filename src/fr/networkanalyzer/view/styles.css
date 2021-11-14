@@ -2,6 +2,8 @@
   -fx-font-family: "Lucida Console";
 }
 
+/* Main */
+
 #mainPanel {
   -fx-background-image: url("../../../../resources/main_background.png");
   -fx-background-repeat: stretch;
@@ -54,4 +56,20 @@
   visibility: hidden;
   -fx-font-size: 13;
   -fx-text-fill: rgb(192, 49, 49);
+}
+
+/* About us */
+
+#aboutUsPanel {
+  -fx-background-image: url("../../../../resources/aboutus_background.png");
+  -fx-background-repeat: stretch;
+  -fx-background-position: center center;
+  -fx-border-radius: 10;
+}
+
+#loadingPanel {
+  -fx-background-image: url("../../../../resources/loading_background.png");
+  -fx-background-repeat: stretch;
+  -fx-background-position: center center;
+  -fx-border-radius: 10;
 }
