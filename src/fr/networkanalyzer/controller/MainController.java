@@ -1,18 +1,27 @@
 package fr.networkanalyzer.controller;
 
 import java.io.File;
+import java.io.IOException;
 
+import fr.networkanalyzer.model.AnalyzerParser;
+import fr.networkanalyzer.model.AnalyzerParserRunnable;
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
-public class MainController  {
+public class MainController {
 
 	@FXML
 	private Button loadBtn;
@@ -35,7 +44,13 @@ public class MainController  {
 	public void loadFile(ActionEvent event) {
 		String filename = filenameInput.getText();
 		File file = new File(filename);
-		checkFile(file);
+		if (!checkFile(file))
+			return;
+		try {
+			throwLoadingStage(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -43,13 +58,16 @@ public class MainController  {
 
 		Scene scene = chooseBtn.getScene();
 		FileChooser fileChooser = new FileChooser();
-		
-//		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-//		fileChooser.getExtensionFilters().add(extFilter);
-		
-		File file = fileChooser.showOpenDialog(scene.getWindow());
 
-		checkFile(file);
+		File file = fileChooser.showOpenDialog(scene.getWindow());
+		if (!checkFile(file))
+			return;
+
+		try {
+			throwLoadingStage(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -62,25 +80,36 @@ public class MainController  {
 	}
 
 	private boolean checkFile(File file) {
-		if (file == null || !file.exists()) {
-			infoLabel.setText("The file does not exist.");
+		try {
+			AnalyzerParser.verifyFile(file);
+		} catch (NetworkAnalyzerException e) {
+			infoLabel.setText(e.getMessage());
 			infoLabel.setVisible(true);
 			return false;
 		}
-
-		if (!file.isFile()) {
-			infoLabel.setText("The node is not a file.");
-			infoLabel.setVisible(true);
-			return false;
-		}
-
-		if (!file.canRead()) {
-			infoLabel.setText("The file is in 'cannot read' mode.");
-			infoLabel.setVisible(true);
-			return false;
-		}
-		
 		return true;
+	}
+
+	private void throwLoadingStage(File file) throws IOException {
+		
+		LoadingController.setFile(file);
+
+		Stage stage = (Stage) loadBtn.getScene().getWindow();
+		Parent root =  FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+	
+	}
+
+	@FXML
+	public void hoverButton(MouseEvent event) {
+		DropShadow e = new DropShadow();
+	    e.setWidth(10);
+	    e.setHeight(10);
+	    e.setOffsetX(10);
+	    e.setOffsetY(10);
+	    e.setRadius(10);
+	    loadBtn.setEffect(e);
 	}
 
 }

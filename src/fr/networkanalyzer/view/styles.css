@@ -1,11 +1,18 @@
+@font-face { /* Définition d'une nouvelle police nommée CAC Champagne */
+    font-family: subway;
+    src: url('../../../../resources/police/SubwayCircleDEMO.otf');
+   
+}
+
 * {
-  -fx-font-family: "Lucida Console";
+  -fx-font-family: subway;
+  -fx-font-weight : bold;
 }
 
 /* Main */
 
 #mainPanel {
-  -fx-background-image: url("../../../../resources/main_background.png");
+  -fx-background-image: url("../../../../resources/image/main_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10;
@@ -20,6 +27,7 @@
 .label {
   -fx-font-size: 22;
   -fx-text-fill: black;
+   
 }
 
 .button {
@@ -28,16 +36,21 @@
   -fx-text-fill: white;
   -fx-alignment: center;
   -fx-cursor: pointer;
-  -fx-background-radius: 40;
+  -fx-background-radius: 25 10 25 10;
 }
 
 #load:hover {
-  -fx-translate-x: 10;
+  
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+  -fx-font-weight: bold;
+  -fx-font-size: 26;
+  -fx-text-fill: rgb(0, 0, 0,0.5);
+  
 }
 
 #choose {
   -fx-background-color: transparent;
-  -fx-background-image: url("../../../../resources/choose.png");
+  -fx-background-image: url("../../../../resources/image/choose.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-style: solid;
@@ -45,30 +58,35 @@
 }
 
 #choose:hover {
-  -fx-translate-x: 2;
+ -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);
 }
 
 #filename {
   -fx-font-size: 15;
 }
 
-#infoLabel {
-  visibility: hidden;
+.infoLabel {
+  
   -fx-font-size: 13;
   -fx-text-fill: rgb(192, 49, 49);
+  /*-fx-text-alignment: center;*/
+}
+
+.textfield{
+	-fx-background-radius: 10 25 10 25;
 }
 
 /* About us */
 
 #aboutUsPanel {
-  -fx-background-image: url("../../../../resources/aboutus_background.png");
+  -fx-background-image: url("../../../../resources/image/aboutus_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10;
 }
 
 #loadingPanel {
-  -fx-background-image: url("../../../../resources/loading_background.png");
+  -fx-background-image: url("../../../../resources/image/loading_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10;
