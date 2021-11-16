@@ -8,7 +8,9 @@ import fr.networkanalyzer.model.AnalyzerParserRunnable;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerNullPointerException;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -45,8 +47,6 @@ public class LoadingController {
 		file = f;
 	}
 
-	
-
 	@FXML
 	public void initialize() {
 
@@ -55,31 +55,50 @@ public class LoadingController {
 		setRotate(meduimCircle, 180, 18);
 		setRotate(bottomCircle, 145, 20);
 
-		AnalyzerParserRunnable analyzerParserRunnable = new AnalyzerParserRunnable(file);
+//		ParseService ps = new ParseService(file);
+//		ps.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//
+//			@Override
+//			public void handle(WorkerStateEvent wse) {
+//				errorsPane.setVisible(true);
+//				errorsLabel.setText("Succes");
+//				
+//			}
+//		});
+//
+//		ps.setOnFailed(new EventHandler<WorkerStateEvent>() {
+//
+//			@Override
+//			public void handle(WorkerStateEvent wse) {
+//				errorsPane.setVisible(true);
+//				errorsLabel.setText("Failed");
+//			}
+//		});
+//
+//		ps.start();
+
+		AnalyzerParserRunnable analyzerParserRunnable = new AnalyzerParserRunnable(file,this);
 		Thread analyzerThread = new Thread(analyzerParserRunnable);
 		analyzerThread.start();
 
-		try {
-			analyzerThread.join();
-		} catch (InterruptedException e) {
-		}
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		if (analyzerParserRunnable.getMessage() != null) {
-			signalError(analyzerParserRunnable.getMessage());
-			return;
-		}
-		try {
-			throwLoadingStage(analyzerParserRunnable.getAnalyzer());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NetworkAnalyzerNullPointerException e) {
-			signalError(e.getMessage());
-
-		}
+	
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		if (analyzerParserRunnable.getMessage() != null) {
+//			signalError(analyzerParserRunnable.getMessage());
+//			return;
+//		}
+//		try {
+//			throwLoadingStage(analyzerParserRunnable.getAnalyzer());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (NetworkAnalyzerNullPointerException e) {
+//			signalError(e.getMessage());
+//
+//		}
 
 	}
 
@@ -102,7 +121,7 @@ public class LoadingController {
 		stage.setScene(scene);
 	}
 
-	private void throwLoadingStage(Analyzer analyzer) throws IOException, NetworkAnalyzerNullPointerException {
+	public void throwLoadingStage(Analyzer analyzer) throws IOException, NetworkAnalyzerNullPointerException {
 		if (analyzer == null)
 			throw new NetworkAnalyzerNullPointerException();
 		ProcessingController.setAnalyzer(analyzer);
@@ -113,7 +132,7 @@ public class LoadingController {
 		stage.setScene(scene);
 	}
 
-	private void signalError(String errorMessage) {
+	public void signalError(String errorMessage) {
 		errorsPane.setVisible(true);
 		errorMessage = String.format("%" + (130 - errorMessage.length()) + "s", " ") + errorMessage
 				+ String.format("%" + (130 - errorMessage.length()) + "s", " ");

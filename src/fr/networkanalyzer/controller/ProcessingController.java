@@ -1,7 +1,5 @@
 package fr.networkanalyzer.controller;
 
-import java.io.File;
-
 import fr.networkanalyzer.model.Analyzer;
 import javafx.fxml.FXML;
 

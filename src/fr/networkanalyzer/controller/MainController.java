@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import fr.networkanalyzer.model.AnalyzerParser;
-import fr.networkanalyzer.model.AnalyzerParserRunnable;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -91,25 +90,25 @@ public class MainController {
 	}
 
 	private void throwLoadingStage(File file) throws IOException {
-		
+
 		LoadingController.setFile(file);
 
 		Stage stage = (Stage) loadBtn.getScene().getWindow();
-		Parent root =  FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
-	
+
 	}
 
 	@FXML
 	public void hoverButton(MouseEvent event) {
 		DropShadow e = new DropShadow();
-	    e.setWidth(10);
-	    e.setHeight(10);
-	    e.setOffsetX(10);
-	    e.setOffsetY(10);
-	    e.setRadius(10);
-	    loadBtn.setEffect(e);
+		e.setWidth(10);
+		e.setHeight(10);
+		e.setOffsetX(10);
+		e.setOffsetY(10);
+		e.setRadius(10);
+		loadBtn.setEffect(e);
 	}
 
 }
