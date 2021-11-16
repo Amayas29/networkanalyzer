@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import fr.networkanalyzer.model.Analyzer;
-import fr.networkanalyzer.model.AnalyzerParserRunnable;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerNullPointerException;
 import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
@@ -55,50 +54,29 @@ public class LoadingController {
 		setRotate(meduimCircle, 180, 18);
 		setRotate(bottomCircle, 145, 20);
 
-//		ParseService ps = new ParseService(file);
-//		ps.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-//
-//			@Override
-//			public void handle(WorkerStateEvent wse) {
-//				errorsPane.setVisible(true);
-//				errorsLabel.setText("Succes");
-//				
-//			}
-//		});
-//
-//		ps.setOnFailed(new EventHandler<WorkerStateEvent>() {
-//
-//			@Override
-//			public void handle(WorkerStateEvent wse) {
-//				errorsPane.setVisible(true);
-//				errorsLabel.setText("Failed");
-//			}
-//		});
-//
-//		ps.start();
+		ParseService ps = new ParseService(file);
+		ps.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 
-		AnalyzerParserRunnable analyzerParserRunnable = new AnalyzerParserRunnable(file,this);
-		Thread analyzerThread = new Thread(analyzerParserRunnable);
-		analyzerThread.start();
+			@Override
+			public void handle(WorkerStateEvent wse) {
+				try {
+					throwLoadingStage(ps.getAnalyzer());
+				} catch (NetworkAnalyzerNullPointerException | IOException e) {
+					signalError(ps.getMessage());
+				}
+			}
+		});
 
-	
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-//		if (analyzerParserRunnable.getMessage() != null) {
-//			signalError(analyzerParserRunnable.getMessage());
-//			return;
-//		}
-//		try {
-//			throwLoadingStage(analyzerParserRunnable.getAnalyzer());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (NetworkAnalyzerNullPointerException e) {
-//			signalError(e.getMessage());
-//
-//		}
+		ps.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent wse) {
+				signalError(ps.getMessage());
+			}
+		});
+
+		ps.start();
+
 
 	}
 
@@ -121,11 +99,22 @@ public class LoadingController {
 		stage.setScene(scene);
 	}
 
+	private void waitPanel() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void throwLoadingStage(Analyzer analyzer) throws IOException, NetworkAnalyzerNullPointerException {
+		waitPanel();
 		if (analyzer == null)
 			throw new NetworkAnalyzerNullPointerException();
 		ProcessingController.setAnalyzer(analyzer);
-
+		
 		Stage stage = (Stage) errorsLabel.getScene().getWindow();
 		Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
 		Scene scene = new Scene(root);
@@ -133,9 +122,10 @@ public class LoadingController {
 	}
 
 	public void signalError(String errorMessage) {
+		waitPanel();
 		errorsPane.setVisible(true);
-		errorMessage = String.format("%" + (130 - errorMessage.length()) + "s", " ") + errorMessage
-				+ String.format("%" + (130 - errorMessage.length()) + "s", " ");
+//		errorMessage = String.format("%" + (130 - errorMessage.length()) + "s", " ") + errorMessage
+//				+ String.format("%" + (130 - errorMessage.length()) + "s", " ");
 
 		System.out.println(errorMessage);
 		errorsLabel.setText(errorMessage);

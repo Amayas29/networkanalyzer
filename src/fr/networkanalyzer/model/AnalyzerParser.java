@@ -24,6 +24,6 @@ public class AnalyzerParser {
 //		throw new NetworkAnalyzerException("Parser error");
 
 		// Boucle
-		return new Analyzer();
+		throw new NetworkAnalyzerException();
 	}
 }

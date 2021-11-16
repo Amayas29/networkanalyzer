@@ -10,7 +10,7 @@ public class NetworkAnalyzerException extends Exception {
 	}
 
 	public NetworkAnalyzerException(String message) {
-		super("Network Analyzer Exception | " + message );
+		super( message );
 	
 	}
 

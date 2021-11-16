@@ -10,7 +10,7 @@ import javafx.concurrent.Task;
 public class ParseTask extends Task<Analyzer> {
 
 	private File file;
-
+	private Analyzer analyzer;
 	public ParseTask(File file) {
 		this.file = file;
 	}
@@ -23,7 +23,12 @@ public class ParseTask extends Task<Analyzer> {
 		} catch (InterruptedException e) {
 		}
 
-		return AnalyzerParser.parse(file);
+		analyzer =  AnalyzerParser.parse(file);
+		return analyzer;
+	}
+
+	public Analyzer getAnalyzer() {
+		return analyzer;
 	}
 
 }
