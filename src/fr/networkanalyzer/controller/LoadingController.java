@@ -22,7 +22,7 @@ import javafx.util.Duration;
 
 public class LoadingController {
 
-	private static final int SLEEP_TIME = 5;
+	private static final int SLEEP_TIME = 3;
 
 	@FXML
 	private Pane errorsPane;
@@ -42,7 +42,6 @@ public class LoadingController {
 	private File file;
 
 	private RotateTransition rt;
-
 
 	public LoadingController(File file) {
 		this.file = file;
