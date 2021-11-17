@@ -7,22 +7,39 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Circle?>
 
-<Pane id="loadingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1200.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox layoutX="474.0" layoutY="276.0" prefHeight="100.0" prefWidth="200.0" />
-      <Pane fx:id="errorsPane" layoutX="9.0" layoutY="476.0" prefHeight="132.0" prefWidth="1183.0">
-         <children>
-            <Label fx:id="errorsLabel" layoutX="17.0" layoutY="34.0" prefHeight="26.0" prefWidth="1150.0" styleClass="infoLabel" />
-            <Button layoutX="449.0" layoutY="76.0" mnemonicParsing="false" onAction="#returnToPrincipalPage" text="Home" />
-            <Button layoutX="629.0" layoutY="76.0" mnemonicParsing="false" onAction="#exitApp" text="Exit" />
-         </children>
-      </Pane>
-      <StackPane layoutX="500.0" layoutY="250.0" prefHeight="150.0" prefWidth="200.0">
-         <children>
-            <Circle fx:id="topCircle" fill="#ffffff00" radius="100.0" stroke="#2a3f54" strokeType="INSIDE" strokeWidth="10.0" style="-fx-stroke-dash-array: 50;" />
-            <Circle fx:id="meduimCircle" fill="#ffffff00" radius="70.0" stroke="#014d94" strokeType="INSIDE" strokeWidth="8.0" style="-fx-stroke-dash-array: 40;" />
-            <Circle fx:id="bottomCircle" fill="#ffffff00" radius="40.0" stroke="#83bffb" strokeType="INSIDE" strokeWidth="5.0" style="-fx-stroke-dash-array: 40;" />
-         </children>
-      </StackPane>
-   </children>
+<Pane id="loadingPanel" maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0"
+	prefWidth="1200.0" stylesheets="@../styles.css"
+	xmlns="http://javafx.com/javafx/11.0.1"
+	xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<HBox layoutX="474.0" layoutY="276.0" prefHeight="100.0"
+			prefWidth="200.0" />
+		<Pane fx:id="errorsPane" layoutX="9.0" layoutY="476.0"
+			prefHeight="132.0" prefWidth="1183.0">
+			<children>
+				<Label fx:id="errorsLabel" layoutX="17.0" layoutY="34.0"
+					prefHeight="26.0" prefWidth="1150.0" styleClass="infoLabel" />
+				<Button layoutX="449.0" layoutY="76.0"
+					mnemonicParsing="false" onAction="#returnToPrincipalPage"
+					text="Home" />
+				<Button layoutX="629.0" layoutY="76.0"
+					mnemonicParsing="false" onAction="#exitApp" text="Exit" />
+			</children>
+		</Pane>
+		<StackPane layoutX="500.0" layoutY="250.0"
+			prefHeight="150.0" prefWidth="200.0">
+			<children>
+				<Circle fx:id="topCircle" fill="#ffffff00" radius="100.0"
+					stroke="#2a3f54" strokeType="INSIDE" strokeWidth="10.0"
+					style="-fx-stroke-dash-array: 50;" />
+				<Circle fx:id="meduimCircle" fill="#ffffff00" radius="70.0"
+					stroke="#014d94" strokeType="INSIDE" strokeWidth="8.0"
+					style="-fx-stroke-dash-array: 40;" />
+				<Circle fx:id="bottomCircle" fill="#ffffff00" radius="40.0"
+					stroke="#83bffb" strokeType="INSIDE" strokeWidth="5.0"
+					style="-fx-stroke-dash-array: 40;" />
+			</children>
+		</StackPane>
+	</children>
 </Pane>

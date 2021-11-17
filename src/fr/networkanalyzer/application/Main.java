@@ -12,7 +12,7 @@ public class Main extends Application {
 	public void start(Stage stage) {
 		try {
 			stage.setTitle("networkanalyzer");
-			Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
+			Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/main.fxml"));
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.setResizable(false);

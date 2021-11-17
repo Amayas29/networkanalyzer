@@ -76,7 +76,7 @@ public class LoadingController {
 
 			PauseTransition pause = new PauseTransition(Duration.seconds(SLEEP_TIME));
 			pause.setOnFinished(event -> {
-				displayError(ps.getMessage());
+				displayError(ps.getException().getMessage());
 			});
 			pause.play();
 
@@ -114,13 +114,13 @@ public class LoadingController {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
 		ProcessingController pc = new ProcessingController();
 		pc.setAnalyzer(analyzer);
-
 		loader.setController(pc);
 
 		Parent root = null;
 		try {
 			root = loader.load();
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new NetworkAnalyzerException("Ressource can't be loaded");
 		}
 
@@ -130,9 +130,8 @@ public class LoadingController {
 
 	private void displayError(String errorMessage) {
 		errorsPane.setVisible(true);
-		errorsLabel.setText(errorMessage);
 		errorsLabel.setTextAlignment(TextAlignment.CENTER);
-		errorsLabel.setWrapText(true);
+		errorsLabel.setText(errorMessage);
 	}
 
 	private void setRotate(Circle c, int angle, int duration) {

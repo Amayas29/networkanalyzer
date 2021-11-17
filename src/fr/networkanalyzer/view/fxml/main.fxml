@@ -7,22 +7,41 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="1200.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.networkanalyzer.controller.MainController">
-   <children>
-      <Pane id="centredPanel" layoutX="43.0" layoutY="291.0" prefHeight="262.0" prefWidth="478.0" stylesheets="@../styles.css">
-         <children>
-            <Label layoutX="35.0" layoutY="39.0" prefHeight="46.0" prefWidth="302.0" styleClass=".label" stylesheets="@../styles.css" text="Choose the file to load" />
-            <TextField id="filename" fx:id="filenameInput" layoutX="26.0" layoutY="98.0" onKeyReleased="#keyReleased" prefHeight="46.0" prefWidth="369.0" styleClass="textfield" stylesheets="@../styles.css">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <cursor>
-                  <Cursor fx:constant="CROSSHAIR" />
-               </cursor></TextField>
-            <Button id="load" fx:id="loadBtn" layoutX="103.0" layoutY="180.0" mnemonicParsing="false" onAction="#loadFile" onMouseDragEntered="#hoverButton" prefHeight="54.0" prefWidth="272.0" styleClass=".button" stylesheets="@../styles.css" text="Load" />
-            <Button id="choose" fx:id="chooseBtn" layoutX="405.0" layoutY="91.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="60.0" prefWidth="60.0" stylesheets="@../styles.css" />
-            <Label fx:id="infoLabel" layoutX="67.0" layoutY="147.0" prefHeight="31.0" prefWidth="339.0" styleClass="infoLabel" stylesheets="@../styles.css" />
-         </children>
-      </Pane>
-   </children>
+<Pane id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0"
+	prefWidth="1200.0" stylesheets="@../styles.css"
+	xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="fr.networkanalyzer.controller.MainController">
+	<children>
+		<Pane id="centredPanel" layoutX="43.0" layoutY="291.0"
+			prefHeight="262.0" prefWidth="478.0" stylesheets="@../styles.css">
+			<children>
+				<Label layoutX="35.0" layoutY="39.0" prefHeight="46.0"
+					prefWidth="302.0" styleClass=".label" stylesheets="@../styles.css"
+					text="Choose the file to load" />
+				<TextField id="filename" fx:id="filenameInput"
+					layoutX="26.0" layoutY="98.0" onKeyReleased="#keyReleased"
+					prefHeight="46.0" prefWidth="369.0" styleClass="textfield"
+					stylesheets="@../styles.css">
+					<opaqueInsets>
+						<Insets />
+					</opaqueInsets>
+					<cursor>
+						<Cursor fx:constant="CROSSHAIR" />
+					</cursor>
+				</TextField>
+				<Button id="load" fx:id="loadBtn" layoutX="103.0"
+					layoutY="180.0" mnemonicParsing="false" onAction="#loadFile"
+					onMouseDragEntered="#hoverButton" prefHeight="54.0"
+					prefWidth="272.0" styleClass=".button" stylesheets="@../styles.css"
+					text="Load" />
+				<Button id="choose" fx:id="chooseBtn" layoutX="405.0"
+					layoutY="91.0" mnemonicParsing="false" onAction="#chooseFile"
+					prefHeight="60.0" prefWidth="60.0" stylesheets="@../styles.css" />
+				<Label fx:id="infoLabel" layoutX="67.0" layoutY="147.0"
+					prefHeight="31.0" prefWidth="339.0" styleClass="infoLabel"
+					stylesheets="@../styles.css" />
+			</children>
+		</Pane>
+	</children>
 </Pane>
