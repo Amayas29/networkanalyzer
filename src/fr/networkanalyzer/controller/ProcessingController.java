@@ -1,20 +1,33 @@
 package fr.networkanalyzer.controller;
 
 import fr.networkanalyzer.model.Analyzer;
+import fr.networkanalyzer.model.Frame;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 
 public class ProcessingController {
 
-	private static Analyzer analyzer;
+	@SuppressWarnings("unused")
+	private Analyzer analyzer;
+
+	@FXML
+	private ListView<Frame> framesList;
 
 	@FXML
 	public void initialize() {
-		// TODO Auto-generated method stub
-		
+		ObservableList<Frame> frames = FXCollections.observableArrayList(new Frame(), new Frame(), new Frame(),
+				new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(),
+				new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(),
+				new Frame(), new Frame(), new Frame(), new Frame(), new Frame());
+		framesList.setItems(frames);
+		framesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 	}
 
-	public static void setAnalyzer(Analyzer analyzer) {
-		ProcessingController.analyzer = analyzer;
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
 	}
 
 }

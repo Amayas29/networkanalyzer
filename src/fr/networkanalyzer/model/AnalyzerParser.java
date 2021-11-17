@@ -21,9 +21,7 @@ public class AnalyzerParser {
 	}
 
 	public static Analyzer parse(File file) throws NetworkAnalyzerException {
-//		throw new NetworkAnalyzerException("Parser error");
-
-		// Boucle
-		throw new NetworkAnalyzerException();
+		return new Analyzer();
+//		throw new NetworkAnalyzerException("Parse Error");
 	}
 }

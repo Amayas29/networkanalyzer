@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import fr.networkanalyzer.model.Analyzer;
-import fr.networkanalyzer.model.exceptions.NetworkAnalyzerNullPointerException;
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.RotateTransition;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,6 +21,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class LoadingController {
+
+	private static final int SLEEP_TIME = 5;
 
 	@FXML
 	private Pane errorsPane;
@@ -38,11 +39,11 @@ public class LoadingController {
 	@FXML
 	private Circle bottomCircle;
 
-	private static File file;
+	private File file;
 
 	private RotateTransition rt;
 
-	public static void setFile(File f) {
+	public void setFile(File f) {
 		file = f;
 	}
 
@@ -55,33 +56,37 @@ public class LoadingController {
 		setRotate(bottomCircle, 145, 20);
 
 		ParseService ps = new ParseService(file);
-		ps.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		ps.setOnSucceeded(wse -> {
 
-			@Override
-			public void handle(WorkerStateEvent wse) {
+			PauseTransition pause = new PauseTransition(Duration.seconds(SLEEP_TIME));
+
+			pause.setOnFinished(event -> {
+				Analyzer analyzer = ps.getValue();
 				try {
-					throwLoadingStage(ps.getAnalyzer());
-				} catch (NetworkAnalyzerNullPointerException | IOException e) {
-					signalError(ps.getMessage());
+					throwProcessingStage(analyzer);
+				} catch (NetworkAnalyzerException e) {
+					displayError(ps.getMessage());
 				}
-			}
+			});
+			pause.play();
+
 		});
 
-		ps.setOnFailed(new EventHandler<WorkerStateEvent>() {
+		ps.setOnFailed(wse -> {
 
-			@Override
-			public void handle(WorkerStateEvent wse) {
-				signalError(ps.getMessage());
-			}
+			PauseTransition pause = new PauseTransition(Duration.seconds(SLEEP_TIME));
+			pause.setOnFinished(event -> {
+				displayError(ps.getMessage());
+			});
+			pause.play();
+
 		});
 
 		ps.start();
-
-
 	}
 
 	@FXML
-	public void exitApp(ActionEvent event) {
+	public void exitApp() {
 		System.exit(0);
 	}
 
@@ -90,48 +95,44 @@ public class LoadingController {
 
 		Stage stage = (Stage) errorsLabel.getScene().getWindow();
 		Parent root = null;
+
 		try {
 			root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/main.fxml"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			displayError("Ressource can't be loaded");
+			return;
 		}
+
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 	}
 
-	private void waitPanel() {
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public void throwLoadingStage(Analyzer analyzer) throws IOException, NetworkAnalyzerNullPointerException {
-		waitPanel();
-		if (analyzer == null)
-			throw new NetworkAnalyzerNullPointerException();
-		ProcessingController.setAnalyzer(analyzer);
-		
+	private void throwProcessingStage(Analyzer analyzer) throws NetworkAnalyzerException {
+
 		Stage stage = (Stage) errorsLabel.getScene().getWindow();
-		Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
+
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
+		ProcessingController pc = new ProcessingController();
+		pc.setAnalyzer(analyzer);
+
+		loader.setController(pc);
+
+		Parent root = null;
+		try {
+			root = loader.load();
+		} catch (IOException e) {
+			throw new NetworkAnalyzerException("Ressource can't be loaded");
+		}
+
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 	}
 
-	public void signalError(String errorMessage) {
-		waitPanel();
+	private void displayError(String errorMessage) {
 		errorsPane.setVisible(true);
-//		errorMessage = String.format("%" + (130 - errorMessage.length()) + "s", " ") + errorMessage
-//				+ String.format("%" + (130 - errorMessage.length()) + "s", " ");
-
-		System.out.println(errorMessage);
 		errorsLabel.setText(errorMessage);
 		errorsLabel.setTextAlignment(TextAlignment.CENTER);
 		errorsLabel.setWrapText(true);
-
 	}
 
 	private void setRotate(Circle c, int angle, int duration) {
@@ -143,5 +144,4 @@ public class LoadingController {
 		rt.setCycleCount(Animation.INDEFINITE);
 		rt.play();
 	}
-
 }

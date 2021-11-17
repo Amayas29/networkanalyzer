@@ -1,12 +1,12 @@
-@font-face { /* Définition d'une nouvelle police nommée CAC Champagne */
-    font-family: subway;
-    src: url('../../../../resources/police/SubwayCircleDEMO.otf');
-   
+@font-face {
+  /* Définition d'une nouvelle police nommée CAC Champagne */
+  font-family: subway;
+  src: url("../../../../resources/police/SubwayCircleDEMO.otf");
 }
 
 * {
   -fx-font-family: subway;
-  -fx-font-weight : bold;
+  -fx-font-weight: bold;
 }
 
 /* Main */
@@ -27,7 +27,6 @@
 .label {
   -fx-font-size: 22;
   -fx-text-fill: black;
-   
 }
 
 .button {
@@ -40,12 +39,10 @@
 }
 
 #load:hover {
-  
-  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
   -fx-font-weight: bold;
   -fx-font-size: 26;
-  -fx-text-fill: rgb(0, 0, 0,0.5);
-  
+  -fx-text-fill: rgb(0, 0, 0, 0.5);
 }
 
 #choose {
@@ -58,7 +55,7 @@
 }
 
 #choose:hover {
- -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 5, 0, 0, 0);
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 5, 0, 0, 0);
 }
 
 #filename {
@@ -66,14 +63,13 @@
 }
 
 .infoLabel {
-  
   -fx-font-size: 13;
   -fx-text-fill: rgb(192, 49, 49);
   /*-fx-text-alignment: center;*/
 }
 
-.textfield{
-	-fx-background-radius: 10 25 10 25;
+.textfield {
+  -fx-background-radius: 10 25 10 25;
 }
 
 /* About us */
@@ -87,6 +83,14 @@
 
 #loadingPanel {
   -fx-background-image: url("../../../../resources/image/loading_background.png");
+  -fx-background-repeat: stretch;
+  -fx-background-position: center center;
+  -fx-border-radius: 10;
+}
+
+/* Processing */
+#processingPanel {
+  -fx-background-image: url("../../../../resources/image/processing_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10;

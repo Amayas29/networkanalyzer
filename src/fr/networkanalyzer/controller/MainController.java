@@ -43,12 +43,15 @@ public class MainController {
 	public void loadFile(ActionEvent event) {
 		String filename = filenameInput.getText();
 		File file = new File(filename);
+
 		if (!checkFile(file))
 			return;
+
 		try {
 			throwLoadingStage(file);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (NetworkAnalyzerException e) {
+			infoLabel.setText(e.getMessage());
+			infoLabel.setVisible(true);
 		}
 	}
 
@@ -59,13 +62,15 @@ public class MainController {
 		FileChooser fileChooser = new FileChooser();
 
 		File file = fileChooser.showOpenDialog(scene.getWindow());
+
 		if (!checkFile(file))
 			return;
 
 		try {
 			throwLoadingStage(file);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (NetworkAnalyzerException e) {
+			infoLabel.setText(e.getMessage());
+			infoLabel.setVisible(true);
 		}
 	}
 
@@ -86,18 +91,28 @@ public class MainController {
 			infoLabel.setVisible(true);
 			return false;
 		}
+
 		return true;
 	}
 
-	private void throwLoadingStage(File file) throws IOException {
-
-		LoadingController.setFile(file);
+	private void throwLoadingStage(File file) throws NetworkAnalyzerException {
 
 		Stage stage = (Stage) loadBtn.getScene().getWindow();
-		Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
+
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
+		LoadingController lc = new LoadingController();
+		lc.setFile(file);
+		loader.setController(lc);
+
+		Parent root = null;
+		try {
+			root = loader.load();
+		} catch (IOException e) {
+			throw new NetworkAnalyzerException("Ressource can't be loaded");
+		}
+
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
-
 	}
 
 	@FXML
