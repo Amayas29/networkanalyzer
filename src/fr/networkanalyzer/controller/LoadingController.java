@@ -43,8 +43,9 @@ public class LoadingController {
 
 	private RotateTransition rt;
 
-	public void setFile(File f) {
-		file = f;
+
+	public LoadingController(File file) {
+		this.file = file;
 	}
 
 	@FXML
@@ -65,7 +66,7 @@ public class LoadingController {
 				try {
 					throwProcessingStage(analyzer);
 				} catch (NetworkAnalyzerException e) {
-					displayError(ps.getMessage());
+					displayError(e.getMessage());
 				}
 			});
 			pause.play();
@@ -112,8 +113,8 @@ public class LoadingController {
 		Stage stage = (Stage) errorsLabel.getScene().getWindow();
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
-		ProcessingController pc = new ProcessingController();
-		pc.setAnalyzer(analyzer);
+		ProcessingController pc = new ProcessingController(analyzer);
+
 		loader.setController(pc);
 
 		Parent root = null;

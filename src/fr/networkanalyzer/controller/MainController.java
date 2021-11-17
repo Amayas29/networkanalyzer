@@ -100,8 +100,8 @@ public class MainController {
 		Stage stage = (Stage) loadBtn.getScene().getWindow();
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
-		LoadingController lc = new LoadingController();
-		lc.setFile(file);
+		LoadingController lc = new LoadingController(file);
+		
 		loader.setController(lc);
 
 		Parent root = null;

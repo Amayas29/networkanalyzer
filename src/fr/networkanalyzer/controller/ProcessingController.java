@@ -7,27 +7,27 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.VBox;
 
 public class ProcessingController {
 
-	@SuppressWarnings("unused")
+
+    @FXML
+    private TreeView<?> rootTree;
+
+    @FXML
+    private VBox tramVb;
+    
 	private Analyzer analyzer;
 
-	@FXML
-	private ListView<Frame> framesList;
+	public ProcessingController(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
 
 	@FXML
 	public void initialize() {
-		ObservableList<Frame> frames = FXCollections.observableArrayList(new Frame(), new Frame(), new Frame(),
-				new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(),
-				new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(), new Frame(),
-				new Frame(), new Frame(), new Frame(), new Frame(), new Frame());
-		framesList.setItems(frames);
-		framesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-	}
-
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
+	
 	}
 
 }
