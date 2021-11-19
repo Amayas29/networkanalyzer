@@ -2,7 +2,6 @@ package fr.networkanalyzer.model.exceptions;
 
 public class NetworkAnalyzerException extends Exception {
 
-	
 	private static final long serialVersionUID = 1L;
 
 	public NetworkAnalyzerException() {
@@ -10,8 +9,8 @@ public class NetworkAnalyzerException extends Exception {
 	}
 
 	public NetworkAnalyzerException(String message) {
-		super( message );
-	
+		super(message);
+
 	}
 
 }

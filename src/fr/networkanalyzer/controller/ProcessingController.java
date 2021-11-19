@@ -27,7 +27,7 @@ public class ProcessingController {
 
 	@FXML
 	private ListView<String> offsetList;
-	
+
 	@FXML
 	private TreeView<String> viewTree;
 

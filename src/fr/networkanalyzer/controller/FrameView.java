@@ -1,7 +1,6 @@
 package fr.networkanalyzer.controller;
 
 import fr.networkanalyzer.model.Frame;
-import fr.networkanalyzer.model.layers.protocols.Ethernet;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

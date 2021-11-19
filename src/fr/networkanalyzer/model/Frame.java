@@ -7,12 +7,11 @@ import fr.networkanalyzer.model.layers.ILayerDataLink;
 public class Frame {
 
 	private ILayerDataLink message;
-	
 
 	public String getEncapsulatedProtocol() {
 		return message.getEncapsulatedProtocol();
 	}
-	
+
 	public void setLayerDataLink(ILayerDataLink message) {
 		this.message = message;
 	}

@@ -13,7 +13,6 @@ public abstract class AbstractLayer implements ILayer {
 		fields = new HashMap<>();
 	}
 
-
 	@Override
 	public IField getField(String field) {
 		return fields.get(field);

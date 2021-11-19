@@ -35,7 +35,6 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	public ILayerNetwork getIncluded() {
 		return included;
 	}
-	
 
 	@Override
 	public void setIncluded(ILayerNetwork layer) {

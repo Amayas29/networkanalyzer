@@ -101,7 +101,7 @@ public class MainController {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/loading.fxml"));
 		LoadingController lc = new LoadingController(file);
-		
+
 		loader.setController(lc);
 
 		Parent root = null;

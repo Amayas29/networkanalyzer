@@ -64,6 +64,7 @@ public class Tcp extends AbstractLayer implements ILayerTransport {
 
 		return fs;
 	}
+
 	@Override
 	public String getEncapsulatedProtocol() {
 		return included.getEncapsulatedProtocol();

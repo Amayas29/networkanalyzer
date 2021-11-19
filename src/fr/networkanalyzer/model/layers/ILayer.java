@@ -13,6 +13,7 @@ public interface ILayer {
 	public void addField(String name, IField field);
 
 	public void accept(ILayerVisitor visitor);
+
 	public String getEncapsulatedProtocol();
-	
+
 }
