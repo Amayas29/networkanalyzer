@@ -11,6 +11,7 @@ import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -120,7 +121,6 @@ public class LoadingController {
 		try {
 			root = loader.load();
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new NetworkAnalyzerException("Ressource can't be loaded");
 		}
 
@@ -130,6 +130,8 @@ public class LoadingController {
 
 	private void displayError(String errorMessage) {
 		errorsPane.setVisible(true);
+		errorsLabel.setVisible(true);
+		errorsLabel.setAlignment(Pos.CENTER);
 		errorsLabel.setTextAlignment(TextAlignment.CENTER);
 		errorsLabel.setText(errorMessage);
 	}

@@ -6,7 +6,10 @@
 
 * {
   -fx-font-family: subway;
-  -fx-font-weight: bold;
+}
+
+.h1 {
+	-fx-font-weight: bold;
 }
 
 /* Main */
@@ -15,34 +18,34 @@
   -fx-background-image: url("../../../../resources/image/main_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
-  -fx-border-radius: 10;
+  -fx-border-radius: 10.0;
 }
 
 #centredPanel {
   -fx-background-color: #d2dfee;
-  -fx-background-radius: 50;
+  -fx-background-radius: 50.0;
   -fx-opacity: 0.85;
 }
 
 .label {
-  -fx-font-size: 22;
+  -fx-font-size: 22.0;
   -fx-text-fill: black;
 }
 
 .button {
-  -fx-font-size: 25;
+  -fx-font-size: 25.0;
   -fx-background-color: #83bffb;
   -fx-text-fill: white;
   -fx-alignment: center;
   -fx-cursor: pointer;
-  -fx-background-radius: 25 10 25 10;
+  -fx-background-radius: 25.0 10.0 25.0 10.0;
 }
 
 #load:hover {
-  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
+  -fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.8), 10.0, 0.0, 0.0, 0.0);
   -fx-font-weight: bold;
-  -fx-font-size: 26;
-  -fx-text-fill: rgb(0, 0, 0, 0.5);
+  -fx-font-size: 26.0;
+  -fx-text-fill: rgb(0.0, 0.0, 0.0, 0.5);
 }
 
 #choose {
@@ -51,25 +54,25 @@
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-style: solid;
-  -fx-border-radius: 20;
+  -fx-border-radius: 20.0;
 }
 
 #choose:hover {
-  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 5, 0, 0, 0);
+  -fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.8), 5.0, 0.0, 0.0, 0.0);
 }
 
 #filename {
-  -fx-font-size: 15;
+  -fx-font-size: 15.0;
 }
 
 .infoLabel {
-  -fx-font-size: 13;
-  -fx-text-fill: rgb(192, 49, 49);
+  -fx-font-size: 13.0;
+  -fx-text-fill: rgb(192.0, 49.0, 49.0);
   /*-fx-text-alignment: center;*/
 }
 
 .textfield {
-  -fx-background-radius: 10 25 10 25;
+  -fx-background-radius: 10.0 25.0 10.0 25.0;
 }
 
 /* About us */
@@ -78,14 +81,14 @@
   -fx-background-image: url("../../../../resources/image/aboutus_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
-  -fx-border-radius: 10;
+  -fx-border-radius: 10.0;
 }
 
 #loadingPanel {
   -fx-background-image: url("../../../../resources/image/loading_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
-  -fx-border-radius: 10;
+  -fx-border-radius: 10.0;
 }
 
 /* Processing */
@@ -93,5 +96,15 @@
   -fx-background-image: url("../../../../resources/image/processing_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
-  -fx-border-radius: 10;
+  -fx-border-radius: 10.0;
 }
+
+.labelByte {
+  -fx-font-size:  17.0;
+}
+
+
+.selected {
+	-fx-background-color: #83bffb;
+}
+

@@ -1,8 +1,8 @@
 package fr.networkanalyzer.controller;
 
 import fr.networkanalyzer.model.Frame;
-import fr.networkanalyzer.model.layers.Ethernet;
-import fr.networkanalyzer.model.layers.Ip;
+import fr.networkanalyzer.model.layers.protocols.Ethernet;
+import fr.networkanalyzer.model.layers.protocols.Ip;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -21,9 +21,9 @@ public class FrameView {
 		this.frame = frame;
 
 		no = new SimpleIntegerProperty(index);
-		src = new SimpleStringProperty(frame.getFieldNetwork(Ip.SRC_ADDRESS).getValueDecoded());
-		dest = new SimpleStringProperty(frame.getFieldNetwork(Ip.DEST_ADDRESS).getValueDecoded());
-		protocol = new SimpleStringProperty(frame.getFieldDataLink(Ethernet.TYPE).getValueDecoded());
+		src = new SimpleStringProperty(frame.getFieldNetwork(Ip.SRC_ADDRESS.NAME).getValueDecoded());
+		dest = new SimpleStringProperty(frame.getFieldNetwork(Ip.DEST_ADDRESS.NAME).getValueDecoded());
+		protocol = new SimpleStringProperty(frame.getEncapsulatedProtocol());
 		lenght = new SimpleIntegerProperty(frame.getTotalLength());
 	}
 

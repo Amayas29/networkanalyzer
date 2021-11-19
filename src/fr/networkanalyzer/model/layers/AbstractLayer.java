@@ -1,32 +1,26 @@
 package fr.networkanalyzer.model.layers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import fr.networkanalyzer.model.Field;
+import fr.networkanalyzer.model.IField;
 
-public abstract class AbstractLayer implements Layer {
+public abstract class AbstractLayer implements ILayer {
 
-	private Map<String, Field> fields;
+	protected Map<String, IField> fields;
 
 	public AbstractLayer() {
 		fields = new HashMap<>();
 	}
 
-	@Override
-	public List<Field> getFields() {
-		return new ArrayList<>(fields.values());
-	}
 
 	@Override
-	public Field getField(String field) {
+	public IField getField(String field) {
 		return fields.get(field);
 	}
 
 	@Override
-	public void addField(String name, Field field) {
+	public void addField(String name, IField field) {
 		fields.put(name, field);
 	}
 

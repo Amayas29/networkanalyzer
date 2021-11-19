@@ -1,26 +1,33 @@
 package fr.networkanalyzer.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.networkanalyzer.model.Analyzer;
-import fr.networkanalyzer.model.Field;
 import fr.networkanalyzer.model.Frame;
-import fr.networkanalyzer.model.layers.Layer;
+import fr.networkanalyzer.model.IField;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
 
 public class ProcessingController {
 
+	@FXML
+	private ListView<String> offsetList;
+	
 	@FXML
 	private TreeView<String> viewTree;
 
@@ -45,12 +52,24 @@ public class ProcessingController {
 	private TableColumn<FrameView, SimpleStringProperty> srcCol;
 
 	@FXML
-	private VBox frameVB;
+	private FlowPane frameFlow;
 
 	private Analyzer analyzer;
 
+	private List<Label> lastSelected;
+	private Map<TreeItem<String>, List<Label>> childrens;
+
+	private int remainingLength;
+	private final int maxLength;
+	private int currentByteLength;
+
 	public ProcessingController(Analyzer analyzer) {
 		this.analyzer = analyzer;
+		maxLength = 47;
+		remainingLength = maxLength;
+		currentByteLength = 0;
+		lastSelected = new ArrayList<>();
+		childrens = new HashMap<>();
 	}
 
 	@FXML
@@ -58,17 +77,7 @@ public class ProcessingController {
 		fillTable();
 		rootItem = new TreeItem<String>();
 		viewTree.setRoot(rootItem);
-	}
-
-	private void fillTable() {
-		initCols();
-		List<Frame> frames = analyzer.getFrames();
-		ObservableList<FrameView> frameViews = FXCollections.observableArrayList();
-		for (int i = 0; i < frames.size(); i++)
-			frameViews.add(new FrameView(frames.get(i), i + 1));
-
-		frameTable.setItems(frameViews);
-
+		viewTree.setShowRoot(false);
 	}
 
 	@FXML
@@ -80,35 +89,59 @@ public class ProcessingController {
 
 		Frame frame = frameView.getFrame();
 
+		rootItem.getChildren().clear();
+		frameFlow.getChildren().clear();
+		childrens.clear();
+		lastSelected.clear();
+		remainingLength = maxLength;
+		currentByteLength = 0;
+
 		showDataLink(frame);
 		showNetwork(frame);
 		showTransport(frame);
 		showApplication(frame);
+
+		viewTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
+			if (newValue == null)
+				return;
+
+			clearSelection();
+
+			for (Label label : childrens.get(newValue)) {
+				label.getStyleClass().add("selected");
+				lastSelected.add(label);
+			}
+		});
+
 	}
 
 	private void showDataLink(Frame frame) {
-		List<Field> fields = frame.getFieldsDataLink();
-		TreeItem<String> ethernetTree = new TreeItem<>("Ethernet");
-
-		for (Field field : fields) {
-			TreeItem<String> fieldItem = new TreeItem<>(field.getName());
-			ethernetTree.getChildren().add(fieldItem);
-		}
-
-		rootItem.getChildren().add(ethernetTree);
-
+		showLayer(frame, frame.getFieldsDataLink(), "Ethernet");
 	}
 
 	private void showNetwork(Frame frame) {
-
+		showLayer(frame, frame.getFieldsNetwork(), "Ip");
 	}
 
 	private void showTransport(Frame frame) {
-
+		showLayer(frame, frame.getFieldsTransport(), "Udp");
 	}
 
 	private void showApplication(Frame frame) {
+		showLayer(frame, frame.getFieldsApplication(), "Dhcp");
+	}
 
+	private void showLayer(Frame frame, List<IField> fields, String name) {
+
+		TreeItem<String> tree = new TreeItem<>(name);
+
+		for (IField field : fields)
+			addTreeField(field, tree, true);
+
+		setChildren(tree);
+
+		rootItem.getChildren().add(tree);
 	}
 
 	private void initCols() {
@@ -117,5 +150,123 @@ public class ProcessingController {
 		destCol.setCellValueFactory(new PropertyValueFactory<>("dest"));
 		protoCol.setCellValueFactory(new PropertyValueFactory<>("protocol"));
 		lengthCol.setCellValueFactory(new PropertyValueFactory<>("lenght"));
+	}
+
+	private void fillTable() {
+		initCols();
+		List<Frame> frames = analyzer.getFrames();
+		ObservableList<FrameView> frameViews = FXCollections.observableArrayList();
+		for (int i = 0; i < frames.size(); i++)
+			frameViews.add(new FrameView(frames.get(i), i + 1));
+
+		frameTable.setItems(frameViews);
+	}
+
+	private void addLabel(IField field, TreeItem<String> correspondingTree) {
+
+		List<Label> labels = childrens.get(correspondingTree);
+
+		if (labels == null)
+			labels = new ArrayList<>();
+
+		String value = field.getValue();
+
+		// Length in bits
+		int len = field.getLength();
+
+		// If is a modulo 8 then we add a space at the end
+		if (len % 8 == 0) {
+			value = value.concat(" ");
+			currentByteLength = 0;
+		}
+
+		// otherwise the accumulator is incremented and if a byte is accumulated, a
+		// space is added.
+		else {
+			currentByteLength += len;
+			if (currentByteLength % 8 == 0) {
+				value = value.concat(" ");
+				currentByteLength = 0;
+			}
+		}
+
+		// Number of characters
+		len = value.length();
+
+		if (len > remainingLength) {
+
+			Label firstL = new Label(value.substring(0, remainingLength));
+			firstL.getStyleClass().add("labelByte");
+			frameFlow.getChildren().add(firstL);
+
+			Label secondL = new Label(value.substring(remainingLength));
+			secondL.getStyleClass().add("labelByte");
+			frameFlow.getChildren().add(secondL);
+
+			remainingLength = maxLength;
+
+			handler(correspondingTree, firstL, secondL);
+
+			labels.add(firstL);
+			labels.add(secondL);
+			childrens.put(correspondingTree, labels);
+			return;
+		}
+
+		remainingLength -= len;
+
+		Label label = new Label(value);
+		label.getStyleClass().add("labelByte");
+		frameFlow.getChildren().add(label);
+
+		handler(correspondingTree, label);
+
+		labels.add(label);
+		childrens.put(correspondingTree, labels);
+	}
+
+	private void handler(TreeItem<String> tree, Label... labels) {
+
+		for (Label l : labels) {
+
+			l.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+				clearSelection();
+				viewTree.getSelectionModel().select(tree);
+				lastSelected.add(l);
+			});
+		}
+	}
+
+	private void clearSelection() {
+		for (Label label : lastSelected)
+			label.getStyleClass().remove("selected");
+
+		lastSelected.clear();
+	}
+
+	private TreeItem<String> addTreeField(IField field, TreeItem<String> root, boolean first) {
+
+		TreeItem<String> fieldItem = new TreeItem<>(field.toString());
+		root.getChildren().add(fieldItem);
+
+		if (first)
+			addLabel(field, fieldItem);
+
+		if (field.getChildrens() == null)
+			return fieldItem;
+
+		for (IField f : field.getChildrens())
+			childrens.put(addTreeField(f, fieldItem, false), childrens.get(fieldItem));
+
+		return fieldItem;
+	}
+
+	private void setChildren(TreeItem<String> tree) {
+		List<Label> childs = new ArrayList<>();
+
+		for (TreeItem<String> c : tree.getChildren())
+			childs.addAll(childrens.get(c));
+
+		childrens.put(tree, childs);
 	}
 }

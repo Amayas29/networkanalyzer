@@ -1,14 +1,12 @@
 package fr.networkanalyzer.model;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerFileErrorsException;
-import fr.networkanalyzer.model.layers.Ethernet;
+import fr.networkanalyzer.model.layers.LayerParserVisitor;
+import fr.networkanalyzer.model.layers.protocols.Ethernet;
+import fr.networkanalyzer.model.layers.ILayerVisitor;
 
 public class AnalyzerParser {
 	private AnalyzerParser() {
@@ -27,6 +25,7 @@ public class AnalyzerParser {
 
 	public static Analyzer parse(File file) throws NetworkAnalyzerException {
 		Analyzer analyzer = new Analyzer();
+		ILayerVisitor visitor = new LayerParserVisitor(file);
 //		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
 //			String line;
 //			int offset = 0;
@@ -51,8 +50,13 @@ public class AnalyzerParser {
 		Frame f = new Frame();
 		Ethernet ethernet = new Ethernet();
 		f.setLayerDataLink(ethernet);
-		ethernet.addField(Ethernet.TYPE, new Field("t", "", "IPV4", 0));
-		ethernet.parse(null);
+		ethernet.accept(visitor);
+		analyzer.addFrame(f);
+
+		f = new Frame();
+		ethernet = new Ethernet();
+		f.setLayerDataLink(ethernet);
+		ethernet.accept(visitor);
 		analyzer.addFrame(f);
 
 		return analyzer;

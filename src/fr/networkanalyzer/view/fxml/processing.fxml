@@ -1,49 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
 
 <Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1200.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<ScrollPane layoutX="32.0" layoutY="42.0" prefHeight="269.0" prefWidth="1118.0">
+		<ScrollPane layoutX="34.0" layoutY="41.0" prefHeight="269.0" prefWidth="1125.0">
 			<content>
 				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="269.0" prefWidth="1098.0">
                <children>
-                  <TableView fx:id="frameTable" onMouseClicked="#showFrame" prefHeight="269.0" prefWidth="1112.0">
+                  <TableView fx:id="frameTable" layoutX="-6.0" onMouseClicked="#showFrame" prefHeight="269.0" prefWidth="1133.0">
                     <columns>
                       <TableColumn fx:id="noCol" prefWidth="75.0" text="No" />
                       <TableColumn fx:id="srcCol" prefWidth="350.0" text="Source" />
                         <TableColumn fx:id="destCol" prefWidth="350.0" text="Destination" />
                         <TableColumn fx:id="protoCol" prefWidth="200.0" text="Protocol" />
-                        <TableColumn fx:id="lengthCol" prefWidth="125.0" text="Lenght" />
+                        <TableColumn fx:id="lengthCol" prefWidth="150.0" text="Lenght" />
                     </columns>
                   </TableView>
                </children>
 				</AnchorPane>
 			</content>
 		</ScrollPane>
-      <HBox layoutX="41.0" layoutY="340.0" prefHeight="348.0" prefWidth="1112.0">
+      <HBox layoutX="34.0" layoutY="339.0" prefHeight="348.0" prefWidth="1133.0">
          <children>
-            <ScrollPane prefHeight="348.0" prefWidth="643.0">
+            <ScrollPane prefHeight="348.0" prefWidth="600.0">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="329.0" prefWidth="640.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="329.0" prefWidth="652.0">
                      <children>
                         <TreeView fx:id="viewTree" layoutX="11.0" layoutY="14.0" prefHeight="319.0" prefWidth="619.0" />
                      </children>
                   </AnchorPane>
               </content>
             </ScrollPane>
-            <ScrollPane prefHeight="348.0" prefWidth="464.0">
+            <ScrollPane prefHeight="345.0" prefWidth="524.0">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="340.0" prefWidth="458.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="340.0" prefWidth="521.0">
                      <children>
-                        <VBox fx:id="frameVB" layoutY="1.0" prefHeight="339.0" prefWidth="464.0" />
+                        <FlowPane fx:id="frameFlow" layoutX="97.0" prefHeight="340.0" prefWidth="426.0" />
+                        <ListView fx:id="offsetList" prefHeight="340.0" prefWidth="92.0" />
                      </children>
                   </AnchorPane>
               </content>
