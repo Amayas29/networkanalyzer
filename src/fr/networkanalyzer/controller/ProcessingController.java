@@ -60,8 +60,14 @@ public class ProcessingController {
 	private Map<TreeItem<String>, List<Label>> childrens;
 
 	private int remainingLength;
+
 	private final int maxLength;
+
 	private int currentByteLength;
+
+	private String offset;
+
+	private ObservableList<String> offsets;
 
 	public ProcessingController(Analyzer analyzer) {
 		this.analyzer = analyzer;
@@ -74,6 +80,7 @@ public class ProcessingController {
 
 	@FXML
 	public void initialize() {
+
 		fillTable();
 		rootItem = new TreeItem<String>();
 		viewTree.setRoot(rootItem);
@@ -95,6 +102,10 @@ public class ProcessingController {
 		lastSelected.clear();
 		remainingLength = maxLength;
 		currentByteLength = 0;
+
+		offset = "0000";
+		offsets = FXCollections.observableArrayList("0x" + offset);
+		offsetList.setItems(offsets);
 
 		showDataLink(frame);
 		showNetwork(frame);
@@ -194,13 +205,25 @@ public class ProcessingController {
 		len = value.length();
 
 		if (len > remainingLength) {
+			offset = String.valueOf(Integer.parseInt(offset, 10) + 10);
+			for (; offset.length() < 4;)
+				offset = "0" + offset;
+
+			offsets.add("0x" + offset);
 
 			Label firstL = new Label(value.substring(0, remainingLength));
 			firstL.getStyleClass().add("labelByte");
+			firstL.getStyleClass().add("label_frame");
 			frameFlow.getChildren().add(firstL);
 
-			Label secondL = new Label(value.substring(remainingLength));
+			String secondValue = value.substring(remainingLength);
+			if (secondValue.charAt(0) == ' ') {
+				secondValue = secondValue.substring(1);
+
+			}
+			Label secondL = new Label(secondValue);
 			secondL.getStyleClass().add("labelByte");
+			secondL.getStyleClass().add("label_frame");
 			frameFlow.getChildren().add(secondL);
 
 			remainingLength = maxLength;
@@ -210,6 +233,7 @@ public class ProcessingController {
 			labels.add(firstL);
 			labels.add(secondL);
 			childrens.put(correspondingTree, labels);
+
 			return;
 		}
 
@@ -217,6 +241,7 @@ public class ProcessingController {
 
 		Label label = new Label(value);
 		label.getStyleClass().add("labelByte");
+		label.getStyleClass().add("label_frame");
 		frameFlow.getChildren().add(label);
 
 		handler(correspondingTree, label);
@@ -242,6 +267,7 @@ public class ProcessingController {
 			label.getStyleClass().remove("selected");
 
 		lastSelected.clear();
+
 	}
 
 	private TreeItem<String> addTreeField(IField field, TreeItem<String> root, boolean first) {
