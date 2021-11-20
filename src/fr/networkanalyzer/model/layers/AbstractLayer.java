@@ -3,7 +3,7 @@ package fr.networkanalyzer.model.layers;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.networkanalyzer.model.IField;
+import fr.networkanalyzer.model.fields.IField;
 
 public abstract class AbstractLayer implements ILayer {
 

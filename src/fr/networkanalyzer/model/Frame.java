@@ -2,6 +2,7 @@ package fr.networkanalyzer.model;
 
 import java.util.List;
 
+import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.ILayerDataLink;
 
 public class Frame {

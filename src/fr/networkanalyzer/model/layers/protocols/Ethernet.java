@@ -3,12 +3,12 @@ package fr.networkanalyzer.model.layers.protocols;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.networkanalyzer.model.Entry;
-import fr.networkanalyzer.model.IField;
+import fr.networkanalyzer.model.fields.Entry;
+import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerDataLink;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
-import fr.networkanalyzer.model.layers.ILayerVisitor;
+import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public class Ethernet extends AbstractLayer implements ILayerDataLink {
 

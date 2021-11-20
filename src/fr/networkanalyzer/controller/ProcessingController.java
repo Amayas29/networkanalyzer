@@ -7,14 +7,14 @@ import java.util.Map;
 
 import fr.networkanalyzer.model.Analyzer;
 import fr.networkanalyzer.model.Frame;
-import fr.networkanalyzer.model.IField;
+import fr.networkanalyzer.model.fields.IField;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
@@ -26,12 +26,10 @@ import javafx.scene.layout.FlowPane;
 public class ProcessingController {
 
 	@FXML
-	private ListView<String> offsetList;
+	private FlowPane offsetList;
 
 	@FXML
 	private TreeView<String> viewTree;
-
-	private TreeItem<String> rootItem;
 
 	@FXML
 	private TableColumn<FrameView, SimpleStringProperty> destCol;
@@ -54,9 +52,15 @@ public class ProcessingController {
 	@FXML
 	private FlowPane frameFlow;
 
+	@FXML
+	private ScrollPane scrollFrame;
+
+	private TreeItem<String> rootItem;
+
 	private Analyzer analyzer;
 
 	private List<Label> lastSelected;
+
 	private Map<TreeItem<String>, List<Label>> childrens;
 
 	private int remainingLength;
@@ -66,8 +70,6 @@ public class ProcessingController {
 	private int currentByteLength;
 
 	private String offset;
-
-	private ObservableList<String> offsets;
 
 	public ProcessingController(Analyzer analyzer) {
 		this.analyzer = analyzer;
@@ -85,6 +87,9 @@ public class ProcessingController {
 		rootItem = new TreeItem<String>();
 		viewTree.setRoot(rootItem);
 		viewTree.setShowRoot(false);
+
+		offsetList.setMouseTransparent(true);
+		offsetList.setFocusTraversable(false);
 	}
 
 	@FXML
@@ -98,14 +103,14 @@ public class ProcessingController {
 
 		rootItem.getChildren().clear();
 		frameFlow.getChildren().clear();
+		offsetList.getChildren().clear();
 		childrens.clear();
-		lastSelected.clear();
+		clearSelection();
 		remainingLength = maxLength;
 		currentByteLength = 0;
-
 		offset = "0000";
-		offsets = FXCollections.observableArrayList("0x" + offset);
-		offsetList.setItems(offsets);
+
+		offsetList.getChildren().add(newOffset());
 
 		showDataLink(frame);
 		showNetwork(frame);
@@ -203,50 +208,50 @@ public class ProcessingController {
 
 		// Number of characters
 		len = value.length();
+		int toAdd;
+		Label label;
+		String toAddValue;
 
-		if (len > remainingLength) {
+		while (len > 0) {
+			toAdd = len - remainingLength;
+
+			if (toAdd < 0) {
+				label = new Label(value);
+				label.getStyleClass().add("labelByte");
+				frameFlow.getChildren().add(label);
+				labels.add(label);
+				remainingLength -= len;
+				len = 0;
+				handler(correspondingTree, label);
+				continue;
+			}
+
 			offset = String.valueOf(Integer.parseInt(offset, 10) + 10);
 			for (; offset.length() < 4;)
 				offset = "0" + offset;
 
-			offsets.add("0x" + offset);
+			offsetList.getChildren().add(newOffset());
 
-			Label firstL = new Label(value.substring(0, remainingLength));
-			firstL.getStyleClass().add("labelByte");
-			firstL.getStyleClass().add("label_frame");
-			frameFlow.getChildren().add(firstL);
+			toAddValue = value.substring(0, remainingLength);
 
-			String secondValue = value.substring(remainingLength);
-			if (secondValue.charAt(0) == ' ') {
-				secondValue = secondValue.substring(1);
-
+			try {
+				value = value.substring(remainingLength).stripLeading();
+			} catch (IndexOutOfBoundsException e) {
+				value = "";
 			}
-			Label secondL = new Label(secondValue);
-			secondL.getStyleClass().add("labelByte");
-			secondL.getStyleClass().add("label_frame");
-			frameFlow.getChildren().add(secondL);
 
 			remainingLength = maxLength;
 
-			handler(correspondingTree, firstL, secondL);
+			len = value.length();
 
-			labels.add(firstL);
-			labels.add(secondL);
-			childrens.put(correspondingTree, labels);
+			label = new Label(toAddValue);
+			label.getStyleClass().add("labelByte");
+			frameFlow.getChildren().add(label);
+			labels.add(label);
 
-			return;
+			handler(correspondingTree, label);
 		}
 
-		remainingLength -= len;
-
-		Label label = new Label(value);
-		label.getStyleClass().add("labelByte");
-		label.getStyleClass().add("label_frame");
-		frameFlow.getChildren().add(label);
-
-		handler(correspondingTree, label);
-
-		labels.add(label);
 		childrens.put(correspondingTree, labels);
 	}
 
@@ -294,5 +299,11 @@ public class ProcessingController {
 			childs.addAll(childrens.get(c));
 
 		childrens.put(tree, childs);
+	}
+
+	private Label newOffset() {
+		Label label = new Label("0x".concat(offset));
+		label.getStyleClass().add("labelOffset");
+		return label;
 	}
 }

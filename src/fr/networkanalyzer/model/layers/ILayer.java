@@ -2,7 +2,8 @@ package fr.networkanalyzer.model.layers;
 
 import java.util.List;
 
-import fr.networkanalyzer.model.IField;
+import fr.networkanalyzer.model.fields.IField;
+import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public interface ILayer {
 

@@ -1,4 +1,4 @@
-package fr.networkanalyzer.model.layers;
+package fr.networkanalyzer.model.visitors;
 
 import fr.networkanalyzer.model.layers.protocols.Arp;
 import fr.networkanalyzer.model.layers.protocols.Dhcp;

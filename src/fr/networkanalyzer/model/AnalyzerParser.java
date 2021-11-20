@@ -4,9 +4,9 @@ import java.io.File;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerFileErrorsException;
-import fr.networkanalyzer.model.layers.LayerParserVisitor;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
-import fr.networkanalyzer.model.layers.ILayerVisitor;
+import fr.networkanalyzer.model.visitors.ILayerVisitor;
+import fr.networkanalyzer.model.visitors.LayerParserVisitor;
 
 public class AnalyzerParser {
 	private AnalyzerParser() {

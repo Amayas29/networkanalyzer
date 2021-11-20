@@ -1,4 +1,4 @@
-package fr.networkanalyzer.model;
+package fr.networkanalyzer.model.fields;
 
 public class Entry {
 

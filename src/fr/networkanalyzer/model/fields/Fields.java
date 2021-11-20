@@ -1,4 +1,4 @@
-package fr.networkanalyzer.model;
+package fr.networkanalyzer.model.fields;
 
 import java.util.ArrayList;
 import java.util.List;

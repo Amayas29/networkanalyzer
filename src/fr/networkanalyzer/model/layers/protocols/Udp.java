@@ -3,12 +3,12 @@ package fr.networkanalyzer.model.layers.protocols;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.networkanalyzer.model.Entry;
-import fr.networkanalyzer.model.IField;
+import fr.networkanalyzer.model.fields.Entry;
+import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerApplication;
 import fr.networkanalyzer.model.layers.ILayerTransport;
-import fr.networkanalyzer.model.layers.ILayerVisitor;
+import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public class Udp extends AbstractLayer implements ILayerTransport {
 

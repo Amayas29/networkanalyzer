@@ -31,9 +31,6 @@
   -fx-font-size: 22.0;
   -fx-text-fill: black;
 }
-.label_frame{
-	-fx-padding: 2 0 2 0;
-}
 
 .button {
   -fx-font-size: 25.0;
@@ -104,10 +101,15 @@
 
 .labelByte {
   -fx-font-size:  17.0;
+  -fx-padding: 2.0 0.0 2.0 0.0;
 }
 
+.labelOffset {
+ -fx-font-size:  17.0;
+ -fx-text-fill: #A5A5A5;
+  -fx-padding: 2.0 0.0 2.0 0.0;
+}
 
 .selected {
 	-fx-background-color: #83bffb;
 }
-
