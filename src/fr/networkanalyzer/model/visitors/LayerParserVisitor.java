@@ -1,9 +1,10 @@
 package fr.networkanalyzer.model.visitors;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
+import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
 import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
@@ -20,23 +21,27 @@ import fr.networkanalyzer.model.layers.protocols.Imap;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import fr.networkanalyzer.model.layers.protocols.Tcp;
 import fr.networkanalyzer.model.layers.protocols.Udp;
+import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
+import fr.networkanalyzer.model.tools.ParsingTools;
 
-public class LayerParserVisitor implements ILayerVisitor, Closeable {
+public class LayerParserVisitor implements ILayerVisitor {
 
-	@SuppressWarnings("unused")
-	private File file;
+	private String line;
+	private List<Integer> listIndex;
+	private int currentIndex;
 
-	public LayerParserVisitor(File file) {
-		this.file = file;
+	public LayerParserVisitor() {
+		listIndex = new ArrayList<>();
+		currentIndex = 0;
+		line = null;
 	}
 
 	@Override
-	public void visit(Arp arp) {
-
+	public void visit(Arp arp) throws NetworkAnalyzerException {
 	}
 
 	@Override
-	public void visit(Dhcp dhcp) {
+	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
 		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, "01", "Boot Request"));
 		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, "01", "Ethernet"));
@@ -77,93 +82,188 @@ public class LayerParserVisitor implements ILayerVisitor, Closeable {
 	}
 
 	@Override
-	public void visit(Dns dns) {
+	public void visit(Dns dns) throws NetworkAnalyzerException {
 
 	}
 
 	@Override
-	public void visit(Ethernet ethernet) {
+	public void visit(Ethernet ethernet) throws NetworkAnalyzerException {
+
+		String header = getHeader(42).trim();
+
+		String destMacAddress = header.substring(0, 17);
+		String srcMacAddress = header.substring(18, 35);
+		String rdType = header.substring(36);
+
 
 		IField type;
 		ILayerNetwork layer = null;
 
-		String read = "08 00";
+		currentIndex += 18;
+		if (srcMacAddress.equals("FF FF FF FF FF FF"))
+			throw new NetworkanalyzerParseErrorException(getLine(),
+					"The source MAC address must not be a broadcast address");
 
-		if (read.equals(Ethernet.IP)) {
-			type = new Field(Ethernet.TYPE, read, "IPV4");
+		if (destMacAddress.equals(srcMacAddress))
+			throw new NetworkanalyzerParseErrorException(getLine(), "Mac addresses are equal");
+
+		currentIndex += 18;
+
+		switch (rdType) {
+
+		case Ethernet.IP: {
+			type = new Field(Ethernet.TYPE, rdType, "IPV4");
 			layer = new Ip();
+			break;
 		}
 
-		else if (read.equals(Ethernet.ARP)) {
-			type = new Field(Ethernet.TYPE, read, "ARP");
+		case Ethernet.ARP: {
+			type = new Field(Ethernet.TYPE, rdType, "ARP");
 			layer = new Arp();
+			break;
 		}
 
-		else
-			return;
-		Field src = new Field(Ethernet.SRC_ADDRESS, "EE EE EE EE EE EE", "23:23:23:23:23:23");
-		Field dest = new Field(Ethernet.DEST_ADDRESS, "FF FF FF FF FF FF", "broadcast");
+		default:
+			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the ethernet type field");
+		}
+
+		Field dest = new Field(Ethernet.DEST_ADDRESS, destMacAddress,
+				destMacAddress.equals("FF FF FF FF FF FF") ? "broadcast" : destMacAddress.replace(" ", ":"));
+
+		Field src = new Field(Ethernet.SRC_ADDRESS, srcMacAddress, srcMacAddress.replace(" ", ":"));
 
 		ethernet.addField(Ethernet.SRC_ADDRESS.NAME, src);
 		ethernet.addField(Ethernet.DEST_ADDRESS.NAME, dest);
 
 		ethernet.addField(Ethernet.TYPE.NAME, type);
+
+		currentIndex += 6;
 		layer.accept(this);
 		ethernet.setIncluded(layer);
 
 	}
 
 	@Override
-	public void visit(Http http) {
-
+	public void visit(Http http) throws NetworkAnalyzerException {
+//		String header = getHeader(0, 41);
 	}
 
 	@Override
-	public void visit(Icmp icmp) {
-
+	public void visit(Icmp icmp) throws NetworkAnalyzerException {
+//		String header = getHeader(0, 41);
 	}
 
 	@Override
-	public void visit(Imap imap) {
-
+	public void visit(Imap imap) throws NetworkAnalyzerException {
+//		String header = getHeader(0, 41);
 	}
 
 	@Override
-	public void visit(Ip ip) {
-		ip.addField(Ip.DEST_ADDRESS.NAME, new Field(Ip.DEST_ADDRESS, "11 11 11 11", "17.17.17.17"));
-		ip.addField(Ip.SRC_ADDRESS.NAME, new Field(Ip.SRC_ADDRESS, "22 22 22 22", "18.18.18.18"));
-		ip.addField(Ip.PROTOCOL.NAME, new Field(Ip.PROTOCOL, "33", "Icmp"));
+	public void visit(Ip ip) throws NetworkAnalyzerException {
 
-		ip.addField(Ip.VERSION.NAME, new Field(Ip.VERSION, "4", "Ipv4"));
-		ip.addField(Ip.IHL.NAME, new Field(Ip.IHL, "5", "15"));
-		ip.addField(Ip.TOS.NAME, new Field(Ip.TOS, "66", "0"));
-		ip.addField(Ip.TOTAL_LENGTH.NAME, new Field(Ip.TOTAL_LENGTH, "77 77", "155"));
+		String header = getHeader(60);
+		System.out.println("*"+header);
+		String version = header.substring(0,1);
+		System.out.println(version);
+		if (!version.equals("4"))
+			throw new NetworkanalyzerParseErrorException(getLine(), "The IP Vesion is not compatible");
 
-		ip.addField(Ip.IDENTIFICATION.NAME, new Field(Ip.IDENTIFICATION, "88 88", "0"));
+		currentIndex += 1;
+
+		String ihl = header.substring(1,2);
+		currentIndex += 1;
+		if (Integer.parseInt(ihl, 16) < 5)
+			throw new NetworkanalyzerParseErrorException(getLine(), "The IP IHL is not compatible");
+
+		String tos = header.substring(3,5);
+		String totalLength = header.substring(6,11);
+		String identification = header.substring(12,17);
+		String fr = Integer.toBinaryString(Integer.parseInt(header.substring(18,23).replace(" ","")));
+		
+		while(fr.length() != 16)
+			fr = "0".concat(fr);
+		
+		String r = fr.substring(0,1);
+		String df = fr.substring(1,2);
+		String mf = fr.substring(2,3);
+		String fragmentOffset = fr.substring(3);
+		String ttl = header.substring(24,26);
+		String protocol = header.substring(27,29);
+		currentIndex += 25;
+		ILayerTransport transport;
+		IField proto;
+		switch (Integer.parseInt(protocol, 16)) {
+		case Ip.ICMP: {
+			transport = new Icmp();
+			proto = new Field(Ip.PROTOCOL, protocol, "ICMP");
+			break;
+		}
+		case Ip.UDP: {
+			transport = new Udp();
+			proto = new Field(Ip.PROTOCOL, protocol, "UDP");
+			break;
+		}
+		case Ip.TCP: {
+			transport = new Tcp();
+			proto = new Field(Ip.PROTOCOL, protocol, "TCP");
+			break;
+		}
+		default:
+			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the IP protocol field");
+		}
+
+		String headerChecksum = header.substring(30,36);
+		currentIndex += 9;
+
+		String srcAddress = header.substring(36,47);
+		String destAddress = header.substring(48,60);
+
+		if (srcAddress.equals("FF FF FF FF"))
+			throw new NetworkanalyzerParseErrorException(getLine(),
+					"The source IP address must not be a broadcast address");
+
+		if (srcAddress.equals(destAddress))
+			throw new NetworkanalyzerParseErrorException(getLine(), "IP addresses are equal");
+
+		ip.addField(Ip.DEST_ADDRESS.NAME,
+				new Field(Ip.DEST_ADDRESS, destAddress, NetworkanalyzerTools.decodeAddressIp(destAddress)));
+		ip.addField(Ip.SRC_ADDRESS.NAME,
+				new Field(Ip.SRC_ADDRESS, srcAddress, NetworkanalyzerTools.decodeAddressIp(srcAddress)));
+		ip.addField(Ip.PROTOCOL.NAME, proto);
+
+		ip.addField(Ip.VERSION.NAME, new Field(Ip.VERSION, version, "Ipv4"));
+		ip.addField(Ip.IHL.NAME, new Field(Ip.IHL, ihl, String.valueOf(Integer.parseInt(ihl.replace(" ", ""), 16))));
+		ip.addField(Ip.TOS.NAME, new Field(Ip.TOS, tos, tos));
+		ip.addField(Ip.TOTAL_LENGTH.NAME,
+				new Field(Ip.TOTAL_LENGTH, totalLength, String.valueOf(Integer.parseInt(totalLength.replace(" ", ""), 16))));
+
+		ip.addField(Ip.IDENTIFICATION.NAME,
+				new Field(Ip.IDENTIFICATION, identification, String.valueOf(Integer.parseInt(identification.replace(" ", ""), 16))));
 
 		Fields fragments = new Fields(Ip.FRAGMENTS.NAME);
-		fragments.addField(new Field(Ip.R, "0", "0"));
-		fragments.addField(new Field(Ip.DF, "0", "0"));
-		fragments.addField(new Field(Ip.MF, "0", "0"));
-		fragments.addField(new Field(Ip.FRAGMENT_OFFSET, "0000000000000", "0"));
+		fragments.addField(new Field(Ip.R, r, r));
+		fragments.addField(new Field(Ip.DF, df, df));
+		fragments.addField(new Field(Ip.MF, mf, mf));
+		fragments.addField(
+				new Field(Ip.FRAGMENT_OFFSET, fragmentOffset, String.valueOf(Integer.parseInt(fragmentOffset, 16))));
 
 		ip.addField(Ip.FRAGMENTS.NAME, fragments);
 
-		ip.addField(Ip.TTL.NAME, new Field(Ip.TTL, "99 99", "1"));
-		ip.addField(Ip.HEADER_CHECKSUM.NAME, new Field(Ip.HEADER_CHECKSUM, "AA AA", "0"));
-
-		ILayerTransport udp = new Udp();
-		udp.accept(this);
-		ip.setIncluded(udp);
+		ip.addField(Ip.TTL.NAME, new Field(Ip.TTL, ttl, String.valueOf(Integer.parseInt(ttl.replace(" ", ""), 16))));
+		ip.addField(Ip.HEADER_CHECKSUM.NAME, new Field(Ip.HEADER_CHECKSUM, headerChecksum, headerChecksum));
+		transport = new Udp();
+		transport.accept(this);
+		ip.setIncluded(transport);
 	}
 
 	@Override
-	public void visit(Tcp tcp) {
-
+	public void visit(Tcp tcp) throws NetworkAnalyzerException {
+//		String header = getHeader(0, 41);
 	}
 
 	@Override
-	public void visit(Udp udp) {
+	public void visit(Udp udp) throws NetworkAnalyzerException {
+//		String header = getHeader(0, 41);
 		udp.addField(Udp.SRC_PORT.NAME, new Field(Udp.SRC_PORT, "00 80", "80"));
 		udp.addField(Udp.DEST_PORT.NAME, new Field(Udp.DEST_PORT, "00 80", "80"));
 		udp.addField(Udp.LENGTH.NAME, new Field(Udp.LENGTH, "00 80", "80"));
@@ -174,9 +274,49 @@ public class LayerParserVisitor implements ILayerVisitor, Closeable {
 		udp.setIncluded(dhcp);
 	}
 
-	@Override
-	public void close() throws IOException {
+	private int getLine() {
 
+		for (int i = 0; i < listIndex.size(); i++) {
+			if (currentIndex < listIndex.get(i))
+				return i - 1;
+		}
+
+		throw new IndexOutOfBoundsException();
+	}
+
+	private String getHeader(int endIndex) throws NetworkanalyzerParseErrorException {
+		if (line == null)
+			throw new NetworkanalyzerParseErrorException();
+
+		String header;
+
+		try {
+			header = line.substring(0, endIndex);
+			line = line.substring(endIndex);
+		} catch (IndexOutOfBoundsException e) {
+			throw new NetworkanalyzerParseErrorException(getLine(), "The frame is not complete");
+		}
+
+		return header;
+	}
+
+	public void setLine(String line) {
+		String data[] = line.split(" ");
+		listIndex.clear();
+		currentIndex = 0;
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < data.length; i++) {
+			if (ParsingTools.isPattern(data[i])) {
+				listIndex.add(ParsingTools.getIndexPattern(data[i]));
+				continue;
+			}
+
+			sb.append(data[i].concat(" "));
+		}
+
+		this.line = sb.toString().trim();
 	}
 
 }

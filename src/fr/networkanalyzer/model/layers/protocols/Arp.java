@@ -2,6 +2,7 @@ package fr.networkanalyzer.model.layers.protocols;
 
 import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
@@ -12,7 +13,7 @@ public class Arp extends AbstractLayer implements ILayerNetwork {
 	private static final int LENGTH = 28;
 
 	@Override
-	public void accept(ILayerVisitor visitor) {
+	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
 		visitor.visit(this);
 	}
 

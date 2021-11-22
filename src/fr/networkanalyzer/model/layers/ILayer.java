@@ -2,6 +2,7 @@ package fr.networkanalyzer.model.layers;
 
 import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
@@ -13,7 +14,7 @@ public interface ILayer {
 
 	public void addField(String name, IField field);
 
-	public void accept(ILayerVisitor visitor);
+	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException;
 
 	public String getEncapsulatedProtocol();
 

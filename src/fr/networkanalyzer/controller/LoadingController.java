@@ -66,6 +66,7 @@ public class LoadingController {
 				try {
 					throwProcessingStage(analyzer);
 				} catch (NetworkAnalyzerException e) {
+					e.printStackTrace();
 					displayError(e.getMessage());
 				}
 			});
@@ -77,6 +78,7 @@ public class LoadingController {
 
 			PauseTransition pause = new PauseTransition(Duration.seconds(SLEEP_TIME));
 			pause.setOnFinished(event -> {
+				ps.getException().printStackTrace();
 				displayError(ps.getException().getMessage());
 			});
 			pause.play();

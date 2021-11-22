@@ -3,6 +3,7 @@ package fr.networkanalyzer.model.layers.protocols;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
@@ -27,7 +28,7 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	}
 
 	@Override
-	public void accept(ILayerVisitor visitor) {
+	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
 		visitor.visit(this);
 	}
 
@@ -44,8 +45,8 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(SRC_ADDRESS.NAME));
 		fs.add(getField(DEST_ADDRESS.NAME));
+		fs.add(getField(SRC_ADDRESS.NAME));
 		fs.add(getField(TYPE.NAME));
 		return fs;
 	}

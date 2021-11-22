@@ -3,6 +3,7 @@ package fr.networkanalyzer.model.layers.protocols;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
@@ -23,7 +24,7 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	private ILayerApplication included;
 
 	@Override
-	public void accept(ILayerVisitor visitor) {
+	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
 		visitor.visit(this);
 	}
 
