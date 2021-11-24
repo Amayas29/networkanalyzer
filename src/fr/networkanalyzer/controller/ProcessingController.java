@@ -89,7 +89,6 @@ public class ProcessingController {
 		currentByteLength = 0;
 		lastSelected = new ArrayList<>();
 		childrens = new HashMap<>();
-
 	}
 
 	@FXML
