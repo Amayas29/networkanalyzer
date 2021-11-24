@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
+import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
@@ -21,6 +22,7 @@ import fr.networkanalyzer.model.layers.protocols.Imap;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import fr.networkanalyzer.model.layers.protocols.Tcp;
 import fr.networkanalyzer.model.layers.protocols.Udp;
+import fr.networkanalyzer.model.tools.IpOptions;
 import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
 import fr.networkanalyzer.model.tools.ParsingTools;
 
@@ -132,7 +134,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String ihl = header.substring(1, 2);
 		System.out.println("Ihl : *" + ihl + "*");
 		currentIndex += 1;
-		if (Integer.parseInt(ihl, 16) < 5)
+		int ihlDecoded = Integer.parseInt(ihl, 16);
+		if (ihlDecoded < 5)
 			throw new NetworkanalyzerParseErrorException(getLine(), "The IP IHL is not compatible");
 
 		String tos = header.substring(3, 5);
@@ -155,7 +158,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 		System.out.println("Ttl : *" + ttl + "*");
 		String protocol = header.substring(27, 29);
 		System.out.println("protocol : *" + protocol + "*");
+		
 		currentIndex += 25;
+		
 		ILayerTransport layer;
 		IField proto;
 		switch (Integer.parseInt(protocol, 16)) {
@@ -186,14 +191,22 @@ public class LayerParserVisitor implements ILayerVisitor {
 		System.out.println("src ip addr : *" + srcAddress + "*");
 		String destAddress = header.substring(48);
 		System.out.println("dest ip addr : *" + destAddress + "*");
-
+		
+		
+		
 		if (srcAddress.equals("FF FF FF FF"))
 			throw new NetworkanalyzerParseErrorException(getLine(),
 					"The source IP address must not be a broadcast address");
 
 		if (srcAddress.equals(destAddress))
 			throw new NetworkanalyzerParseErrorException(getLine(), "IP addresses are equal");
-
+		IField options = null;
+		if (ihlDecoded > 5) {
+			String s = getHeader(((ihlDecoded - 5) * 12)).trim();
+			System.out.println("*"+ s+"*---->" +ihlDecoded);
+			options = buildOptions(s);
+		}
+		currentIndex += (ihlDecoded - 5) * 12 + 12;
 		ip.addField(Ip.DEST_ADDRESS.NAME,
 				new Field(Ip.DEST_ADDRESS, destAddress, NetworkanalyzerTools.decodeAddressIp(destAddress)));
 		ip.addField(Ip.SRC_ADDRESS.NAME,
@@ -201,7 +214,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ip.addField(Ip.PROTOCOL.NAME, proto);
 
 		ip.addField(Ip.VERSION.NAME, new Field(Ip.VERSION, version, "Ipv4"));
-		ip.addField(Ip.IHL.NAME, new Field(Ip.IHL, ihl, String.valueOf(Integer.parseInt(ihl.replace(" ", ""), 16))));
+		ip.addField(Ip.IHL.NAME, new Field(Ip.IHL, ihl, String.valueOf(ihlDecoded)));
 		ip.addField(Ip.TOS.NAME, new Field(Ip.TOS, tos, tos));
 		ip.addField(Ip.TOTAL_LENGTH.NAME, new Field(Ip.TOTAL_LENGTH, totalLength,
 				String.valueOf(Integer.parseInt(totalLength.replace(" ", ""), 16))));
@@ -220,6 +233,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		ip.addField(Ip.TTL.NAME, new Field(Ip.TTL, ttl, String.valueOf(Integer.parseInt(ttl.replace(" ", ""), 16))));
 		ip.addField(Ip.HEADER_CHECKSUM.NAME, new Field(Ip.HEADER_CHECKSUM, headerChecksum, headerChecksum));
+		
+		if(options != null)
+			ip.addField(Ip.OPTIONS.NAME,options);
+		
+		
 		layer = new Udp();
 		layer.accept(this);
 		ip.setIncluded(layer);
@@ -246,7 +264,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		System.out.println("destPort : *" + destPort + "*");
 
 		int pDest = Integer.parseInt(destPort.replace(" ", ""), 16);
-
+		currentIndex += 12;
 		switch (pDest) {
 		case Udp.DNS: {
 			layer = new Dns();
@@ -276,11 +294,61 @@ public class LayerParserVisitor implements ILayerVisitor {
 				new Field(Udp.LENGTH, length, String.valueOf(Integer.parseInt(length.replace(" ", ""), 16))));
 		udp.addField(Udp.CHECKSUM.NAME,
 				new Field(Udp.CHECKSUM, checksum, String.valueOf(Integer.parseInt(checksum.replace(" ", ""), 16))));
-
+		currentIndex += 12;
 //		layer.accept(this);
 		udp.setIncluded(layer);
 	}
 
+	private static IField buildOptions(String data) throws NetworkAnalyzerException {
+		Fields options = new Fields(Ip.OPTIONS.NAME);
+
+		String datas[] = data.trim().split(" ");
+		for (int i = 0; i < datas.length;) {
+
+			String type = datas[i++];
+			System.out.println("le type " +type);
+			int typeDecoded = Integer.parseInt(type, 16);
+			Entry typeEnty = IpOptions.getEntryByCode(typeDecoded);
+			
+			if(typeDecoded == 68)
+				continue;
+			if (typeDecoded == 1 || typeDecoded == 0) {
+				options.addField(new Field(typeEnty, type, String.valueOf(typeDecoded)));
+				continue;
+			}
+
+			Fields option = new Fields(String.valueOf(typeDecoded));
+			option.addField(new Field(typeEnty, type, String.valueOf(typeDecoded)));
+		
+
+			String len = datas[i++];
+			int lenDecoded = Integer.parseInt(len, 16);
+			option.addField(new Field(new Entry("Length", 8), len, String.valueOf(lenDecoded)));
+			
+			if (typeDecoded == 7) {
+				String ptr = datas[i++];
+				option.addField(new Field(typeEnty, ptr, String.valueOf(Integer.parseInt(ptr, 16))));
+				lenDecoded -= 1;
+			}
+
+			
+
+			lenDecoded -= 2;
+			Fields fieldsAdresses = null;
+			for (int j = 3; j < lenDecoded; j += 4) {
+				fieldsAdresses = new Fields(Ip.IPS_ADRESSES.NAME);
+				String ips = String.format("%s %s %s %s", datas[j], datas[j + 1], datas[j + 2], datas[j + 3]);
+				fieldsAdresses.addField(new Field(new Entry("adresse", 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));
+				i += 4;
+			}
+			option.addField(fieldsAdresses);
+			options.addField(option);
+
+		}
+
+		return options;
+	}
+	
 	@Override
 	public void visit(Arp arp) throws NetworkAnalyzerException {
 	}

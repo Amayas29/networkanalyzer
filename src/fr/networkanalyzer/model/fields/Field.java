@@ -14,7 +14,7 @@ public class Field implements IField {
 		this.name = entry.NAME;
 		this.value = value;
 		this.valueDecoded = valueDecoded;
-		this.length = entry.LENGTH;
+		this.length = entry.VALUE;
 		content = value;
 	}
 

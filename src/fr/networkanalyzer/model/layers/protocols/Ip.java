@@ -5,10 +5,14 @@ import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
+import fr.networkanalyzer.model.fields.Field;
+import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
 import fr.networkanalyzer.model.layers.ILayerTransport;
+import fr.networkanalyzer.model.tools.IpOptions;
+import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
 import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public class Ip extends AbstractLayer implements ILayerNetwork {
@@ -32,7 +36,8 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public static final Entry SRC_ADDRESS = new Entry("Source Address", 32);
 	public static final Entry DEST_ADDRESS = new Entry("Destination Address", 32);
 	public static final Entry FRAGMENTS = new Entry("Fragments", 16);
-
+	public static final Entry OPTIONS = new Entry("Options", Integer.MAX_VALUE);
+	public static final Entry IPS_ADRESSES = new Entry("Ips adresses option", Integer.MAX_VALUE);
 	private ILayerTransport included;
 
 	@Override
@@ -70,7 +75,7 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 		fs.add(getField(HEADER_CHECKSUM.NAME));
 		fs.add(getField(SRC_ADDRESS.NAME));
 		fs.add(getField(DEST_ADDRESS.NAME));
-
+		fs.add(getField(OPTIONS.NAME));
 		return fs;
 	}
 
@@ -78,10 +83,12 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public String getEncapsulatedProtocol() {
 		return included.getEncapsulatedProtocol();
 	}
-	
+
 	@Override
 	public String getName() {
 		return "IP";
 	}
+
 	
+
 }

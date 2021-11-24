@@ -137,15 +137,15 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsDataLink(), frame.getDataLinkName());
 		} catch (NetworkAnalyzerException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
 	private void showNetwork(Frame frame) {
 		try {
-			showLayer(frame, frame.getFieldsNetwork(),frame.getNetworkName());
+			showLayer(frame, frame.getFieldsNetwork(), frame.getNetworkName());
 		} catch (NetworkAnalyzerException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -153,7 +153,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsTransport(), frame.getTransportName());
 		} catch (NetworkAnalyzerException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -161,7 +161,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsApplication(), frame.getApplicationName());
 		} catch (NetworkAnalyzerException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
