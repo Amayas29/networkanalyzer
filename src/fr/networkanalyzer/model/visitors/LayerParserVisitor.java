@@ -36,54 +36,23 @@ public class LayerParserVisitor implements ILayerVisitor {
 		line = null;
 	}
 
-	@Override
-	public void visit(Arp arp) throws NetworkAnalyzerException {
-	}
+	public void setLine(String line) {
+		String data[] = line.split(" ");
+		listIndex.clear();
+		currentIndex = 0;
 
-	@Override
-	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
+		StringBuilder sb = new StringBuilder();
 
-		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, "01", "Boot Request"));
-		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, "01", "Ethernet"));
-		dhcp.addField(Dhcp.HARDWARE_ADDRESS_LENGTH.NAME, new Field(Dhcp.HARDWARE_ADDRESS_LENGTH, "06", "6"));
-		dhcp.addField(Dhcp.HOPS.NAME, new Field(Dhcp.HOPS, "00", "0"));
-		dhcp.addField(Dhcp.TRANSACTION_ID.NAME, new Field(Dhcp.TRANSACTION_ID, "d5 d1 5c 88", "Oxd5d15c88"));
-		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME, new Field(Dhcp.SECONDS_ELAPSED, "00 00", "0"));
+		for (int i = 0; i < data.length; i++) {
+			if (ParsingTools.isPattern(data[i])) {
+				listIndex.add(ParsingTools.getIndexPattern(data[i]));
+				continue;
+			}
 
-		Fields flags = new Fields(Dhcp.FLAGS.NAME);
-		flags.addField(new Field(Dhcp.BROADCAST, "0", "0"));
-		flags.addField(new Field(Dhcp.RESERVED, "000000000000000", "0"));
-		dhcp.addField(Dhcp.FLAGS.NAME, flags);
+			sb.append(data[i].concat(" "));
+		}
 
-		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME, new Field(Dhcp.CLIENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
-		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME, new Field(Dhcp.YOUR_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
-
-		dhcp.addField(Dhcp.NEXT_SERVER_IP_ADDRESS.NAME,
-				new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
-
-		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME,
-				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
-
-		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME,
-				new Field(Dhcp.CLIENT_MAC_ADDRESS, "32 20 a3 e2 d6 fe", "32:20:a3:e2:d6:fe"));
-
-		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.NAME, new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING,
-				"00 00 00 00 00 00 00 00 00 00", "00 00 00 00 00 00 00 00 00 00"));
-
-		dhcp.addField(Dhcp.SERVER_HOST_NAME.NAME, new Field(Dhcp.SERVER_HOST_NAME,
-				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-				"not given", false));
-
-		dhcp.addField(Dhcp.BOOT_FILE.NAME, new Field(Dhcp.BOOT_FILE,
-				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-				"not given", false));
-
-		dhcp.addField(Dhcp.MAGIC_COOKIE.NAME, new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
-	}
-
-	@Override
-	public void visit(Dns dns) throws NetworkAnalyzerException {
-
+		this.line = sb.toString().trim();
 	}
 
 	@Override
@@ -145,21 +114,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		layer.accept(this);
 		ethernet.setIncluded(layer);
 
-	}
-
-	@Override
-	public void visit(Http http) throws NetworkAnalyzerException {
-//		String header = getHeader(0, 41);
-	}
-
-	@Override
-	public void visit(Icmp icmp) throws NetworkAnalyzerException {
-//		String header = getHeader(0, 41);
-	}
-
-	@Override
-	public void visit(Imap imap) throws NetworkAnalyzerException {
-//		String header = getHeader(0, 41);
 	}
 
 	@Override
@@ -273,7 +227,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	@Override
 	public void visit(Tcp tcp) throws NetworkAnalyzerException {
-//		String header = getHeader(0, 41);
 	}
 
 	@Override
@@ -328,6 +281,67 @@ public class LayerParserVisitor implements ILayerVisitor {
 		udp.setIncluded(layer);
 	}
 
+	@Override
+	public void visit(Arp arp) throws NetworkAnalyzerException {
+	}
+
+	@Override
+	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
+
+		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, "01", "Boot Request"));
+		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, "01", "Ethernet"));
+		dhcp.addField(Dhcp.HARDWARE_ADDRESS_LENGTH.NAME, new Field(Dhcp.HARDWARE_ADDRESS_LENGTH, "06", "6"));
+		dhcp.addField(Dhcp.HOPS.NAME, new Field(Dhcp.HOPS, "00", "0"));
+		dhcp.addField(Dhcp.TRANSACTION_ID.NAME, new Field(Dhcp.TRANSACTION_ID, "d5 d1 5c 88", "Oxd5d15c88"));
+		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME, new Field(Dhcp.SECONDS_ELAPSED, "00 00", "0"));
+
+		Fields flags = new Fields(Dhcp.FLAGS.NAME);
+		flags.addField(new Field(Dhcp.BROADCAST, "0", "0"));
+		flags.addField(new Field(Dhcp.RESERVED, "000000000000000", "0"));
+		dhcp.addField(Dhcp.FLAGS.NAME, flags);
+
+		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME, new Field(Dhcp.CLIENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME, new Field(Dhcp.YOUR_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+
+		dhcp.addField(Dhcp.NEXT_SERVER_IP_ADDRESS.NAME,
+				new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+
+		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME,
+				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+
+		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME,
+				new Field(Dhcp.CLIENT_MAC_ADDRESS, "32 20 a3 e2 d6 fe", "32:20:a3:e2:d6:fe"));
+
+		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.NAME, new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING,
+				"00 00 00 00 00 00 00 00 00 00", "00 00 00 00 00 00 00 00 00 00"));
+
+		dhcp.addField(Dhcp.SERVER_HOST_NAME.NAME, new Field(Dhcp.SERVER_HOST_NAME,
+				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+				"not given", false));
+
+		dhcp.addField(Dhcp.BOOT_FILE.NAME, new Field(Dhcp.BOOT_FILE,
+				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+				"not given", false));
+
+		dhcp.addField(Dhcp.MAGIC_COOKIE.NAME, new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
+	}
+
+	@Override
+	public void visit(Dns dns) throws NetworkAnalyzerException {
+	}
+
+	@Override
+	public void visit(Http http) throws NetworkAnalyzerException {
+	}
+
+	@Override
+	public void visit(Icmp icmp) throws NetworkAnalyzerException {
+	}
+
+	@Override
+	public void visit(Imap imap) throws NetworkAnalyzerException {
+	}
+
 	private int getLine() {
 
 		for (int i = 0; i < listIndex.size(); i++) {
@@ -353,24 +367,4 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		return header;
 	}
-
-	public void setLine(String line) {
-		String data[] = line.split(" ");
-		listIndex.clear();
-		currentIndex = 0;
-
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < data.length; i++) {
-			if (ParsingTools.isPattern(data[i])) {
-				listIndex.add(ParsingTools.getIndexPattern(data[i]));
-				continue;
-			}
-
-			sb.append(data[i].concat(" "));
-		}
-
-		this.line = sb.toString().trim();
-	}
-
 }
