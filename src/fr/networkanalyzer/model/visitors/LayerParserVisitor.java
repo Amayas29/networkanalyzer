@@ -163,6 +163,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		
 		ILayerTransport layer;
 		IField proto;
+		
+		System.out.println(currentIndex);
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
 			layer = new Icmp();

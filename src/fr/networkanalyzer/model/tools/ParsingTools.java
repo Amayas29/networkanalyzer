@@ -49,7 +49,8 @@ public class ParsingTools {
 
 				oldOffset = data[0];
 
-				indexs.append(addPattern(indexLine, Integer.parseInt(oldOffset, 16)).concat(" "));
+				int oldOffsetParsed = Integer.parseInt(oldOffset, 16);
+				indexs.append(addPattern(indexLine, oldOffsetParsed * 2 + oldOffsetParsed).concat(" "));
 				lengthLine = 0;
 
 				for (int i = 1; i < data.length; i++) {
