@@ -2,6 +2,7 @@ package fr.networkanalyzer.model;
 
 import java.util.List;
 
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.ILayerDataLink;
 
@@ -52,5 +53,46 @@ public class Frame {
 	public List<IField> getFieldsApplication() {
 		return message.getIncluded().getIncluded().getIncluded().getFields();
 	}
+
+	
+	public String getDataLinkName() throws NetworkAnalyzerException{
+		try {
+			return message.getName();
+		} catch (NullPointerException e) {
+			throw new NetworkAnalyzerException("Data link layer doesn't exist");
+		}
+	}
+	
+	public String getNetworkName() throws NetworkAnalyzerException {
+		try {
+			return message.getIncluded().getName();
+		} catch (NullPointerException e) {
+			throw new NetworkAnalyzerException("Network layer doesn't exist");
+		}
+
+	}
+
+	public String getTransportName() throws NetworkAnalyzerException {
+		try {
+			return message.getIncluded().getIncluded().getName();
+		} catch (NullPointerException e) {
+			throw new NetworkAnalyzerException("Transport layer doesn't exist");
+		}
+
+	}
+
+	public String getApplicationName() throws NetworkAnalyzerException {
+		try {
+			return message.getIncluded().getIncluded().getIncluded().getName();
+		} catch (NullPointerException e) {
+			try {
+				return message.getIncluded().getIncluded().getName();
+			} catch (NullPointerException e2) {
+				throw new NetworkAnalyzerException("Application layer doesn't exist");
+			}
+		}
+	}
+	
+
 
 }

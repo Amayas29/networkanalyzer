@@ -70,8 +70,13 @@ public class Tcp extends AbstractLayer implements ILayerTransport {
 	public String getEncapsulatedProtocol() {
 
 		if (included == null)
-			return "TCP";
+			return getName();
 
 		return included.getEncapsulatedProtocol();
+	}
+
+	@Override
+	public String getName() {
+		return "TCP";
 	}
 }

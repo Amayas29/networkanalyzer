@@ -7,6 +7,7 @@ import java.util.Map;
 
 import fr.networkanalyzer.model.Analyzer;
 import fr.networkanalyzer.model.Frame;
+import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.IField;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -133,19 +134,39 @@ public class ProcessingController {
 	}
 
 	private void showDataLink(Frame frame) {
-		showLayer(frame, frame.getFieldsDataLink(), "Ethernet");
+		try {
+			showLayer(frame, frame.getFieldsDataLink(), frame.getDataLinkName());
+		} catch (NetworkAnalyzerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void showNetwork(Frame frame) {
-		showLayer(frame, frame.getFieldsNetwork(), "Ip");
+		try {
+			showLayer(frame, frame.getFieldsNetwork(),frame.getNetworkName());
+		} catch (NetworkAnalyzerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void showTransport(Frame frame) {
-		showLayer(frame, frame.getFieldsTransport(), "Udp");
+		try {
+			showLayer(frame, frame.getFieldsTransport(), frame.getTransportName());
+		} catch (NetworkAnalyzerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void showApplication(Frame frame) {
-		showLayer(frame, frame.getFieldsApplication(), "Dhcp");
+		try {
+			showLayer(frame, frame.getFieldsApplication(), frame.getApplicationName());
+		} catch (NetworkAnalyzerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void showLayer(Frame frame, List<IField> fields, String name) {

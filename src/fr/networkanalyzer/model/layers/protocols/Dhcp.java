@@ -63,4 +63,9 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public String getEncapsulatedProtocol() {
 		return "DHCP";
 	}
+	@Override
+	public String getName() {
+		return "DHCP";
+	}
+
 }

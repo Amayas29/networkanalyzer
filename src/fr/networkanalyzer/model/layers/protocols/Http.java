@@ -25,4 +25,9 @@ public class Http extends AbstractLayer implements ILayerApplication {
 		return "HTTP";
 	}
 
+	@Override
+	public String getName() {
+		return "HTTP";
+	}
+
 }

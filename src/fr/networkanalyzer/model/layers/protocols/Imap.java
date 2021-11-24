@@ -24,5 +24,9 @@ public class Imap extends AbstractLayer implements ILayerApplication {
 	public String getEncapsulatedProtocol() {
 		return "IMAP";
 	}
-
+	
+	@Override
+	public String getName() {
+		return "IMAP";
+	}
 }

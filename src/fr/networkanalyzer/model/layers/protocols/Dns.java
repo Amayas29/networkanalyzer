@@ -24,5 +24,11 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 	public String getEncapsulatedProtocol() {
 		return "DNS";
 	}
+	
+	@Override
+	public String getName() {
+		return "DNS";
+	}
+
 
 }

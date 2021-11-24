@@ -17,5 +17,6 @@ public interface ILayer {
 	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException;
 
 	public String getEncapsulatedProtocol();
-
+	
+	public String getName();
 }

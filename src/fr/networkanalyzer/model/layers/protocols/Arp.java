@@ -32,4 +32,10 @@ public class Arp extends AbstractLayer implements ILayerNetwork {
 		return "ARP";
 	}
 
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "ARP";
+	}
+
 }

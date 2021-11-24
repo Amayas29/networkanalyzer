@@ -25,4 +25,10 @@ public class Icmp extends AbstractLayer implements ILayerTransport {
 		return "ICMP";
 	}
 
+	@Override
+	public String getName() {
+		return "ICMP";
+	}
+	
+
 }

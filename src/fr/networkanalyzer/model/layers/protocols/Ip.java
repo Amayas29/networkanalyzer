@@ -79,5 +79,9 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 		return included.getEncapsulatedProtocol();
 	}
 	
+	@Override
+	public String getName() {
+		return "IP";
+	}
 	
 }

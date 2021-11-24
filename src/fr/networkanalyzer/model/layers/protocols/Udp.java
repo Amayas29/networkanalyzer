@@ -52,4 +52,8 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	public String getEncapsulatedProtocol() {
 		return included.getEncapsulatedProtocol();
 	}
+	@Override
+	public String getName() {
+		return "UDP";
+	}
 }
