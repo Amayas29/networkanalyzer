@@ -30,7 +30,6 @@ public class AnalyzerParser {
 
 		file = ParsingTools.reorganizeFile(file);
 
-		
 		Analyzer analyzer = new Analyzer();
 		String line;
 		Frame frame;
@@ -56,6 +55,8 @@ public class AnalyzerParser {
 
 		} catch (IOException e) {
 			throw new NetworkAnalyzerException(e.getMessage());
+		} finally {
+			file.delete();
 		}
 
 		return analyzer;
