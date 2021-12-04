@@ -47,7 +47,6 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 
 	@Override
 	public String toString() {
-	
 		return super.toString();
 	}
 

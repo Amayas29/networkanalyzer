@@ -79,9 +79,9 @@ public class Tcp extends AbstractLayer implements ILayerTransport {
 	public String getName() {
 		return "TCP";
 	}
+
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return super.toString().concat(included.toString());
 	}
 }

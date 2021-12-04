@@ -30,4 +30,9 @@ public class Http extends AbstractLayer implements ILayerApplication {
 		return "HTTP";
 	}
 
+	@Override
+	public String toString() {
+		return super.toString();
+	}
+
 }

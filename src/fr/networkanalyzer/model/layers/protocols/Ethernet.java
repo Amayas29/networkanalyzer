@@ -56,16 +56,15 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	public String getEncapsulatedProtocol() {
 		return included.getEncapsulatedProtocol();
 	}
-	
+
 	@Override
 	public String getName() {
 		return "ETHERNET";
 	}
+
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return super.toString().concat(included.toString());
 	}
-	
-	
+
 }
