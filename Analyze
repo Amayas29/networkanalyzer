@@ -1,0 +1,54 @@
+		FRAME : 1
+
+ETHERNET
+	Destination Address : ff ff ff ff ff ff (ff:ff:ff:ff:ff:ff) | 48 bits
+	Source Address : 32 20 a3 e2 d6 fe (32:20:a3:e2:d6:fe) | 48 bits
+	Type : 08 00 (IPV4) | 16 bits
+
+
+IP
+	Version : 4 (Ipv4) | 4 bits
+	IHL : 5 (5) | 4 bits
+	TOS : 10 (10) | 8 bits
+	Total Length : 01 5a (346) | 16 bits
+	Identification : 00 00 (0) | 16 bits
+	Fragments
+	R : 0 (0) | 1 bits
+	DF : 0 (0) | 1 bits
+	MF : 0 (0) | 1 bits
+	Fragment Offset : 0111110100000 (4000) | 13 bits
+
+	TTL : 40 (64) | 8 bits
+	Protocol : 11 (UDP) | 8 bits
+	Header Checksum : 39 84 (39 84) | 16 bits
+	Source Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Destination Address : ff ff ff ff (255.255.255.255) | 32 bits
+
+
+UDP
+	Source Port : 00 44 (68) | 16 bits
+	Destination Port : 00 43 (67) | 16 bits
+	Length : 01 46 (326) | 16 bits
+	Checksum : d6 2d (54829) | 16 bits
+
+
+DHCP
+	Message Type : 01 () | 8 bits
+	Hardware Type : 01 () | 8 bits
+	Hardware Address Length : 06 () | 8 bits
+	Hops : 00 (0) | 8 bits
+	Transaction Id : 28 e0 e6 6a (28 e0 e6 6a) | 32 bits
+	Seconds Elapsed : 00 00 (0) | 16 bits
+	Flags
+	Broadcast Flag : 0 (0) | 1 bits
+	Reserved Flag : 000000000000000 (0) | 15 bits
+
+	Client Ip Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Your Ip Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Next Server Ip Address : 00 00 00 00 (00 00 00 00) | 32 bits
+	Relay Agent Ip Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Client Mac Address : 32 20 a3 e2 d6 fe 00 00 00 00 00 00 00 00 00 00 (32:20:a3:e2:d6:fe) | 128 bits
+	Server Host Name :  (not given) | 512 bits
+	Boot File :  (not given) | 1024 bits
+
+

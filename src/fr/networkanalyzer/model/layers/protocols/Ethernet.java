@@ -1,6 +1,7 @@
 package fr.networkanalyzer.model.layers.protocols;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
@@ -60,5 +61,11 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	public String getName() {
 		return "ETHERNET";
 	}
-
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString().concat(included.toString());
+	}
+	
+	
 }

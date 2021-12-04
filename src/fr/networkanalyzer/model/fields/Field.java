@@ -27,7 +27,7 @@ public class Field implements IField {
 
 	@Override
 	public String getName() {
-		return name;
+		return toString();
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -32,6 +33,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class ProcessingController {
@@ -68,6 +70,9 @@ public class ProcessingController {
 
 	@FXML
 	private ScrollPane scrollFrame;
+
+	@FXML
+	private Label saveNotification;
 
 	private TreeItem<String> rootItem;
 
@@ -115,6 +120,8 @@ public class ProcessingController {
 		offsetList.setFocusTraversable(false);
 
 		errorsListView.setFocusTraversable(false);
+		saveNotification.setAlignment(Pos.CENTER);
+		saveNotification.setTextAlignment(TextAlignment.CENTER);
 	}
 
 	@FXML
@@ -140,11 +147,31 @@ public class ProcessingController {
 
 	@FXML
 	void save(ActionEvent event) {
-		AnalyzerParser.save(analyzer);
+		FrameView frameView = frameTable.getSelectionModel().getSelectedItem();
+
+		if (frameView == null)
+			return;
+		try {
+			AnalyzerParser.save(frameView.getFrame());
+			displayNotification("saved successfully", false);
+		} catch (NetworkAnalyzerException e) {
+			displayNotification(e.getMessage(), true);
+		}
+	}
+
+	@FXML
+	void saveAll(ActionEvent event) {
+		try {
+			AnalyzerParser.saveAll(analyzer);
+			displayNotification("saved successfully", false);
+		} catch (NetworkAnalyzerException e) {
+			displayNotification(e.getMessage(), true);
+		}
 	}
 
 	@FXML
 	void showFrame(MouseEvent event) {
+		saveNotification.setVisible(false);
 		FrameView frameView = frameTable.getSelectionModel().getSelectedItem();
 
 		if (frameView == null)
@@ -242,7 +269,7 @@ public class ProcessingController {
 		List<Frame> frames = analyzer.getFrames();
 		ObservableList<FrameView> frameViews = FXCollections.observableArrayList();
 		for (int i = 0; i < frames.size(); i++)
-			frameViews.add(new FrameView(frames.get(i), i + 1));
+			frameViews.add(new FrameView(frames.get(i)));
 
 		frameTable.setItems(frameViews);
 	}
@@ -372,7 +399,7 @@ public class ProcessingController {
 
 	private TreeItem<String> addTreeField(IField field, TreeItem<String> root, boolean first) {
 
-		TreeItem<String> fieldItem = new TreeItem<>(field.toString());
+		TreeItem<String> fieldItem = new TreeItem<>(field.getName());
 		root.getChildren().add(fieldItem);
 
 		if (first)
@@ -401,4 +428,14 @@ public class ProcessingController {
 		label.getStyleClass().add("labelOffset");
 		return label;
 	}
+
+	private void displayNotification(String errorMessage, boolean error) {
+		if (!error)
+			saveNotification.getStyleClass().add("succesNotification");
+		saveNotification.setVisible(true);
+		saveNotification.setAlignment(Pos.CENTER);
+		saveNotification.setTextAlignment(TextAlignment.CENTER);
+		saveNotification.setText(errorMessage);
+	}
+
 }

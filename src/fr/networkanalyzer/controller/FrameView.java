@@ -15,11 +15,11 @@ public class FrameView {
 
 	private Frame frame;
 
-	public FrameView(Frame frame, int index) {
+	public FrameView(Frame frame) {
 
 		this.frame = frame;
 
-		no = new SimpleIntegerProperty(index);
+		no = new SimpleIntegerProperty(frame.getId());
 		src = new SimpleStringProperty(frame.getFieldNetwork(Ip.SRC_ADDRESS.NAME).getValueDecoded());
 		dest = new SimpleStringProperty(frame.getFieldNetwork(Ip.DEST_ADDRESS.NAME).getValueDecoded());
 		protocol = new SimpleStringProperty(frame.getEncapsulatedProtocol());

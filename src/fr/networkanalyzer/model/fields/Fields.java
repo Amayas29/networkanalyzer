@@ -84,6 +84,14 @@ public class Fields implements IField {
 
 	@Override
 	public String toString() {
-		return name;
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName());
+		sb.append("\n");
+		for (IField iField : getChildrens()) {
+			sb.append("\t");
+			sb.append(iField.toString());
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 }

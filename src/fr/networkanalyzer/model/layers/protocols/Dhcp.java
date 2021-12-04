@@ -23,7 +23,7 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public static final Entry CLIENT_IP_ADDRESS = new Entry("Client Ip Address", 32);
 	public static final Entry YOUR_IP_ADDRESS = new Entry("Your Ip Address", 32);
 	public static final Entry NEXT_SERVER_IP_ADDRESS = new Entry("Next Server Ip Address", 32);
-	public static final Entry RELAY_AGENT_IP_ADDRESS = new Entry("Relay Agent Ip Address", 32);
+	public static final Entry RELAY_AGENT_IP_ADDRESS = new Entry("Gateway Ip Address", 32);
 	public static final Entry CLIENT_MAC_ADDRESS = new Entry("Client Mac Address", 128);
 //	TODO
 //	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 80);
@@ -68,6 +68,11 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	@Override
 	public String getName() {
 		return "DHCP";
+	}
+	@Override
+	public String toString() {
+	
+		return super.toString();
 	}
 
 }

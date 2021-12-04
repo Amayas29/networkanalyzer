@@ -12,8 +12,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<ScrollPane layoutX="57.0" layoutY="33.0" prefHeight="260.0" prefWidth="1127.0">
          <content>
@@ -49,12 +50,18 @@
 				</ScrollPane>
 			</children>
 		</HBox>
-      <HBox alignment="CENTER" layoutX="331.0" layoutY="830.0" prefHeight="46.0" prefWidth="623.0" spacing="150.0">
+      <HBox alignment="CENTER" layoutX="138.0" layoutY="823.0" prefHeight="48.0" prefWidth="994.0" spacing="150.0">
          <children>
             <Button mnemonicParsing="false" onAction="#returnToPrincipalPage" text="Home" />
             <Button mnemonicParsing="false" onAction="#save" text="save" />
+            <Button mnemonicParsing="false" onAction="#saveAll" prefHeight="48.0" prefWidth="159.0" text="save all" />
             <Button mnemonicParsing="false" onAction="#exitApp" text="Exit" />
          </children>
       </HBox>
+      <Label fx:id="saveNotification" layoutX="462.0" layoutY="878.0" prefHeight="16.0" prefWidth="300.0" styleClass="infoLabel">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
 	</children>
 </Pane>

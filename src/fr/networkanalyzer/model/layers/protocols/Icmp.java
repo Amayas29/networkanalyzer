@@ -36,5 +36,10 @@ public class Icmp extends AbstractLayer implements ILayerTransport {
 		return "ICMP";
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
 
 }

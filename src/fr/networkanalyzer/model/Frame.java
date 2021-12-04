@@ -7,7 +7,15 @@ import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.ILayerDataLink;
 
 public class Frame {
-
+	private static int cpt = 0;
+	private int id;
+	
+	public Frame() {
+		id = ++cpt;
+	}
+	public int getId() {
+		return id;
+	}
 	private ILayerDataLink message;
 
 	public String getEncapsulatedProtocol() {
@@ -88,5 +96,11 @@ public class Frame {
 
 		}
 	}
-
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\t\tFRAME : ").append(id).append("\n\n").append(message.toString());
+		return sb.toString();
+	}
 }

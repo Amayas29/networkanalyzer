@@ -14,7 +14,8 @@ import fr.networkanalyzer.model.visitors.ILayerVisitor;
 public class Udp extends AbstractLayer implements ILayerTransport {
 
 	public static final int DNS = 53;
-	public static final int DHCP = 67;
+	public static final int DHCP_1 = 67;
+	public static final int DHCP_2 = 68;
 
 	public static final Entry SRC_PORT = new Entry("Source Port", 16);
 	public static final Entry DEST_PORT = new Entry("Destination Port", 16);
@@ -55,5 +56,10 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	@Override
 	public String getName() {
 		return "UDP";
+	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString().concat(included.toString());
 	}
 }
