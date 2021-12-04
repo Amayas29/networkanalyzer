@@ -5,14 +5,10 @@ import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
-import fr.networkanalyzer.model.fields.Field;
-import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
 import fr.networkanalyzer.model.layers.ILayerTransport;
-import fr.networkanalyzer.model.tools.IpOptions;
-import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
 import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public class Ip extends AbstractLayer implements ILayerNetwork {

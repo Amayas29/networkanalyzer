@@ -203,8 +203,10 @@ public class ProcessingController {
 
 		TreeItem<String> tree = new TreeItem<>(name);
 
-		for (IField field : fields)
+		for (IField field : fields) {
+			System.out.println(field);
 			addTreeField(field, tree, true);
+		}
 
 		setChildren(tree);
 

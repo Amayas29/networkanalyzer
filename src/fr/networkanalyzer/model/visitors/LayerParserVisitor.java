@@ -240,7 +240,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			ip.addField(Ip.OPTIONS.NAME, options);
 
 		// TODO
-		layer = new Udp();
+//		layer = new Udp();
 		layer.accept(this);
 		ip.setIncluded(layer);
 	}

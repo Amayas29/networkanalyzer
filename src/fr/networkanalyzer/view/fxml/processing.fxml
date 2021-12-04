@@ -44,7 +44,7 @@
 			</children>
 		</HBox>
       <ListView fx:id="errorsListView" layoutX="37.0" layoutY="348.0" prefHeight="175.0" prefWidth="1127.0" />
-      <HBox alignment="CENTER" layoutX="311.0" layoutY="834.0" prefHeight="46.0" prefWidth="578.0" spacing="150.0">
+      <HBox alignment="CENTER" layoutX="311.0" layoutY="835.0" prefHeight="46.0" prefWidth="578.0" spacing="150.0">
          <children>
             <Button mnemonicParsing="false" onAction="#returnToPrincipalPage" text="Home" />
             <Button mnemonicParsing="false" onAction="#exitApp" text="Exit" />
