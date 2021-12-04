@@ -24,8 +24,9 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public static final Entry YOUR_IP_ADDRESS = new Entry("Your Ip Address", 32);
 	public static final Entry NEXT_SERVER_IP_ADDRESS = new Entry("Next Server Ip Address", 32);
 	public static final Entry RELAY_AGENT_IP_ADDRESS = new Entry("Relay Agent Ip Address", 32);
-	public static final Entry CLIENT_MAC_ADDRESS = new Entry("Client Mac Address", 48);
-	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 80);
+	public static final Entry CLIENT_MAC_ADDRESS = new Entry("Client Mac Address", 128);
+//	TODO
+//	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 80);
 	public static final Entry SERVER_HOST_NAME = new Entry("Server Host Name", 512);
 	public static final Entry BOOT_FILE = new Entry("Boot File", 1024);
 	public static final Entry MAGIC_COOKIE = new Entry("Magic Cookie", 32);
@@ -51,10 +52,10 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 		fs.add(getField(NEXT_SERVER_IP_ADDRESS.NAME));
 		fs.add(getField(RELAY_AGENT_IP_ADDRESS.NAME));
 		fs.add(getField(CLIENT_MAC_ADDRESS.NAME));
-		fs.add(getField(CLIENT_HARDWARE_ADDRESS_PADDING.NAME));
+//		fs.add(getField(CLIENT_HARDWARE_ADDRESS_PADDING.NAME));
 		fs.add(getField(SERVER_HOST_NAME.NAME));
 		fs.add(getField(BOOT_FILE.NAME));
-		fs.add(getField(MAGIC_COOKIE.NAME));
+//		fs.add(getField(MAGIC_COOKIE.NAME));
 
 		return fs;
 	}

@@ -1,21 +1,18 @@
-@font-face {
-  /* Définition d'une nouvelle police nommée CAC Champagne */
-  font-family: subway;
-  src: url("../../../../resources/police/SubwayCircleDEMO.otf");
-}
 
-* {
-  -fx-font-family: subway;
+*{
+	-fx-font-family: monospace;
 }
 
 .h1 {
 	-fx-font-weight: bold;
+	-fx-font-size: 20.0;
+  	-fx-text-fill: black;
 }
 
 /* Main */
 
 #mainPanel {
-  -fx-background-image: url("../../../../resources/image/main_background.png");
+  -fx-background-image: url("../../../../resources/images/main_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
@@ -27,10 +24,6 @@
   -fx-opacity: 0.85;
 }
 
-.label {
-  -fx-font-size: 22.0;
-  -fx-text-fill: black;
-}
 
 .button {
   -fx-font-size: 25.0;
@@ -50,7 +43,7 @@
 
 #choose {
   -fx-background-color: transparent;
-  -fx-background-image: url("../../../../resources/image/choose.png");
+  -fx-background-image: url("../../../../resources/images/choose.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-style: solid;
@@ -78,14 +71,14 @@
 /* About us */
 
 #aboutUsPanel {
-  -fx-background-image: url("../../../../resources/image/aboutus_background.png");
+  -fx-background-image: url("../../../../resources/images/aboutus_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
 }
 
 #loadingPanel {
-  -fx-background-image: url("../../../../resources/image/loading_background.png");
+  -fx-background-image: url("../../../../resources/images/loading_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
@@ -93,13 +86,14 @@
 
 /* Processing */
 #processingPanel {
-  -fx-background-image: url("../../../../resources/image/processing_background.png");
+  -fx-background-image: url("../../../../resources/images/processing_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
 }
 
 .labelByte {
+	-fx-font-family: "Roboto";
   -fx-font-size:  17.0;
   -fx-padding: 2.0 0.0 2.0 0.0;
 }

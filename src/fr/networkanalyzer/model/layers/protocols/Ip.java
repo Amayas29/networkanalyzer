@@ -71,7 +71,11 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 		fs.add(getField(HEADER_CHECKSUM.NAME));
 		fs.add(getField(SRC_ADDRESS.NAME));
 		fs.add(getField(DEST_ADDRESS.NAME));
-		fs.add(getField(OPTIONS.NAME));
+		IField options = getField(OPTIONS.NAME);
+
+		if (options != null)
+			fs.add(options);
+
 		return fs;
 	}
 
@@ -84,7 +88,5 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public String getName() {
 		return "IP";
 	}
-
-	
 
 }

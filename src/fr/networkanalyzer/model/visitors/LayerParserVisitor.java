@@ -163,7 +163,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ILayerTransport layer;
 		IField proto;
 
-		System.out.println(currentIndex);
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
 			layer = new Icmp();
@@ -239,8 +238,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		if (options != null)
 			ip.addField(Ip.OPTIONS.NAME, options);
 
-		// TODO
-//		layer = new Udp();
 		layer.accept(this);
 		ip.setIncluded(layer);
 	}
@@ -297,7 +294,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		udp.addField(Udp.CHECKSUM.NAME,
 				new Field(Udp.CHECKSUM, checksum, String.valueOf(Integer.parseInt(checksum.replace(" ", ""), 16))));
 		currentIndex += 12;
-//		layer.accept(this);
+
+		layer.accept(this);
 		udp.setIncluded(layer);
 	}
 
@@ -308,45 +306,66 @@ public class LayerParserVisitor implements ILayerVisitor {
 	@Override
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
-		System.out.println(currentIndex);
-		System.out.println("*" + line + "*");
+		// TODO decoded value
+		String header = getHeader(708).trim();
+		System.out.println("Header dhcp : *" + header + "*");
 
-		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, "01", "Boot Request"));
-		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, "01", "Ethernet"));
-		dhcp.addField(Dhcp.HARDWARE_ADDRESS_LENGTH.NAME, new Field(Dhcp.HARDWARE_ADDRESS_LENGTH, "06", "6"));
-		dhcp.addField(Dhcp.HOPS.NAME, new Field(Dhcp.HOPS, "00", "0"));
-		dhcp.addField(Dhcp.TRANSACTION_ID.NAME, new Field(Dhcp.TRANSACTION_ID, "d5 d1 5c 88", "Oxd5d15c88"));
-		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME, new Field(Dhcp.SECONDS_ELAPSED, "00 00", "0"));
+		String messageType = header.substring(0, 2);
 
+		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, messageType, ""));
+
+		String hardwareType = header.substring(3, 5);
+
+		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, hardwareType, ""));
+
+		String hardwareAddressLenght = header.substring(6, 8);
+
+		dhcp.addField(Dhcp.HARDWARE_ADDRESS_LENGTH.NAME,
+				new Field(Dhcp.HARDWARE_ADDRESS_LENGTH, hardwareAddressLenght, ""));
+
+		String hops = header.substring(9, 11);
+		dhcp.addField(Dhcp.HOPS.NAME, new Field(Dhcp.HOPS, hops, "0"));
+
+		String transactionId = header.substring(12, 23);
+		dhcp.addField(Dhcp.TRANSACTION_ID.NAME, new Field(Dhcp.TRANSACTION_ID, transactionId, transactionId));
+
+		String secondsElapsed = header.substring(24, 29);
+		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME, new Field(Dhcp.SECONDS_ELAPSED, secondsElapsed, "0"));
+
+		String fls = header.substring(30, 35);
 		Fields flags = new Fields(Dhcp.FLAGS.NAME);
 		flags.addField(new Field(Dhcp.BROADCAST, "0", "0"));
 		flags.addField(new Field(Dhcp.RESERVED, "000000000000000", "0"));
 		dhcp.addField(Dhcp.FLAGS.NAME, flags);
 
-		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME, new Field(Dhcp.CLIENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
-		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME, new Field(Dhcp.YOUR_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+		String clientIp = header.substring(36, 47);
+		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME, new Field(Dhcp.CLIENT_IP_ADDRESS, clientIp, "0.0.0.0"));
 
+		String yourIp = header.substring(48, 59);
+		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME, new Field(Dhcp.YOUR_IP_ADDRESS, yourIp, "0.0.0.0"));
+
+		String nextServerIp = header.substring(60, 71);
 		dhcp.addField(Dhcp.NEXT_SERVER_IP_ADDRESS.NAME,
-				new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+				new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, nextServerIp, nextServerIp));
 
-		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME,
-				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, "00 00 00 00", "0.0.0.0"));
+		String relayAgent = header.substring(72, 83);
+		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME, new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, relayAgent, "0.0.0.0"));
 
-		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME,
-				new Field(Dhcp.CLIENT_MAC_ADDRESS, "32 20 a3 e2 d6 fe", "32:20:a3:e2:d6:fe"));
+		String clientMac = header.substring(84, 131);
+		// TODO padding
+		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME, new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, "32:20:a3:e2:d6:fe"));
+//		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.NAME, new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING,
+//				"00 00 00 00 00 00 00 00 00 00", "00 00 00 00 00 00 00 00 00 00"));
 
-		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.NAME, new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING,
-				"00 00 00 00 00 00 00 00 00 00", "00 00 00 00 00 00 00 00 00 00"));
+		// TODO option overloading
+		String serverHostName = header.substring(132, 323);
+		dhcp.addField(Dhcp.SERVER_HOST_NAME.NAME, new Field(Dhcp.SERVER_HOST_NAME, serverHostName, "not given", false));
 
-		dhcp.addField(Dhcp.SERVER_HOST_NAME.NAME, new Field(Dhcp.SERVER_HOST_NAME,
-				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-				"not given", false));
+		String bootFile = header.substring(324, 707);
+		dhcp.addField(Dhcp.BOOT_FILE.NAME, new Field(Dhcp.BOOT_FILE, bootFile, "not given", false));
 
-		dhcp.addField(Dhcp.BOOT_FILE.NAME, new Field(Dhcp.BOOT_FILE,
-				"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-				"not given", false));
-
-		dhcp.addField(Dhcp.MAGIC_COOKIE.NAME, new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
+		// TODO MAGIC COOKIE ?
+//		dhcp.addField(Dhcp.MAGIC_COOKIE.NAME, new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
 	}
 
 	@Override

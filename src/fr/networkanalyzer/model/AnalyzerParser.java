@@ -12,6 +12,9 @@ import fr.networkanalyzer.model.tools.ParsingTools;
 import fr.networkanalyzer.model.visitors.LayerParserVisitor;
 
 public class AnalyzerParser {
+
+	public static final String FILE_NAME = "networkAnalyzerSavedFrames.txt";
+
 	private AnalyzerParser() {
 	}
 
@@ -60,6 +63,10 @@ public class AnalyzerParser {
 		}
 
 		return analyzer;
+	}
+
+	public static void save(Analyzer analyzer) {
+		// Save analyzer.getFrames() in FILE_NAME with offsets 16 bytes per line
 	}
 
 }

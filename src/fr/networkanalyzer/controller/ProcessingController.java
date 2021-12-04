@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.networkanalyzer.model.Analyzer;
+import fr.networkanalyzer.model.AnalyzerParser;
 import fr.networkanalyzer.model.Frame;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.IField;
@@ -29,6 +30,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ProcessingController {
@@ -61,7 +64,7 @@ public class ProcessingController {
 	private ListView<Label> errorsListView;
 
 	@FXML
-	private FlowPane frameFlow;
+	private VBox frameDisplay;
 
 	@FXML
 	private ScrollPane scrollFrame;
@@ -82,13 +85,21 @@ public class ProcessingController {
 
 	private String offset;
 
+	private int line;
+
+	private List<HBox> boxes;
+
+	private static final int MAX_BYTES_LINE = 16;
+
 	public ProcessingController(Analyzer analyzer) {
 		this.analyzer = analyzer;
-		maxLength = 47;
+		maxLength = MAX_BYTES_LINE * 2 + MAX_BYTES_LINE;
 		remainingLength = maxLength;
 		currentByteLength = 0;
 		lastSelected = new ArrayList<>();
 		childrens = new HashMap<>();
+		line = 0;
+		boxes = new ArrayList<>();
 	}
 
 	@FXML
@@ -128,6 +139,11 @@ public class ProcessingController {
 	}
 
 	@FXML
+	void save(ActionEvent event) {
+		AnalyzerParser.save(analyzer);
+	}
+
+	@FXML
 	void showFrame(MouseEvent event) {
 		FrameView frameView = frameTable.getSelectionModel().getSelectedItem();
 
@@ -136,8 +152,10 @@ public class ProcessingController {
 
 		Frame frame = frameView.getFrame();
 
+		line = 0;
+		boxes.clear();
 		rootItem.getChildren().clear();
-		frameFlow.getChildren().clear();
+		frameDisplay.getChildren().clear();
 		offsetList.getChildren().clear();
 		childrens.clear();
 		clearSelection();
@@ -203,10 +221,8 @@ public class ProcessingController {
 
 		TreeItem<String> tree = new TreeItem<>(name);
 
-		for (IField field : fields) {
-			System.out.println(field);
+		for (IField field : fields)
 			addTreeField(field, tree, true);
-		}
 
 		setChildren(tree);
 
@@ -251,25 +267,21 @@ public class ProcessingController {
 		if (labels == null)
 			labels = new ArrayList<>();
 
+		// Value in hex
 		String value = field.getValue();
 
 		// Length in bits
 		int len = field.getLength();
 
+		if (len % 8 != 0) {
+			currentByteLength += len;
+			len = currentByteLength;
+		}
+
 		// If is a modulo 8 then we add a space at the end
 		if (len % 8 == 0) {
 			value = value.concat(" ");
 			currentByteLength = 0;
-		}
-
-		// otherwise the accumulator is incremented and if a byte is accumulated, a
-		// space is added.
-		else {
-			currentByteLength += len;
-			if (currentByteLength % 8 == 0) {
-				value = value.concat(" ");
-				currentByteLength = 0;
-			}
 		}
 
 		// Number of characters
@@ -284,7 +296,7 @@ public class ProcessingController {
 			if (toAdd < 0) {
 				label = new Label(value);
 				label.getStyleClass().add("labelByte");
-				frameFlow.getChildren().add(label);
+				insertLabel(label);
 				labels.add(label);
 				remainingLength -= len;
 				len = 0;
@@ -292,7 +304,9 @@ public class ProcessingController {
 				continue;
 			}
 
-			offset = String.valueOf(Integer.parseInt(offset, 10) + 10);
+			offset = String
+					.valueOf(Integer.parseInt(offset, 10) + Integer.parseInt(Integer.toHexString(MAX_BYTES_LINE), 10));
+
 			for (; offset.length() < 4;)
 				offset = "0" + offset;
 
@@ -312,13 +326,28 @@ public class ProcessingController {
 
 			label = new Label(toAddValue);
 			label.getStyleClass().add("labelByte");
-			frameFlow.getChildren().add(label);
+			insertLabel(label);
 			labels.add(label);
 
 			handler(correspondingTree, label);
+			line++;
 		}
 
 		childrens.put(correspondingTree, labels);
+	}
+
+	private void insertLabel(Label label) {
+		HBox box = null;
+
+		try {
+			box = boxes.get(line);
+		} catch (IndexOutOfBoundsException e) {
+			box = new HBox();
+			boxes.add(box);
+			frameDisplay.getChildren().add(box);
+		}
+
+		box.getChildren().add(label);
 	}
 
 	private void handler(TreeItem<String> tree, Label... labels) {

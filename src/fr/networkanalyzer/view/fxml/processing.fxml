@@ -11,10 +11,11 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1200.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<ScrollPane layoutX="37.0" layoutY="34.0" prefHeight="260.0" prefWidth="1127.0">
+		<ScrollPane layoutX="57.0" layoutY="33.0" prefHeight="260.0" prefWidth="1127.0">
          <content>
             <TableView fx:id="frameTable" onMouseClicked="#showFrame" prefHeight="269.0" prefWidth="1127.0">
                <columns>
@@ -27,31 +28,33 @@
             </TableView>
          </content>
 		</ScrollPane>
-		<HBox layoutX="37.0" layoutY="556.0" prefHeight="260.0" prefWidth="1127.0">
+      <Separator layoutX="371.0" layoutY="315.0" prefWidth="500.0" />
+      <Label layoutX="26.0" layoutY="318.0" prefHeight="26.0" prefWidth="292.0" styleClass="h1" stylesheets="@../styles.css" text="Erroneous frames" />
+      <ListView fx:id="errorsListView" layoutX="26.0" layoutY="351.0" prefHeight="175.0" prefWidth="1189.0" />
+      <Separator layoutX="471.0" layoutY="541.0" prefWidth="300.0" />
+		<HBox layoutX="31.0" layoutY="556.0" prefHeight="260.0" prefWidth="1189.0">
 			<children>
 								<TreeView fx:id="viewTree" prefHeight="319.0" prefWidth="585.0" />
-				<ScrollPane prefHeight="348.0" prefWidth="557.0" vbarPolicy="ALWAYS">
+				<ScrollPane prefHeight="260.0" prefWidth="603.0" vbarPolicy="ALWAYS">
                <content>
-                  <HBox prefHeight="345.0" prefWidth="533.0">
+                  <HBox prefHeight="259.0" prefWidth="581.0">
                      <children>
-                        <FlowPane fx:id="offsetList" prefHeight="345.0" prefWidth="68.0" />
-                        <Pane prefHeight="345.0" prefWidth="10.0" HBox.hgrow="ALWAYS" />
-                        <FlowPane fx:id="frameFlow" prefHeight="345.0" prefWidth="456.0" />
+                        <FlowPane fx:id="offsetList" prefHeight="260.0" prefWidth="70.0" />
+                        <Pane prefHeight="260.0" prefWidth="5.0" HBox.hgrow="ALWAYS" />
+                        <VBox fx:id="frameDisplay" alignment="CENTER" prefHeight="259.0" prefWidth="495.0" />
+                        <Pane prefHeight="260.0" prefWidth="5.0" />
                      </children>
                   </HBox>
                </content>
 				</ScrollPane>
 			</children>
 		</HBox>
-      <ListView fx:id="errorsListView" layoutX="37.0" layoutY="348.0" prefHeight="175.0" prefWidth="1127.0" />
-      <HBox alignment="CENTER" layoutX="311.0" layoutY="835.0" prefHeight="46.0" prefWidth="578.0" spacing="150.0">
+      <HBox alignment="CENTER" layoutX="331.0" layoutY="830.0" prefHeight="46.0" prefWidth="623.0" spacing="150.0">
          <children>
             <Button mnemonicParsing="false" onAction="#returnToPrincipalPage" text="Home" />
+            <Button mnemonicParsing="false" onAction="#save" text="save" />
             <Button mnemonicParsing="false" onAction="#exitApp" text="Exit" />
          </children>
       </HBox>
-      <Label layoutX="50.0" layoutY="314.0" prefHeight="26.0" prefWidth="292.0" styleClass="h1" stylesheets="@../styles.css" text="Erroneous frames" />
-      <Separator layoutX="351.0" layoutY="313.0" prefWidth="500.0" />
-      <Separator layoutX="450.0" layoutY="536.0" prefWidth="300.0" />
 	</children>
 </Pane>
