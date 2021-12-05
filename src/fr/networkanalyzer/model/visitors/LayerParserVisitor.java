@@ -5,9 +5,13 @@ import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
+import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
+import fr.networkanalyzer.model.functions.CheckFunction;
+import fr.networkanalyzer.model.functions.ValueFunction;
+import fr.networkanalyzer.model.layers.ILayer;
 import fr.networkanalyzer.model.layers.ILayerApplication;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
 import fr.networkanalyzer.model.layers.ILayerTransport;
@@ -30,17 +34,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 	private String line;
 	private List<Integer> listIndex;
 	private int currentIndex;
+	private int index;
 
 	public LayerParserVisitor() {
 		listIndex = new ArrayList<>();
 		currentIndex = 0;
 		line = null;
+		index = 0;
 	}
 
 	public void setLine(String line) {
 		String data[] = line.split(" ");
 		listIndex.clear();
 		currentIndex = 0;
+		index = 0;
 
 		StringBuilder sb = new StringBuilder();
 
@@ -61,19 +68,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String header = getHeader(42).trim();
 
-		System.out.println("Header ethernet : *" + header + "*");
+		String destMacAddress = parseField(header, Ethernet.DEST_ADDRESS);
+		incIndex(Ethernet.DEST_ADDRESS);
 
-		String destMacAddress = header.substring(0, 17);
-		System.out.println("Mac dest : *" + destMacAddress + "*");
-		String srcMacAddress = header.substring(18, 35);
-		System.out.println("Mac src : *" + srcMacAddress + "*");
-		String rdType = header.substring(36);
-		System.out.println("type : *" + rdType + "*");
+		String srcMacAddress = parseField(header, Ethernet.SRC_ADDRESS);
 
-		IField type;
-		ILayerNetwork layer = null;
-
-		currentIndex += 18;
 		if (srcMacAddress.equals("FF FF FF FF FF FF"))
 			throw new NetworkanalyzerParseErrorException(getLine(),
 					"The source MAC address must not be a broadcast address");
@@ -81,25 +80,32 @@ public class LayerParserVisitor implements ILayerVisitor {
 		if (destMacAddress.equals(srcMacAddress))
 			throw new NetworkanalyzerParseErrorException(getLine(), "Mac addresses are equal");
 
-		currentIndex += 18;
+		incIndex(Ethernet.SRC_ADDRESS);
+
+		String rdType = parseField(header, Ethernet.TYPE);
+
+		IField type;
+		ILayerNetwork layer = null;
 
 		switch (rdType) {
 
 		case Ethernet.IP: {
-			type = new Field(Ethernet.TYPE, rdType, "IPV4");
 			layer = new Ip();
+			type = new Field(Ethernet.TYPE, rdType, layer.getName());
 			break;
 		}
 
 		case Ethernet.ARP: {
-			type = new Field(Ethernet.TYPE, rdType, "ARP");
 			layer = new Arp();
+			type = new Field(Ethernet.TYPE, rdType, layer.getName());
 			break;
 		}
 
 		default:
 			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the ethernet type field");
 		}
+
+		incIndex(Ethernet.TYPE);
 
 		Field dest = new Field(Ethernet.DEST_ADDRESS, destMacAddress,
 				destMacAddress.equals("FF FF FF FF FF FF") ? "broadcast" : destMacAddress.replace(" ", ":"));
@@ -108,43 +114,44 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		ethernet.addField(Ethernet.SRC_ADDRESS.NAME, src);
 		ethernet.addField(Ethernet.DEST_ADDRESS.NAME, dest);
-
 		ethernet.addField(Ethernet.TYPE.NAME, type);
 
-		currentIndex += 6;
 		layer.accept(this);
 		ethernet.setIncluded(layer);
-
 	}
 
 	@Override
 	public void visit(Ip ip) throws NetworkAnalyzerException {
 
 		String header = getHeader(60).trim();
-		System.out.println("Header ip : *" + header + "*");
+		index = 0;
 
-		String version = header.substring(0, 1);
-		System.out.println("Version : *" + version + "*");
+		String version = parseField(header, Ip.VERSION);
+
 		if (!version.equals("4"))
 			throw new NetworkanalyzerParseErrorException(getLine(), "The IP Vesion is not compatible");
 
-		currentIndex += 1;
+		incIndex(Ip.VERSION);
 
-		String ihl = header.substring(1, 2);
-		System.out.println("Ihl : *" + ihl + "*");
-		currentIndex += 1;
+		String ihl = parseField(header, Ip.IHL);
+
 		int ihlDecoded = Integer.parseInt(ihl, 16);
 		if (ihlDecoded < 5)
 			throw new NetworkanalyzerParseErrorException(getLine(), "The IP IHL is not compatible");
 
-		String tos = header.substring(3, 5);
-		System.out.println("Tos : *" + tos + "*");
-		String totalLength = header.substring(6, 11);
-		System.out.println("Total len : *" + totalLength + "*");
-		String identification = header.substring(12, 17);
-		System.out.println("Identific : *" + identification + "*");
-		String fr = Integer.toBinaryString(Integer.parseInt(header.substring(18, 23).replace(" ", "")));
-		System.out.println("Frags : *" + fr + "*");
+		incIndex(Ip.IHL, true);
+
+		String tos = parseField(header, Ip.TOS);
+		incIndex(Ip.TOS);
+
+		String totalLength = parseField(header, Ip.TOTAL_LENGTH);
+		incIndex(Ip.TOTAL_LENGTH);
+
+		String identification = parseField(header, Ip.IDENTIFICATION);
+		incIndex(Ip.IDENTIFICATION);
+
+		String fr = ParsingTools.toBinary(parseField(header, Ip.FRAGMENTS));
+
 		while (fr.length() != 16)
 			fr = "0".concat(fr);
 
@@ -153,12 +160,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String mf = fr.substring(2, 3);
 		String fragmentOffset = fr.substring(3);
 
-		String ttl = header.substring(24, 26);
-		System.out.println("Ttl : *" + ttl + "*");
-		String protocol = header.substring(27, 29);
-		System.out.println("protocol : *" + protocol + "*");
+		incIndex(Ip.FRAGMENTS);
 
-		currentIndex += 25;
+		String ttl = parseField(header, Ip.TTL);
+		incIndex(Ip.TTL);
+
+		String protocol = parseField(header, Ip.PROTOCOL);
 
 		ILayerTransport layer;
 		IField proto;
@@ -166,22 +173,24 @@ public class LayerParserVisitor implements ILayerVisitor {
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
 			layer = new Icmp();
-			proto = new Field(Ip.PROTOCOL, protocol, "ICMP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		case Ip.UDP: {
 			layer = new Udp();
-			proto = new Field(Ip.PROTOCOL, protocol, "UDP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		case Ip.TCP: {
 			layer = new Tcp();
-			proto = new Field(Ip.PROTOCOL, protocol, "TCP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		default:
 			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the IP protocol field");
 		}
+
+		incIndex(Ip.PROTOCOL);
 
 		String headerChecksum = header.substring(30, 35);
 		System.out.println("checksum : *" + headerChecksum + "*");
@@ -266,21 +275,23 @@ public class LayerParserVisitor implements ILayerVisitor {
 		int pSrc = Integer.parseInt(srcPort.replace(" ", ""), 16);
 
 		currentIndex += 12;
-		if(pDest == pSrc && pSrc > 1023)
-			throw new NetworkanalyzerParseErrorException(getLine(),
-					"Unexpected value of the Udp port fields");
+
+//		if (pDest == pSrc && pSrc < 1024)
+//			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the Udp port fields");
+
 		switch (pDest) {
+
 		case Udp.DNS: {
 			layer = new Dns();
 			break;
 		}
 
 		default:
-			if(pDest == Udp.DHCP_1 ||  pDest == Udp.DHCP_2 || pSrc == Udp.DHCP_1 ||  pSrc == Udp.DHCP_2 ) {
+			if ((pDest == Udp.DHCP_1 && pSrc == Udp.DHCP_2) || (pDest == Udp.DHCP_2 && pSrc == Udp.DHCP_1)) {
 				layer = new Dhcp();
 				break;
 			}
-				
+
 			throw new NetworkanalyzerParseErrorException(getLine(),
 					"Unexpected value of the Udp port destination field");
 		}
@@ -309,24 +320,26 @@ public class LayerParserVisitor implements ILayerVisitor {
 	public void visit(Arp arp) throws NetworkAnalyzerException {
 	}
 
-	private String toIntegerValue(String value) {
-		return String.valueOf(Integer.parseInt(value.replace(" ", ""), 16));
-	}
-	
 	@Override
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
-		// TODO decoded value
 		String header = getHeader(708).trim();
 		System.out.println("Header dhcp : *" + header + "*");
 
 		String messageType = header.substring(0, 2);
 
-		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, messageType, toIntegerValue(messageType)));
+		String messageTypeDecoded = toIntegerValue(messageType);
+
+		if (!messageTypeDecoded.equals("1") && !messageTypeDecoded.equals("2"))
+			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the message type field");
+
+		currentIndex += 2;
+		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, messageType, messageTypeDecoded));
 
 		String hardwareType = header.substring(3, 5);
 
-		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME, new Field(Dhcp.HARDWARE_TYPE, hardwareType, toIntegerValue(hardwareType)));
+		dhcp.addField(Dhcp.HARDWARE_TYPE.NAME,
+				new Field(Dhcp.HARDWARE_TYPE, hardwareType, toIntegerValue(hardwareType)));
 
 		String hardwareAddressLenght = header.substring(6, 8);
 
@@ -337,34 +350,41 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.HOPS.NAME, new Field(Dhcp.HOPS, hops, toIntegerValue(hops)));
 
 		String transactionId = header.substring(12, 23);
-		dhcp.addField(Dhcp.TRANSACTION_ID.NAME, new Field(Dhcp.TRANSACTION_ID, transactionId, toIntegerValue(transactionId)));
+		dhcp.addField(Dhcp.TRANSACTION_ID.NAME,
+				new Field(Dhcp.TRANSACTION_ID, transactionId, toIntegerValue(transactionId)));
 
 		String secondsElapsed = header.substring(24, 29);
-		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME, new Field(Dhcp.SECONDS_ELAPSED, secondsElapsed, toIntegerValue(secondsElapsed)));
+		dhcp.addField(Dhcp.SECONDS_ELAPSED.NAME,
+				new Field(Dhcp.SECONDS_ELAPSED, secondsElapsed, toIntegerValue(secondsElapsed)));
 
-		String fls = header.substring(30, 35);
+		String fls = Integer.toBinaryString(Integer.parseInt(toIntegerValue(header.substring(30, 35))));
+
 		Fields flags = new Fields(Dhcp.FLAGS.NAME);
-		String broadcast = Integer.toBinaryString(Integer.parseInt(fls.charAt(0)+"", 16)).charAt(0)+"";
-		flags.addField(new Field(Dhcp.BROADCAST, broadcast, broadcast.equals("1")?"true": "false"));
-		flags.addField(new Field(Dhcp.RESERVED, "000000000000000", "0"));
+		char broadcast = fls.charAt(0);
+		flags.addField(new Field(Dhcp.BROADCAST, String.valueOf(broadcast), broadcast == '1' ? "true" : "false"));
+		flags.addField(new Field(Dhcp.RESERVED, fls.substring(1), "0"));
 		dhcp.addField(Dhcp.FLAGS.NAME, flags);
 
 		String clientIp = header.substring(36, 47);
-		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME, new Field(Dhcp.CLIENT_IP_ADDRESS, clientIp,NetworkanalyzerTools.decodeAddressIp(clientIp) ));
+		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.NAME,
+				new Field(Dhcp.CLIENT_IP_ADDRESS, clientIp, NetworkanalyzerTools.decodeAddressIp(clientIp)));
 
 		String yourIp = header.substring(48, 59);
-		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME, new Field(Dhcp.YOUR_IP_ADDRESS, yourIp, NetworkanalyzerTools.decodeAddressIp(yourIp)));
+		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.NAME,
+				new Field(Dhcp.YOUR_IP_ADDRESS, yourIp, NetworkanalyzerTools.decodeAddressIp(yourIp)));
 
 		String nextServerIp = header.substring(60, 71);
-		dhcp.addField(Dhcp.NEXT_SERVER_IP_ADDRESS.NAME,
-				new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, nextServerIp, NetworkanalyzerTools.decodeAddressIp(nextServerIp)));
+		dhcp.addField(Dhcp.NEXT_SERVER_IP_ADDRESS.NAME, new Field(Dhcp.NEXT_SERVER_IP_ADDRESS, nextServerIp,
+				NetworkanalyzerTools.decodeAddressIp(nextServerIp)));
 
 		String relayAgent = header.substring(72, 83);
-		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME, new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, relayAgent, NetworkanalyzerTools.decodeAddressIp(relayAgent)));
+		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.NAME,
+				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, relayAgent, NetworkanalyzerTools.decodeAddressIp(relayAgent)));
 
 		String clientMac = header.substring(84, 131);
 		// TODO padding
-		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME, new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
+		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.NAME,
+				new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
 //		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.NAME, new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING,
 //				"00 00 00 00 00 00 00 00 00 00", "00 00 00 00 00 00 00 00 00 00"));
 
@@ -419,5 +439,44 @@ public class LayerParserVisitor implements ILayerVisitor {
 		}
 
 		return header;
+	}
+
+	private String toIntegerValue(String value) {
+		return String.valueOf(Integer.parseInt(value.replace(" ", ""), 16));
+	}
+
+	private String parseField(String header, Entry entry) {
+
+		int len = entry.VALUE;
+		int inc = 1;
+
+		if (len % 8 == 0)
+			inc = len / 4 + len / 8 - 1;
+
+		return header.substring(index, index + inc);
+	}
+
+	private void incIndex(Entry entry, boolean end) {
+
+		if (end) {
+			currentIndex++;
+			index++;
+			incIndex(entry);
+			return;
+		}
+
+		incIndex(entry);
+	}
+
+	private void incIndex(Entry entry) {
+
+		int len = entry.VALUE;
+		int inc = 1;
+
+		if (len % 8 == 0)
+			inc = len / 4 + len / 8;
+
+		currentIndex += inc;
+		index += inc;
 	}
 }

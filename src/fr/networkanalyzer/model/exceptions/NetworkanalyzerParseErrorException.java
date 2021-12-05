@@ -12,4 +12,8 @@ public class NetworkanalyzerParseErrorException extends NetworkAnalyzerException
 		super("Empty frame");
 	}
 
+	public NetworkanalyzerParseErrorException(String message) {
+		super(message);
+	}
+
 }

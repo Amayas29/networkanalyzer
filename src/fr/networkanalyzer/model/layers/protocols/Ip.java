@@ -88,9 +88,9 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public String getName() {
 		return "IP";
 	}
+
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return super.toString().concat(included.toString());
 	}
 

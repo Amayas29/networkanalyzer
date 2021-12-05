@@ -68,8 +68,9 @@ public class AnalyzerParser {
 	}
 
 	public static void save(Frame frame) throws NetworkAnalyzerException {
-		
-		try (BufferedWriter bf = new BufferedWriter(new FileWriter(new File("Trame " + frame.getId())))){
+
+		try (BufferedWriter bf = new BufferedWriter(
+				new FileWriter(new File(String.format("Trame_%d.netanalyzer", frame.getId()))))) {
 			save(frame, bf);
 		} catch (NetworkAnalyzerException | IOException e) {
 			throw new NetworkAnalyzerException("writer does not work");
@@ -78,22 +79,23 @@ public class AnalyzerParser {
 
 	public static void save(Frame frame, BufferedWriter bwFile) throws NetworkAnalyzerException {
 		if (frame == null)
-			throw new NetworkAnalyzerException("frame does not exist");
+			throw new NetworkAnalyzerException("Frame does not exist");
+
 		try {
 			bwFile.write(frame.toString());
-			System.out.println(frame);
 		} catch (IOException e) {
-			throw new NetworkAnalyzerException("writer does not work");
+			throw new NetworkAnalyzerException("Writer does not work");
 		}
 	}
 
 	public static void saveAll(Analyzer analyzer) throws NetworkAnalyzerException {
-		try (BufferedWriter bf = new BufferedWriter(new FileWriter(new File("Analyze")))) {
+		try (BufferedWriter bf = new BufferedWriter(new FileWriter(new File("Analyzer.netanalyzer")))) {
 			if (analyzer == null)
-				throw new NetworkAnalyzerException("frame does not exist");
-			for (Frame frame : analyzer.getFrames()) {
+				throw new NetworkAnalyzerException("Analyzer does not exist");
+
+			for (Frame frame : analyzer.getFrames())
 				save(frame, bf);
-			}
+
 		} catch (Exception e) {
 		}
 	}

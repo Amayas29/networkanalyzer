@@ -86,12 +86,14 @@ public class Fields implements IField {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getName());
-		sb.append("\n");
+		sb.append(" : \n");
+
 		for (IField iField : getChildrens()) {
-			sb.append("\t");
+			sb.append("\t\t");
 			sb.append(iField.toString());
 			sb.append("\n");
 		}
+
 		return sb.toString();
 	}
 }
