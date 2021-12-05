@@ -96,4 +96,8 @@ public class Fields implements IField {
 
 		return sb.toString();
 	}
+
+	public void removeField(String field) {
+		fields.remove(getField(field));
+	}
 }

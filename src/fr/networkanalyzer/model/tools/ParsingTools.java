@@ -123,22 +123,5 @@ public class ParsingTools {
 			return false;
 		}
 	}
-	
-	public static String toAscii(String bytes) {
-		StringBuilder sb = new StringBuilder();
-		String bytesTab[] = bytes.split(" ");
-		for (String s : bytesTab) {
-			sb.append((char)Integer.parseInt(s, 16));
-		}
-		
-		return sb.toString();
-	}
-	
-	public static String toIntegerValue(String value) {
-		return String.valueOf(Integer.parseInt(value.replace(" ", ""), 16));
-	}
 
-	public static String toBinary(String value) {
-		return Integer.toBinaryString(Integer.parseInt(value.substring(18, 23).replace(" ", "")));
-	}
 }

@@ -40,4 +40,13 @@ public abstract class AbstractLayer implements ILayer {
 		return sb.toString();
 	}
 
+	@Override
+	public int getLength() {
+		int len = 0;
+
+		for (IField field : fields.values())
+			len += field.getLength();
+
+		return len;
+	}
 }
