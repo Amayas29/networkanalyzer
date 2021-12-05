@@ -2,11 +2,22 @@ package fr.networkanalyzer.model.fields;
 
 public class Entry {
 
-	public final String NAME;
-	public final int VALUE;
+	private final String name;
+	private int value;
+	
 
 	public Entry(String name, int length) {
-		NAME = name;
-		VALUE = length;
+		this.name = name;
+		value = length;	
+	}
+	public int getValue() {
+		return value;
+	}
+	
+	public void setValue(int value) {
+		this.value = value;
+	}
+	public String getName() {
+		return name;
 	}
 }

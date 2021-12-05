@@ -53,15 +53,15 @@ public class Tcp extends AbstractLayer implements ILayerTransport {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(SRC_PORT.NAME));
-		fs.add(getField(DEST_PORT.NAME));
-		fs.add(getField(SEQUENCE_NUMBER.NAME));
-		fs.add(getField(ACKNOWLEDGMENT_NUMBER.NAME));
-		fs.add(getField(THL.NAME));
-		fs.add(getField(FLAGS.NAME));
-		fs.add(getField(WINDOW.NAME));
-		fs.add(getField(CHECKSUM.NAME));
-		fs.add(getField(URGENT_POINTER.NAME));
+		fs.add(getField(SRC_PORT.getName()));
+		fs.add(getField(DEST_PORT.getName()));
+		fs.add(getField(SEQUENCE_NUMBER.getName()));
+		fs.add(getField(ACKNOWLEDGMENT_NUMBER.getName()));
+		fs.add(getField(THL.getName()));
+		fs.add(getField(FLAGS.getName()));
+		fs.add(getField(WINDOW.getName()));
+		fs.add(getField(CHECKSUM.getName()));
+		fs.add(getField(URGENT_POINTER.getName()));
 
 		return fs;
 	}

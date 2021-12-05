@@ -42,10 +42,10 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(SRC_PORT.NAME));
-		fs.add(getField(DEST_PORT.NAME));
-		fs.add(getField(LENGTH.NAME));
-		fs.add(getField(CHECKSUM.NAME));
+		fs.add(getField(SRC_PORT.getName()));
+		fs.add(getField(DEST_PORT.getName()));
+		fs.add(getField(LENGTH.getName()));
+		fs.add(getField(CHECKSUM.getName()));
 		return fs;
 	}
 

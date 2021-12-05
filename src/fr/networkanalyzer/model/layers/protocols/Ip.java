@@ -38,7 +38,7 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 
 	@Override
 	public Integer getTotalLength() {
-		return Integer.parseInt(getField(TOTAL_LENGTH.NAME).getValueDecoded());
+		return Integer.parseInt(getField(TOTAL_LENGTH.getName()).getValueDecoded());
 	}
 
 	@Override
@@ -60,18 +60,18 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
 
-		fs.add(getField(VERSION.NAME));
-		fs.add(getField(IHL.NAME));
-		fs.add(getField(TOS.NAME));
-		fs.add(getField(TOTAL_LENGTH.NAME));
-		fs.add(getField(IDENTIFICATION.NAME));
-		fs.add(getField(FRAGMENTS.NAME));
-		fs.add(getField(TTL.NAME));
-		fs.add(getField(PROTOCOL.NAME));
-		fs.add(getField(HEADER_CHECKSUM.NAME));
-		fs.add(getField(SRC_ADDRESS.NAME));
-		fs.add(getField(DEST_ADDRESS.NAME));
-		IField options = getField(OPTIONS.NAME);
+		fs.add(getField(VERSION.getName()));
+		fs.add(getField(IHL.getName()));
+		fs.add(getField(TOS.getName()));
+		fs.add(getField(TOTAL_LENGTH.getName()));
+		fs.add(getField(IDENTIFICATION.getName()));
+		fs.add(getField(FRAGMENTS.getName()));
+		fs.add(getField(TTL.getName()));
+		fs.add(getField(PROTOCOL.getName()));
+		fs.add(getField(HEADER_CHECKSUM.getName()));
+		fs.add(getField(SRC_ADDRESS.getName()));
+		fs.add(getField(DEST_ADDRESS.getName()));
+		IField options = getField(OPTIONS.getName());
 
 		if (options != null)
 			fs.add(options);

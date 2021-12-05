@@ -17,7 +17,7 @@ public enum IpOptions {
 	public static Entry getEntryByCode(int code) throws NetworkAnalyzerException {
 		IpOptions[] options = values();
 		for (int j = 0; j < options.length; j++) 
-			if(code == options[j].option.VALUE)
+			if(code == options[j].option.getValue())
 				return options[j].option;
 		
 		throw new NetworkAnalyzerException("Unexpected value of the option");

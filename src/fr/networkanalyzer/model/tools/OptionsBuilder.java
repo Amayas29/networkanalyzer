@@ -11,7 +11,7 @@ public class OptionsBuilder {
 
 	public static IField buildIpOptions(String header) throws NetworkAnalyzerException {
 
-		Fields options = new Fields(Ip.OPTIONS.NAME);
+		Fields options = new Fields(Ip.OPTIONS.getName());
 
 		String data[] = header.trim().split(" ");
 		for (int i = 0; i < data.length;) {
@@ -44,7 +44,7 @@ public class OptionsBuilder {
 			lenDecoded -= 2;
 			Fields fieldsAdresses = null;
 			for (int j = 3; j < lenDecoded; j += 4) {
-				fieldsAdresses = new Fields(Ip.IPS_ADRESSES.NAME);
+				fieldsAdresses = new Fields(Ip.IPS_ADRESSES.getName());
 				String ips = String.format("%s %s %s %s", data[j], data[j + 1], data[j + 2], data[j + 3]);
 				fieldsAdresses
 						.addField(new Field(new Entry("adresse", 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));

@@ -46,9 +46,9 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(DEST_ADDRESS.NAME));
-		fs.add(getField(SRC_ADDRESS.NAME));
-		fs.add(getField(TYPE.NAME));
+		fs.add(getField(DEST_ADDRESS.getName()));
+		fs.add(getField(SRC_ADDRESS.getName()));
+		fs.add(getField(TYPE.getName()));
 		return fs;
 	}
 

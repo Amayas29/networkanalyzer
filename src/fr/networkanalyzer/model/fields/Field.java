@@ -11,10 +11,10 @@ public class Field implements IField {
 	private int length;
 
 	public Field(Entry entry, String value, String valueDecoded) {
-		this.name = entry.NAME;
+		this.name = entry.getName();
 		this.value = value;
 		this.valueDecoded = valueDecoded;
-		this.length = entry.VALUE;
+		this.length = entry.getValue();
 		content = value;
 	}
 
