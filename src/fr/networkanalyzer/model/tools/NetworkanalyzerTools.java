@@ -12,8 +12,12 @@ public class NetworkanalyzerTools {
 		StringBuilder sb = new StringBuilder();
 		String bytesTab[] = bytes.split(" ");
 
-		for (String s : bytesTab)
+		for (String s : bytesTab) {
+			System.out.println(s);
+
 			sb.append((char) Integer.parseInt(s, 16));
+
+		}
 
 		return sb.toString();
 	}

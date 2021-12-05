@@ -268,10 +268,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ILayerApplication layer;
 
 		header = getHeader(24).trim();
+		index = 0;
 
 		String srcPort = parseField(Udp.SRC_PORT);
-
 		incIndex(Udp.SRC_PORT);
+
 		String destPort = parseField(Udp.SRC_PORT);
 
 		int pDest = Integer.parseInt(destPort.replace(" ", ""), 16);
@@ -324,6 +325,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
 		header = getHeader(708).trim();
+		index = 0;
 
 		// message type------------------------------------------
 		String messageType = parseField(Dhcp.MESSAGE_TYPE);
@@ -361,25 +363,30 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.TRANSACTION_ID.getName(),
 				new Field(Dhcp.TRANSACTION_ID, transactionId, NetworkanalyzerTools.toInteger(transactionId)));
 
+		// seconds elapsed
 		String secondsElapsed = parseField(Dhcp.SECONDS_ELAPSED);
 		incIndex(Dhcp.SECONDS_ELAPSED);
 
 		dhcp.addField(Dhcp.SECONDS_ELAPSED.getName(),
 				new Field(Dhcp.SECONDS_ELAPSED, secondsElapsed, NetworkanalyzerTools.toInteger(secondsElapsed)));
 
+		// Flags
 		String fls = NetworkanalyzerTools.toBinary(parseField(Dhcp.FLAGS));
-		incIndex(Dhcp.FLAGS);
 		Fields flags = new Fields(Dhcp.FLAGS.getName());
 		char broadcast = fls.charAt(0);
 		flags.addField(new Field(Dhcp.BROADCAST, String.valueOf(broadcast), broadcast == '1' ? "true" : "false"));
 		flags.addField(new Field(Dhcp.RESERVED, fls.substring(1), "0"));
 		dhcp.addField(Dhcp.FLAGS.getName(), flags);
 
+		incIndex(Dhcp.FLAGS);
+
+		// Client Ip
 		String clientIp = parseField(Dhcp.CLIENT_IP_ADDRESS);
 		incIndex(Dhcp.CLIENT_IP_ADDRESS);
 		dhcp.addField(Dhcp.CLIENT_IP_ADDRESS.getName(),
 				new Field(Dhcp.CLIENT_IP_ADDRESS, clientIp, NetworkanalyzerTools.decodeAddressIp(clientIp)));
 
+		// Your ip
 		String yourIp = parseField(Dhcp.YOUR_IP_ADDRESS);
 		incIndex(Dhcp.YOUR_IP_ADDRESS);
 		dhcp.addField(Dhcp.YOUR_IP_ADDRESS.getName(),
@@ -395,13 +402,14 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.getName(),
 				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, relayAgent, NetworkanalyzerTools.decodeAddressIp(relayAgent)));
 
-		Dhcp.CLIENT_MAC_ADDRESS
-				.setValue(Integer.parseInt(dhcp.getField(Dhcp.HARDWARE_ADDRESS_LENGTH.getName()).getValueDecoded()));
+		Dhcp.CLIENT_MAC_ADDRESS.setValue(Integer.parseInt(NetworkanalyzerTools.toInteger(hardwareAddressLenght)) * 8);
+
 		String clientMac = parseField(Dhcp.CLIENT_MAC_ADDRESS);
 		incIndex(Dhcp.CLIENT_MAC_ADDRESS);
 
 		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.getName(),
 				new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
+
 		Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING
 				.setValue(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.getValue() - Dhcp.CLIENT_MAC_ADDRESS.getValue());
 
@@ -414,16 +422,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 		// TODO option overloading
 		String serverHostName = parseField(Dhcp.SERVER_HOST_NAME);
 		incIndex(Dhcp.SERVER_HOST_NAME);
-		String result = NetworkanalyzerTools.toInteger(serverHostName).equals("0") ? "not given"
+
+		String result = serverHostName.replace(" ", "").replace("0", "").equals("") ? "not given"
 				: NetworkanalyzerTools.toAscii(serverHostName);
 
 		dhcp.addField(Dhcp.SERVER_HOST_NAME.getName(), new Field(Dhcp.SERVER_HOST_NAME, serverHostName, result, false));
 
-		String bootFile = parseField(Dhcp.SERVER_HOST_NAME);
-		incIndex(Dhcp.SERVER_HOST_NAME);
-		result = NetworkanalyzerTools.toInteger(bootFile).equals("0") ? "not given"
+		String bootFile = parseField(Dhcp.BOOT_FILE);
+		incIndex(Dhcp.BOOT_FILE);
+
+		result = bootFile.replace(" ", "").replace("0", "").equals("") ? "not given"
 				: NetworkanalyzerTools.toAscii(bootFile);
+
 		dhcp.addField(Dhcp.BOOT_FILE.getName(), new Field(Dhcp.BOOT_FILE, bootFile, "not given", false));
+		incIndex(Dhcp.BOOT_FILE);
 
 		// TODO MAGIC COOKIE ?
 //		dhcp.addField(Dhcp.MAGIC_COOKIE.getName(), new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
@@ -479,6 +491,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	private String parseField(Entry entry) {
 
+		System.out.println(entry.getName() + " " + entry.getValue() + " : " + index);
 		int len = entry.getValue();
 		int inc = 1;
 
