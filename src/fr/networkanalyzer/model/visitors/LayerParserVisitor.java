@@ -5,9 +5,13 @@ import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
+import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
+import fr.networkanalyzer.model.functions.CheckFunction;
+import fr.networkanalyzer.model.functions.ValueFunction;
+import fr.networkanalyzer.model.layers.ILayer;
 import fr.networkanalyzer.model.layers.ILayerApplication;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
 import fr.networkanalyzer.model.layers.ILayerTransport;
@@ -30,17 +34,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 	private String line;
 	private List<Integer> listIndex;
 	private int currentIndex;
+	private int index;
 
 	public LayerParserVisitor() {
 		listIndex = new ArrayList<>();
 		currentIndex = 0;
 		line = null;
+		index = 0;
 	}
 
 	public void setLine(String line) {
 		String data[] = line.split(" ");
 		listIndex.clear();
 		currentIndex = 0;
+		index = 0;
 
 		StringBuilder sb = new StringBuilder();
 
@@ -61,19 +68,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String header = getHeader(42).trim();
 
-		System.out.println("Header ethernet : *" + header + "*");
+		String destMacAddress = parseField(header, Ethernet.DEST_ADDRESS);
+		incIndex(Ethernet.DEST_ADDRESS);
 
-		String destMacAddress = header.substring(0, 17);
-		System.out.println("Mac dest : *" + destMacAddress + "*");
-		String srcMacAddress = header.substring(18, 35);
-		System.out.println("Mac src : *" + srcMacAddress + "*");
-		String rdType = header.substring(36);
-		System.out.println("type : *" + rdType + "*");
+		String srcMacAddress = parseField(header, Ethernet.SRC_ADDRESS);
 
-		IField type;
-		ILayerNetwork layer = null;
-
-		currentIndex += 18;
 		if (srcMacAddress.equals("FF FF FF FF FF FF"))
 			throw new NetworkanalyzerParseErrorException(getLine(),
 					"The source MAC address must not be a broadcast address");
@@ -81,25 +80,32 @@ public class LayerParserVisitor implements ILayerVisitor {
 		if (destMacAddress.equals(srcMacAddress))
 			throw new NetworkanalyzerParseErrorException(getLine(), "Mac addresses are equal");
 
-		currentIndex += 18;
+		incIndex(Ethernet.SRC_ADDRESS);
+
+		String rdType = parseField(header, Ethernet.TYPE);
+
+		IField type;
+		ILayerNetwork layer = null;
 
 		switch (rdType) {
 
 		case Ethernet.IP: {
-			type = new Field(Ethernet.TYPE, rdType, "IPV4");
 			layer = new Ip();
+			type = new Field(Ethernet.TYPE, rdType, layer.getName());
 			break;
 		}
 
 		case Ethernet.ARP: {
-			type = new Field(Ethernet.TYPE, rdType, "ARP");
 			layer = new Arp();
+			type = new Field(Ethernet.TYPE, rdType, layer.getName());
 			break;
 		}
 
 		default:
 			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the ethernet type field");
 		}
+
+		incIndex(Ethernet.TYPE);
 
 		Field dest = new Field(Ethernet.DEST_ADDRESS, destMacAddress,
 				destMacAddress.equals("FF FF FF FF FF FF") ? "broadcast" : destMacAddress.replace(" ", ":"));
@@ -108,43 +114,44 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		ethernet.addField(Ethernet.SRC_ADDRESS.NAME, src);
 		ethernet.addField(Ethernet.DEST_ADDRESS.NAME, dest);
-
 		ethernet.addField(Ethernet.TYPE.NAME, type);
 
-		currentIndex += 6;
 		layer.accept(this);
 		ethernet.setIncluded(layer);
-
 	}
 
 	@Override
 	public void visit(Ip ip) throws NetworkAnalyzerException {
 
 		String header = getHeader(60).trim();
-		System.out.println("Header ip : *" + header + "*");
+		index = 0;
 
-		String version = header.substring(0, 1);
-		System.out.println("Version : *" + version + "*");
+		String version = parseField(header, Ip.VERSION);
+
 		if (!version.equals("4"))
 			throw new NetworkanalyzerParseErrorException(getLine(), "The IP Vesion is not compatible");
 
-		currentIndex += 1;
+		incIndex(Ip.VERSION);
 
-		String ihl = header.substring(1, 2);
-		System.out.println("Ihl : *" + ihl + "*");
-		currentIndex += 1;
+		String ihl = parseField(header, Ip.IHL);
+
 		int ihlDecoded = Integer.parseInt(ihl, 16);
 		if (ihlDecoded < 5)
 			throw new NetworkanalyzerParseErrorException(getLine(), "The IP IHL is not compatible");
 
-		String tos = header.substring(3, 5);
-		System.out.println("Tos : *" + tos + "*");
-		String totalLength = header.substring(6, 11);
-		System.out.println("Total len : *" + totalLength + "*");
-		String identification = header.substring(12, 17);
-		System.out.println("Identific : *" + identification + "*");
-		String fr = Integer.toBinaryString(Integer.parseInt(header.substring(18, 23).replace(" ", "")));
-		System.out.println("Frags : *" + fr + "*");
+		incIndex(Ip.IHL, true);
+
+		String tos = parseField(header, Ip.TOS);
+		incIndex(Ip.TOS);
+
+		String totalLength = parseField(header, Ip.TOTAL_LENGTH);
+		incIndex(Ip.TOTAL_LENGTH);
+
+		String identification = parseField(header, Ip.IDENTIFICATION);
+		incIndex(Ip.IDENTIFICATION);
+
+		String fr = ParsingTools.toBinary(parseField(header, Ip.FRAGMENTS));
+
 		while (fr.length() != 16)
 			fr = "0".concat(fr);
 
@@ -153,12 +160,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String mf = fr.substring(2, 3);
 		String fragmentOffset = fr.substring(3);
 
-		String ttl = header.substring(24, 26);
-		System.out.println("Ttl : *" + ttl + "*");
-		String protocol = header.substring(27, 29);
-		System.out.println("protocol : *" + protocol + "*");
+		incIndex(Ip.FRAGMENTS);
 
-		currentIndex += 25;
+		String ttl = parseField(header, Ip.TTL);
+		incIndex(Ip.TTL);
+
+		String protocol = parseField(header, Ip.PROTOCOL);
 
 		ILayerTransport layer;
 		IField proto;
@@ -166,22 +173,24 @@ public class LayerParserVisitor implements ILayerVisitor {
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
 			layer = new Icmp();
-			proto = new Field(Ip.PROTOCOL, protocol, "ICMP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		case Ip.UDP: {
 			layer = new Udp();
-			proto = new Field(Ip.PROTOCOL, protocol, "UDP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		case Ip.TCP: {
 			layer = new Tcp();
-			proto = new Field(Ip.PROTOCOL, protocol, "TCP");
+			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
 		default:
 			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the IP protocol field");
 		}
+
+		incIndex(Ip.PROTOCOL);
 
 		String headerChecksum = header.substring(30, 35);
 		System.out.println("checksum : *" + headerChecksum + "*");
@@ -266,9 +275,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		int pSrc = Integer.parseInt(srcPort.replace(" ", ""), 16);
 
 		currentIndex += 12;
-		if (pDest == pSrc && pSrc > 1023)
-			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the Udp port fields");
+
+//		if (pDest == pSrc && pSrc < 1024)
+//			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the Udp port fields");
+
 		switch (pDest) {
+
 		case Udp.DNS: {
 			layer = new Dns();
 			break;
@@ -316,7 +328,13 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String messageType = header.substring(0, 2);
 
-		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, messageType, toIntegerValue(messageType)));
+		String messageTypeDecoded = toIntegerValue(messageType);
+
+		if (!messageTypeDecoded.equals("1") && !messageTypeDecoded.equals("2"))
+			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the message type field");
+
+		currentIndex += 2;
+		dhcp.addField(Dhcp.MESSAGE_TYPE.NAME, new Field(Dhcp.MESSAGE_TYPE, messageType, messageTypeDecoded));
 
 		String hardwareType = header.substring(3, 5);
 
@@ -425,5 +443,40 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	private String toIntegerValue(String value) {
 		return String.valueOf(Integer.parseInt(value.replace(" ", ""), 16));
+	}
+
+	private String parseField(String header, Entry entry) {
+
+		int len = entry.VALUE;
+		int inc = 1;
+
+		if (len % 8 == 0)
+			inc = len / 4 + len / 8 - 1;
+
+		return header.substring(index, index + inc);
+	}
+
+	private void incIndex(Entry entry, boolean end) {
+
+		if (end) {
+			currentIndex++;
+			index++;
+			incIndex(entry);
+			return;
+		}
+
+		incIndex(entry);
+	}
+
+	private void incIndex(Entry entry) {
+
+		int len = entry.VALUE;
+		int inc = 1;
+
+		if (len % 8 == 0)
+			inc = len / 4 + len / 8;
+
+		currentIndex += inc;
+		index += inc;
 	}
 }
