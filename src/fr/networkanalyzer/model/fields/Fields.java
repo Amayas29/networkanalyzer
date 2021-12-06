@@ -6,18 +6,18 @@ import java.util.List;
 public class Fields implements IField {
 
 	private String name;
-	private boolean isFlags;
+	private boolean isOption;
 	private List<IField> fields;
 
 	public Fields(String name) {
 		this(name, false);
 	}
 
-	public Fields(String name, boolean isFlags) {
+	public Fields(String name, boolean isOption) {
 		super();
 		this.name = name;
 		fields = new ArrayList<>();
-		isFlags = false;
+		isOption = false;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class Fields implements IField {
 	public String getValue() {
 
 		StringBuilder sb = new StringBuilder();
-		if (isFlags()) {
+		if (isOption()) {
 
 			int l = 0;
 			for (IField f : fields) {
@@ -131,8 +131,8 @@ public class Fields implements IField {
 	}
 
 	@Override
-	public boolean isFlags() {
+	public boolean isOption() {
 		// TODO Auto-generated method stub
-		return isFlags;
+		return isOption;
 	}
 }
