@@ -10,6 +10,8 @@ import fr.networkanalyzer.model.Analyzer;
 import fr.networkanalyzer.model.AnalyzerParser;
 import fr.networkanalyzer.model.Frame;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
+import fr.networkanalyzer.model.fields.Fields;
+import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.IField;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -397,19 +399,24 @@ public class ProcessingController {
 
 	}
 
-	private TreeItem<String> addTreeField(IField field, TreeItem<String> root, boolean first) {
+	private TreeItem<String> addTreeField(IField field, TreeItem<String> root) {
 
 		TreeItem<String> fieldItem = new TreeItem<>(field.display());
 		root.getChildren().add(fieldItem);
 
-		if (first)
+		if (field.isFlags())
 			addLabel(field, fieldItem);
 
 		if (field.getChildrens() == null)
 			return fieldItem;
 
+		List<Label> labels = new ArrayList<>();
+
 		for (IField f : field.getChildrens())
-			childrens.put(addTreeField(f, fieldItem, false), childrens.get(fieldItem));
+			childrens.put(addTreeField(f, fieldItem), childrens.get(fieldItem));
+
+		if (!field.isFlags())
+			setChildren(fieldItem);
 
 		return fieldItem;
 	}

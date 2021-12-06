@@ -28,7 +28,8 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 128);
 	public static final Entry SERVER_HOST_NAME = new Entry("Server Host Name", 512);
 	public static final Entry BOOT_FILE = new Entry("Boot File", 1024);
-//	public static final Entry MAGIC_COOKIE = new Entry("Magic Cookie", 32);
+	public static final Entry MAGIC_COOKIE = new Entry("Magic Cookie", 32);
+
 	public static final Entry FLAGS = new Entry("Flags", 16);
 	public static final Entry OPTIONS = new Entry("Options", Integer.MAX_VALUE);
 
@@ -55,14 +56,13 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 		fs.add(getField(CLIENT_HARDWARE_ADDRESS_PADDING.getName()));
 		fs.add(getField(SERVER_HOST_NAME.getName()));
 		fs.add(getField(BOOT_FILE.getName()));
-//		fs.add(getField(MAGIC_COOKIE.getName()));
+		fs.add(getField(MAGIC_COOKIE.getName()));
 
 		IField opts = getField(OPTIONS.getName());
 
-		if (opts != null) {
+		if (opts != null)
 			for (IField f : opts.getChildrens())
 				fs.add(f);
-		}
 
 		return fs;
 	}

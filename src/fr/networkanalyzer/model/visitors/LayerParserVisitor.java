@@ -239,7 +239,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ip.addField(Ip.IDENTIFICATION.getName(),
 				new Field(Ip.IDENTIFICATION, identification, NetworkanalyzerTools.toInteger(identification)));
 
-		Fields fragments = new Fields(Ip.FRAGMENTS.getName());
+		Fields fragments = new Fields(Ip.FRAGMENTS.getName(), true);
 		fragments.addField(new Field(Ip.R, r, r));
 		fragments.addField(new Field(Ip.DF, df, df));
 		fragments.addField(new Field(Ip.MF, mf, mf));
@@ -372,7 +372,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		// Flags
 		String fls = NetworkanalyzerTools.toBinary(parseField(Dhcp.FLAGS));
-		Fields flags = new Fields(Dhcp.FLAGS.getName());
+		Fields flags = new Fields(Dhcp.FLAGS.getName(), true);
 		char broadcast = fls.charAt(0);
 		flags.addField(new Field(Dhcp.BROADCAST, String.valueOf(broadcast), broadcast == '1' ? "true" : "false"));
 		flags.addField(new Field(Dhcp.RESERVED, fls.substring(1), "0"));
@@ -437,12 +437,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.BOOT_FILE.getName(), new Field(Dhcp.BOOT_FILE, bootFile, "not given", false));
 		incIndex(Dhcp.BOOT_FILE);
 
-		// TODO MAGIC COOKIE ?
-//		dhcp.addField(Dhcp.MAGIC_COOKIE.getName(), new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
+		String magicCookie = parseField(Dhcp.MAGIC_COOKIE);
+		dhcp.addField(Dhcp.MAGIC_COOKIE.getName(), new Field(Dhcp.MAGIC_COOKIE, magicCookie, dhcp.getName()));
+		incIndex(Dhcp.MAGIC_COOKIE);
 
 		try {
 			header = getHeader(line.length()).trim();
-			System.out.println("$$" + header);
 		} catch (NetworkAnalyzerException e) {
 			return;
 		}
@@ -473,7 +473,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String nonAuth = fls.substring(11, 12);
 		String reply = fls.substring(12);
 
-		Fields flags = new Fields(Dns.FLAGS.getName());
+		Fields flags = new Fields(Dns.FLAGS.getName(), true);
 
 		flags.addField(new Field(Dns.RESPONSE, response, response));
 		flags.addField(new Field(Dns.OPCODE, opcode, opcode));
@@ -511,12 +511,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		int number = Integer.parseInt(decodedNumberQst);
 		Dns.QUESTIONS.setValue(number);
 		Fields questions = new Fields(Dns.QUESTIONS.getName());
-		for (; number > 0; number--) {
+		for (int j = 0; j < number; j++) {
 			i = curr;
 			boolean pointer = false;
 
 			System.out.println("*" + i);
-			while (isPointer(data[i])) {
+			while (isPointer(NetworkanalyzerTools.toInteger(data[i]))) {
 				i = Integer.parseInt(
 						NetworkanalyzerTools.toBinary(data[i].concat(data[i + 1]).replace(" ", "")).substring(2), 2);
 
@@ -528,22 +528,45 @@ public class LayerParserVisitor implements ILayerVisitor {
 			if (pointer)
 				curr += 2;
 
+			StringBuilder sbv = new StringBuilder();
 			StringBuilder sb = new StringBuilder();
+
 			while (!data[i].equals("00")) {
-				int len = Integer.parseInt(data[i], 16);
+				sb.append(data[i]).append(" ");
+				int len = Integer.parseInt(data[i++], 16);
 
 				while (len != 0) {
-					sb.append((char) (Integer.parseInt(data[i++], 16)));
+					sb.append(data[i]).append(" ");
+					sbv.append((char) (Integer.parseInt(data[i++], 16)));
 					len--;
 
 					if (!pointer)
 						curr++;
 				}
 
-				sb.append(".");
+				sbv.append(".");
 			}
 
-			System.out.println(sb.toString());
+			String qNameDecoded = sbv.toString();
+			String qName = sb.toString();
+
+			String qType = String.format("%s %s", data[curr], data[curr + 1]);
+			curr += 2;
+
+			String qClass = String.format("%s %s", data[curr], data[curr + 1]);
+			curr += 2;
+
+			Fields question = new Fields(String.format("%s %d", "Question ", j));
+
+			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
+			Field qT = new Field(new Entry("QTYPE", 16), qType, opcode);
+			Field qC = new Field(new Entry("QCLASS", 16), qClass, opcode);
+
+			question.addField(qN);
+			question.addField(qT);
+			question.addField(qC);
+
+			questions.addField(question);
 		}
 
 		incIndex(Dns.QUESTIONS);
