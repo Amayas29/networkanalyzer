@@ -30,7 +30,10 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public static final Entry BOOT_FILE = new Entry("Boot File", 1024);
 //	public static final Entry MAGIC_COOKIE = new Entry("Magic Cookie", 32);
 	public static final Entry FLAGS = new Entry("Flags", 16);
-
+	public static final Entry OPTIONS = new Entry("Options", Integer.MAX_VALUE);
+	
+	
+	
 	@Override
 	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
 		visitor.visit(this);
@@ -51,7 +54,7 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 		fs.add(getField(NEXT_SERVER_IP_ADDRESS.getName()));
 		fs.add(getField(RELAY_AGENT_IP_ADDRESS.getName()));
 		fs.add(getField(CLIENT_MAC_ADDRESS.getName()));
-//		fs.add(getField(CLIENT_HARDWARE_ADDRESS_PADDING.getName()));
+		fs.add(getField(CLIENT_HARDWARE_ADDRESS_PADDING.getName()));
 		fs.add(getField(SERVER_HOST_NAME.getName()));
 		fs.add(getField(BOOT_FILE.getName()));
 //		fs.add(getField(MAGIC_COOKIE.getName()));
