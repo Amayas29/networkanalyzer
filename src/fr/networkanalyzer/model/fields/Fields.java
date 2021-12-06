@@ -1,7 +1,6 @@
 package fr.networkanalyzer.model.fields;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Fields implements IField {

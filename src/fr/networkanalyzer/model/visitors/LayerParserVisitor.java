@@ -559,7 +559,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			Fields question = new Fields(String.format("%s %d", "Question ", j));
 
 			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
-			Field qT = new Field(new Entry("QTYPE", 16), qType, opcode);
+			Field qT = new Field(new Entry("QTYPE", 16), qType, "");
 			Field qC = new Field(new Entry("QCLASS", 16), qClass, opcode);
 
 			question.addField(qN);
