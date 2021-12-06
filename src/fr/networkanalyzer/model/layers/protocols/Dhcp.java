@@ -24,8 +24,8 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 	public static final Entry YOUR_IP_ADDRESS = new Entry("Your Ip Address", 32);
 	public static final Entry NEXT_SERVER_IP_ADDRESS = new Entry("Next Server Ip Address", 32);
 	public static final Entry RELAY_AGENT_IP_ADDRESS = new Entry("Gateway Ip Address", 32);
-	public static final Entry CLIENT_MAC_ADDRESS = new Entry("Client Mac Address", 128);
-	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 80);
+	public static final Entry CLIENT_MAC_ADDRESS = new Entry("Client Mac Address", 0);
+	public static final Entry CLIENT_HARDWARE_ADDRESS_PADDING = new Entry("Client Hardware Address Padding", 128);
 	public static final Entry SERVER_HOST_NAME = new Entry("Server Host Name", 512);
 	public static final Entry BOOT_FILE = new Entry("Boot File", 1024);
 //	public static final Entry MAGIC_COOKIE = new Entry("Magic Cookie", 32);
