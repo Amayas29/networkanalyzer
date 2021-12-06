@@ -402,37 +402,37 @@ public class ProcessingController {
 		TreeItem<String> fieldItem = new TreeItem<>(field.display());
 		root.getChildren().add(fieldItem);
 
-		System.out.println(field.getName() + " " + field.isOptions() + " " + field.isFlag());
-		if (!field.isOptions() && !field.isFlag()) {
-			System.out.println("Enter");
+		if (!field.isOptions() && !field.isFlag())
 			addLabel(field, fieldItem);
-		}
-
-		System.out.println("");
 
 		if (field.getChildrens() == null)
 			return fieldItem;
 
-		List<Label> labels = new ArrayList<>();
 		for (IField f : field.getChildrens()) {
-			List<Label> l = childrens.get(fieldItem);
-			labels.addAll(l);
-			childrens.put(addTreeField(f, fieldItem), l);
+			TreeItem<String> t = addTreeField(f, fieldItem);
+
+			if (!field.isOptions())
+				childrens.put(t, childrens.get(fieldItem));
 		}
 
-		if (!(!field.isOptions() && !field.isFlag()))
+		if (field.isOptions()) {
+			List<Label> labels = new ArrayList<>();
+
+			for (TreeItem<String> t : fieldItem.getChildren())
+				labels.addAll(childrens.get(t));
+
 			childrens.put(fieldItem, labels);
+		}
 
 		return fieldItem;
+
 	}
 
 	private void setChildren(TreeItem<String> tree) {
 		List<Label> childs = new ArrayList<>();
 
-		for (TreeItem<String> c : tree.getChildren()) {
-			if (c.getChildren() == null)
-				childs.addAll(childrens.get(c));
-		}
+		for (TreeItem<String> c : tree.getChildren())
+			childs.addAll(childrens.get(c));
 
 		childrens.put(tree, childs);
 	}
