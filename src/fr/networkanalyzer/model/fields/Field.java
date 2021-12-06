@@ -60,4 +60,9 @@ public class Field implements IField {
 		return toString();
 	}
 
+	@Override
+	public boolean isFlags() {
+		return false;
+	}
+
 }

@@ -1,17 +1,24 @@
 package fr.networkanalyzer.model.fields;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Fields implements IField {
 
 	private String name;
-
+	private boolean isFlags;
 	private List<IField> fields;
 
 	public Fields(String name) {
+		this(name, false);
+	}
+
+	public Fields(String name, boolean isFlags) {
+		super();
 		this.name = name;
 		fields = new ArrayList<>();
+		isFlags = false;
 	}
 
 	@Override
@@ -31,34 +38,51 @@ public class Fields implements IField {
 
 	@Override
 	public String getValue() {
+
 		StringBuilder sb = new StringBuilder();
+		if (isFlags()) {
 
-		int l = 0;
-		for (IField f : fields) {
-			l += f.getLength();
-			sb.append(f.getValue());
+			int l = 0;
+			for (IField f : fields) {
+				l += f.getLength();
+				sb.append(f.getValue());
+			}
+
+			l /= 4;
+
+			int decimal = Integer.parseInt(sb.toString().replace(" ", ""), 2);
+			String hex = Integer.toString(decimal, 16);
+			l -= hex.length();
+
+			for (int i = 0; i < l; i++)
+				hex = "0" + hex;
+
+			int n = hex.length();
+			sb = new StringBuilder();
+			for (int i = 0; i < n; i += 2) {
+				sb.append(hex.charAt(i));
+				sb.append(hex.charAt(i + 1));
+
+				if (i != n - 2)
+					sb.append(" ");
+			}
+
+			return sb.toString();
 		}
+		for (IField iField : fields) {
+			String s[] = iField.getValue().split(" ");
+		
+			for (int i = 0; i < s.length; i++) {
+				if(s[i].length() == 1)
+					sb.append(s[i]);
+				else
+					sb.append(s[i]).append(" ");
+			}
+			sb.append(" ");
 
-		l /= 4;
-
-		int decimal = Integer.parseInt(sb.toString().replace(" ", ""), 2);
-		String hex = Integer.toString(decimal, 16);
-		l -= hex.length();
-
-		for (int i = 0; i < l; i++)
-			hex = "0" + hex;
-
-		int n = hex.length();
-		sb = new StringBuilder();
-		for (int i = 0; i < n; i += 2) {
-			sb.append(hex.charAt(i));
-			sb.append(hex.charAt(i + 1));
-
-			if (i != n - 2)
-				sb.append(" ");
 		}
-
 		return sb.toString();
+
 	}
 
 	@Override
@@ -105,5 +129,11 @@ public class Fields implements IField {
 	@Override
 	public String display() {
 		return name;
+	}
+
+	@Override
+	public boolean isFlags() {
+		// TODO Auto-generated method stub
+		return isFlags;
 	}
 }

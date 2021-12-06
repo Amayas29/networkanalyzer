@@ -1,6 +1,5 @@
 package fr.networkanalyzer.model.tools;
 
-import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
 
 public enum DhcpOption {
@@ -12,7 +11,7 @@ public enum DhcpOption {
 	DHCP_MSG_TYPE(53, "DHCP Msg Type", "hexa", true), DHCP_SERVER_ID(54, "DHCP Server Id", "ip", true),
 	PARAMETER_LIST(55, "Parameter List", "bytes", true), DHCP_MAX_MSG_SIZE(57, "DHCP Max Msg Size", "int", true),
 	RENEWAL_TIME(58, "Renewal Time", "time", true), REBINDING_TIME(59, "Rebinding Time", "time", true),
-	CLASS_ID(60, "Class Id", "ascii", true), CLIENT_ID(61, "Client Id", "", true), END(255, "End", "", false);
+	CLASS_ID(60, "Class Id", "ascii", true), CLIENT_ID(61, "Client Id", "", true), END(255, "End", "", false),UNKNOW(-1,"Unknow", "UNKNOW",true);
 
 	public static final String IP = "ip";
 	public static final String ASCII = "ascii";
@@ -40,32 +39,20 @@ public enum DhcpOption {
 		this.length = length;
 	}
 
-	public static DhcpOption getOptionByCode(String code) throws NetworkAnalyzerException {
+	public static DhcpOption getOptionByCode(String code)  {
 		int codeDecoded = Integer.parseInt(code, 16);
-		System.out.println("Hey " + codeDecoded + "-" + code);
+		System.out.println("Hey " + codeDecoded);
 		DhcpOption[] options = values();
 
 		for (int j = 0; j < options.length; j++)
 			if (codeDecoded == options[j].code)
 				return options[j];
 
-		throw new NetworkAnalyzerException("Unexpected value of the option");
+		return DhcpOption.UNKNOW;
 	}
 
 	public static Entry getEntryTypeDhcp(int number) {
-		if (number == 1)
-			return DISCOVER;
-
-		if (number == 2) {
-			return OFFER;
-		}
-		if (number == 3)
-			return REQUEST;
-
-		if (number == 5)
-			return ACK;
-
-		return null;
+		return TypeDhcp.getEntryByCode(number);
 	}
 
 	public int getCode() {
