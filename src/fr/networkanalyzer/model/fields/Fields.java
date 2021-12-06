@@ -94,10 +94,16 @@ public class Fields implements IField {
 			sb.append("\n");
 		}
 
-		return sb.toString();
+		String val = sb.toString();
+		return val.substring(0, val.length() - 1);
 	}
 
 	public void removeField(String field) {
 		fields.remove(getField(field));
+	}
+
+	@Override
+	public String display() {
+		return name;
 	}
 }

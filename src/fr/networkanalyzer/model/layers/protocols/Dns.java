@@ -19,8 +19,8 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 	public static final Entry OPCODE = new Entry("Opcode", 4);
 	public static final Entry AUTHORITATIVE = new Entry("Authoritative", 1);
 	public static final Entry TRUNCATED = new Entry("Truncated", 1);
-	public static final Entry RECURSION_DESIRED = new Entry("Decursion Desired", 1);
-	public static final Entry RECURSION_AVAILABLE = new Entry("Decursion available", 1);
+	public static final Entry RECURSION_DESIRED = new Entry("Recursion Desired", 1);
+	public static final Entry RECURSION_AVAILABLE = new Entry("Recursion available", 1);
 	public static final Entry Z = new Entry("Z", 1);
 	public static final Entry ANSWER_AUTHENTICATED = new Entry("Answer authenticated", 1);
 	public static final Entry NON_AUTHENTICATED_DATA = new Entry("Non authenticated data", 1);
@@ -31,10 +31,10 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 	public static final Entry ANSWER_RRS_NUMBER = new Entry("# Answer RRS", 16);
 	public static final Entry AUTHORITY_RRS_NUMBER = new Entry("# Authority RRs", 16);
 	public static final Entry ADDITIONAL_RRS_NUMBER = new Entry("# Additional RRs", 16);
-	public static final Entry QUESTIONS = new Entry("Questions", 32);
-	public static final Entry ANSWER = new Entry("Answer", 32);
-	public static final Entry AUTHORITY = new Entry("Authority", 32);
-	public static final Entry ADDITIONAL_INFO = new Entry("Additional info", 32);
+	public static final Entry QUESTIONS = new Entry("Questions", 0);
+	public static final Entry ANSWER = new Entry("Answer", 0);
+	public static final Entry AUTHORITY = new Entry("Authority", 0);
+	public static final Entry ADDITIONAL_INFO = new Entry("Additional info", 0);
 
 	@Override
 	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
@@ -58,13 +58,27 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 			flags.removeField(REPLY_CODE.getName());
 		}
 
+		fs.add(flags);
 		fs.add(getField(QUESTIONS_NUMBER.getName()));
 		fs.add(getField(ANSWER_RRS_NUMBER.getName()));
 		fs.add(getField(AUTHORITY_RRS_NUMBER.getName()));
-		fs.add(getField(QUESTIONS.getName()));
-		fs.add(getField(ANSWER.getName()));
-		fs.add(getField(AUTHORITY.getName()));
-		fs.add(getField(ADDITIONAL_INFO.getName()));
+		fs.add(getField(ADDITIONAL_RRS_NUMBER.getName()));
+		
+		IField field = getField(QUESTIONS.getName());
+		if (field != null)
+			fs.add(field);
+
+		field = getField(ANSWER.getName());
+		if (field != null)
+			fs.add(field);
+
+		field = getField(AUTHORITY.getName());
+		if (field != null)
+			fs.add(field);
+
+		field = getField(ADDITIONAL_INFO.getName());
+		if (field != null)
+			fs.add(field);
 
 		return fs;
 	}

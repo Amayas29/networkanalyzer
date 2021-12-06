@@ -399,7 +399,7 @@ public class ProcessingController {
 
 	private TreeItem<String> addTreeField(IField field, TreeItem<String> root, boolean first) {
 
-		TreeItem<String> fieldItem = new TreeItem<>(field.getName());
+		TreeItem<String> fieldItem = new TreeItem<>(field.display());
 		root.getChildren().add(fieldItem);
 
 		if (first)

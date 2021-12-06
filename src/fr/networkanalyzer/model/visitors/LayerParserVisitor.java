@@ -281,7 +281,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 //		if (pDest == pSrc && pSrc < 1024)
 //			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the Udp port fields");
 
-		switch (pDest) {
+		switch (pSrc) {
 
 		case Udp.DNS: {
 			layer = new Dns();
@@ -324,7 +324,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 	@Override
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
-		header = getHeader(708).trim();
+		header = getHeader(720).trim();
 		index = 0;
 
 		// message type------------------------------------------
@@ -439,12 +439,149 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		// TODO MAGIC COOKIE ?
 //		dhcp.addField(Dhcp.MAGIC_COOKIE.getName(), new Field(Dhcp.MAGIC_COOKIE, "63 82 53 63", "dhcp"));
+
+		try {
+			header = getHeader(line.length()).trim();
+			System.out.println("$$" + header);
+		} catch (NetworkAnalyzerException e) {
+			return;
+		}
+
+		dhcp.addField(Dhcp.OPTIONS.getName(), OptionsBuilder.buildDhcpOptions(header));
 	}
 
 	@Override
 	public void visit(Dns dns) throws NetworkAnalyzerException {
 
-		header = getHeader(3).trim();
+		header = getHeader(line.length()).trim();
+		String[] data = header.split(" ");
+		index = 0;
+
+		String identifier = parseField(Dns.IDENTIFIER);
+		incIndex(Dns.IDENTIFIER);
+
+		String fls = NetworkanalyzerTools.toBinary(NetworkanalyzerTools.toInteger(parseField(Dns.FLAGS)));
+
+		String response = fls.substring(0, 1);
+		String opcode = fls.substring(1, 5);
+		String auth = fls.substring(5, 6);
+		String trunc = fls.substring(6, 7);
+		String recDes = fls.substring(7, 8);
+		String recAva = fls.substring(8, 9);
+		String Z = fls.substring(9, 10);
+		String answ = fls.substring(10, 11);
+		String nonAuth = fls.substring(11, 12);
+		String reply = fls.substring(12);
+
+		Fields flags = new Fields(Dns.FLAGS.getName());
+
+		flags.addField(new Field(Dns.RESPONSE, response, response));
+		flags.addField(new Field(Dns.OPCODE, opcode, opcode));
+		flags.addField(new Field(Dns.AUTHORITATIVE, auth, auth));
+		flags.addField(new Field(Dns.TRUNCATED, trunc, trunc));
+		flags.addField(new Field(Dns.RECURSION_DESIRED, recDes, recDes));
+		flags.addField(new Field(Dns.RECURSION_AVAILABLE, recAva, recAva));
+		flags.addField(new Field(Dns.Z, Z, Z));
+		flags.addField(new Field(Dns.ANSWER_AUTHENTICATED, answ, answ));
+		flags.addField(new Field(Dns.NON_AUTHENTICATED_DATA, nonAuth, nonAuth));
+		flags.addField(new Field(Dns.REPLY_CODE, reply, reply));
+
+		incIndex(Dns.FLAGS);
+
+		String numberQst = parseField(Dns.QUESTIONS_NUMBER);
+		incIndex(Dns.QUESTIONS_NUMBER);
+
+		String numberAns = parseField(Dns.ANSWER_RRS_NUMBER);
+		incIndex(Dns.ANSWER_RRS_NUMBER);
+
+		String numberAuth = parseField(Dns.AUTHORITY_RRS_NUMBER);
+		incIndex(Dns.AUTHORITY_RRS_NUMBER);
+
+		String numberAdd = parseField(Dns.ADDITIONAL_RRS_NUMBER);
+		incIndex(Dns.ADDITIONAL_RRS_NUMBER);
+
+		String decodedNumberQst = NetworkanalyzerTools.toInteger(numberQst);
+		String decodedNumberAns = NetworkanalyzerTools.toInteger(numberAns);
+		String decodedNumberAuth = NetworkanalyzerTools.toInteger(numberAuth);
+		String decodedNumberAdd = NetworkanalyzerTools.toInteger(numberAdd);
+
+		int curr = 12;
+		int i = 12;
+
+		int number = Integer.parseInt(decodedNumberQst);
+		Dns.QUESTIONS.setValue(number);
+		Fields questions = new Fields(Dns.QUESTIONS.getName());
+		for (; number > 0; number--) {
+			i = curr;
+			boolean pointer = false;
+
+			System.out.println("*" + i);
+			while (isPointer(data[i])) {
+				i = Integer.parseInt(
+						NetworkanalyzerTools.toBinary(data[i].concat(data[i + 1]).replace(" ", "")).substring(2), 2);
+
+				System.out.println("µ" + i);
+			}
+
+			pointer = (i != curr);
+
+			if (pointer)
+				curr += 2;
+
+			StringBuilder sb = new StringBuilder();
+			while (!data[i].equals("00")) {
+				int len = Integer.parseInt(data[i], 16);
+
+				while (len != 0) {
+					sb.append((char) (Integer.parseInt(data[i++], 16)));
+					len--;
+
+					if (!pointer)
+						curr++;
+				}
+
+				sb.append(".");
+			}
+
+			System.out.println(sb.toString());
+		}
+
+		incIndex(Dns.QUESTIONS);
+
+		number = Integer.parseInt(decodedNumberAns);
+		Dns.ANSWER.setValue(number);
+		for (; number > 0; number--)
+			;
+
+		incIndex(Dns.ANSWER);
+
+		number = Integer.parseInt(decodedNumberAuth);
+		Dns.ANSWER_AUTHENTICATED.setValue(number);
+		for (; number > 0; number--)
+			;
+
+		incIndex(Dns.ANSWER_AUTHENTICATED);
+
+		number = Integer.parseInt(decodedNumberAdd);
+		Dns.ADDITIONAL_INFO.setValue(number);
+		for (; number > 0; number--)
+			;
+
+		incIndex(Dns.ADDITIONAL_INFO);
+
+		dns.addField(Dns.IDENTIFIER.getName(), new Field(Dns.IDENTIFIER, identifier, identifier));
+
+		dns.addField(Dns.FLAGS.getName(), flags);
+
+		dns.addField(Dns.QUESTIONS_NUMBER.getName(), new Field(Dns.QUESTIONS_NUMBER, numberQst, decodedNumberQst));
+
+		dns.addField(Dns.ANSWER_RRS_NUMBER.getName(), new Field(Dns.ANSWER_RRS_NUMBER, numberAns, decodedNumberAns));
+
+		dns.addField(Dns.AUTHORITY_RRS_NUMBER.getName(),
+				new Field(Dns.AUTHORITY_RRS_NUMBER, numberAuth, decodedNumberAuth));
+
+		dns.addField(Dns.ADDITIONAL_RRS_NUMBER.getName(),
+				new Field(Dns.ADDITIONAL_RRS_NUMBER, numberAdd, decodedNumberAdd));
 	}
 
 	@Override
@@ -491,7 +628,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	private String parseField(Entry entry) {
 
-		System.out.println(entry.getName() + " " + entry.getValue() + " : " + index);
 		int len = entry.getValue();
 		int inc = 1;
 
@@ -522,5 +658,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		currentIndex += inc;
 		index += inc;
+	}
+
+	private boolean isPointer(String b) {
+		return NetworkanalyzerTools.toBinary(b).startsWith("11");
 	}
 }

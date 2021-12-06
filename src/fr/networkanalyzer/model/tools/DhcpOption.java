@@ -20,7 +20,7 @@ public enum DhcpOption {
 	public static final String TIME = "time";
 	public static final String INT = "int";
 	public static final String BYTE = "bytes";
-	
+
 	public static final Entry REQUEST = new Entry("Request", 3);
 
 	public static final Entry ACK = new Entry("ACK", 5);
@@ -42,22 +42,25 @@ public enum DhcpOption {
 
 	public static DhcpOption getOptionByCode(String code) throws NetworkAnalyzerException {
 		int codeDecoded = Integer.parseInt(code, 16);
+		System.out.println("Hey " + codeDecoded);
 		DhcpOption[] options = values();
+
 		for (int j = 0; j < options.length; j++)
 			if (codeDecoded == options[j].code)
 				return options[j];
 
 		throw new NetworkAnalyzerException("Unexpected value of the option");
 	}
+
 	public static Entry getEntryTypeDhcp(int number) {
-		if(number == 1)
+		if (number == 1)
 			return DISCOVER;
-		if (number ==2) {
+		if (number == 2) {
 			return OFFER;
 		}
-		if(number == 3)
+		if (number == 3)
 			return REQUEST;
-		if(number  ==  5)
+		if (number == 5)
 			return ACK;
 		return null;
 	}

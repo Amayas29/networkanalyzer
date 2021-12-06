@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<ScrollPane layoutX="57.0" layoutY="33.0" prefHeight="260.0" prefWidth="1127.0">
          <content>
@@ -42,7 +42,7 @@
                      <children>
                         <FlowPane fx:id="offsetList" prefHeight="260.0" prefWidth="70.0" />
                         <Pane prefHeight="260.0" prefWidth="5.0" HBox.hgrow="ALWAYS" />
-                        <VBox fx:id="frameDisplay" alignment="CENTER" prefHeight="259.0" prefWidth="495.0" />
+                        <VBox fx:id="frameDisplay" prefHeight="259.0" prefWidth="495.0" />
                         <Pane prefHeight="260.0" prefWidth="5.0" />
                      </children>
                   </HBox>

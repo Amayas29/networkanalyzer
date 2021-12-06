@@ -1,7 +1,5 @@
 package fr.networkanalyzer.model.tools;
 
-import java.util.Iterator;
-
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.Field;

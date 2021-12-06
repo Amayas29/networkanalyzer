@@ -27,7 +27,7 @@ public class Field implements IField {
 
 	@Override
 	public String getName() {
-		return toString();
+		return name;
 	}
 
 	@Override
@@ -53,6 +53,11 @@ public class Field implements IField {
 	@Override
 	public List<IField> getChildrens() {
 		return null;
+	}
+
+	@Override
+	public String display() {
+		return toString();
 	}
 
 }
