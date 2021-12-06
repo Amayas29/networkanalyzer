@@ -61,8 +61,11 @@ public class Field implements IField {
 	}
 
 	@Override
-	public boolean isFlags() {
+	public boolean isOption() {
+		// TODO Auto-generated method stub
 		return false;
 	}
+
+	
 
 }

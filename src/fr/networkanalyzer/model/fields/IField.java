@@ -16,5 +16,5 @@ public interface IField {
 
 	public String display();
 
-	public boolean isFlags();
+	public boolean isOption();
 }

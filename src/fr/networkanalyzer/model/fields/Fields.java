@@ -3,7 +3,7 @@ package fr.networkanalyzer.model.fields;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fields implements IField {
+public  class Fields implements IField {
 
 	private String name;
 	private boolean isOption;
@@ -39,7 +39,7 @@ public class Fields implements IField {
 	public String getValue() {
 
 		StringBuilder sb = new StringBuilder();
-		if (isOption()) {
+		if (!isOption()) {
 
 			int l = 0;
 			for (IField f : fields) {
@@ -135,4 +135,7 @@ public class Fields implements IField {
 		// TODO Auto-generated method stub
 		return isOption;
 	}
+
+
+	
 }
