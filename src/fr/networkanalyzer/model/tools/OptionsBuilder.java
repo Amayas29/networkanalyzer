@@ -66,18 +66,22 @@ public class OptionsBuilder {
 
 		for (int i = 0; i < data.length;) {
 			DhcpOption dOption = DhcpOption.getOptionByCode(data[i]);
+
 			if (dOption == DhcpOption.PAD) {
-				options.addField(new Field(new Entry(dOption.getName(), 0), data[i++], "0"));
+				options.addField(new Field(new Entry(dOption.getName(), 0),
+						Integer.toBinaryString(Integer.parseInt(data[i++], 16)), "0"));
 				continue;
 			}
+
 			if (dOption == DhcpOption.END) {
-				options.addField(new Field(new Entry(dOption.getName(), 255), data[i++], "255"));
+				options.addField(new Field(new Entry(dOption.getName(), 255),
+						Integer.toBinaryString(Integer.parseInt(data[i++], 16)), "255"));
 				continue;
 			}
 
 			if (dOption.hasLength()) {
 				Fields option = new Fields(dOption.getName());
-				String name = data[i++];
+				String name = Integer.toBinaryString(Integer.parseInt(data[i++], 16));
 				String length = data[i++];
 				int l = Integer.parseInt(length, 16);
 				Field type = new Field(new Entry("Type", 0), name, dOption.getCode() + "");
@@ -87,15 +91,17 @@ public class OptionsBuilder {
 				option.addField(len);
 
 				if (dOption.getCode() == 61) {
+					String hardwareType = data[i];
+					i++;
+					option.addField(new Field(Dhcp.HARDWARE_TYPE, hardwareType, hardwareType));
+
 					String clientMac = String.format("%s %s %s %s %s %s", data[i], data[i + 1], data[i + 2],
 							data[i + 3], data[i + 4], data[i + 5]);
-					option.addField(new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(' ', ':')));
-					i += 4;
-					String clientIp = String.format("%s %s %s %s", data[i], data[i + 1], data[i + 2], data[i + 3]);
-					option.addField(new Field(Dhcp.CLIENT_IP_ADDRESS, clientIp,
-							NetworkanalyzerTools.decodeAddressIp(clientIp)));
-					options.addField(option);
 
+					option.addField(new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(' ', ':')));
+					i += 6;
+
+					options.addField(option);
 					continue;
 				}
 
@@ -106,8 +112,8 @@ public class OptionsBuilder {
 						valuesOption = new Fields(Ip.IPS_ADRESSES.getName());
 						String ips = String.format("%s %s %s %s", data[j + i], data[j + 1 + i], data[j + 2 + i],
 								data[j + 3 + i]);
-						valuesOption.addField(
-								new Field(new Entry(name, 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));
+						valuesOption.addField(new Field(new Entry(dOption.getName(), 32), ips,
+								NetworkanalyzerTools.decodeAddressIp(ips)));
 						i += 4;
 					}
 
@@ -118,26 +124,39 @@ public class OptionsBuilder {
 
 				if (dOption.getDecodetype().equals(DhcpOption.ASCII)) {
 					StringBuilder sb = new StringBuilder();
-
-					for (int j = 0; j < l; j++) {
-						sb.append(data[i + j]);
-						i++;
+					StringBuilder sby = new StringBuilder();
+					int j;
+					for (j = 0; j < l; j++) {
+						sb.append(data[i + j]).append(" ");
+						sby.append(Integer.toBinaryString(Integer.parseInt(data[i + j], 16)));
 					}
-					option.addField(
-							new Field(new Entry(name, l), sb.toString(), NetworkanalyzerTools.toAscii(sb.toString())));
+
+					i += j;
+					option.addField(new Field(new Entry(dOption.getName(), l), sby.toString(),
+							NetworkanalyzerTools.toAscii(sb.toString())));
 					options.addField(option);
 					continue;
 				}
 
 				if (dOption.getDecodetype().equals(DhcpOption.HEXA)) {
 					StringBuilder sb = new StringBuilder();
-
-					for (int j = 0; j < l; j++) {
-						sb.append(data[i + j]);
-						i++;
+					StringBuilder sby = new StringBuilder();
+					int j;
+					for (j = 0; j < l; j++) {
+						sb.append(data[i + j]).append(" ");
+						sby.append(Integer.toBinaryString(Integer.parseInt(data[i + j], 16)));
 					}
-					Entry e = DhcpOption.getEntryTypeDhcp(Integer.parseInt(sb.toString(), 16));
-					option.addField(new Field(e == null ? new Entry(name, l) : e, sb.toString(), e.getName()));
+					i += j;
+
+					Entry e;
+					try {
+						e = DhcpOption.getEntryTypeDhcp(Integer.parseInt(sb.toString(), 16));
+					} catch (Exception x) {
+						e = new Entry(dOption.getName(), l);
+					}
+
+					option.addField(
+							new Field(e, sby.toString(), e.getName()));
 					options.addField(option);
 
 					continue;
@@ -147,21 +166,28 @@ public class OptionsBuilder {
 				if (dOption.getDecodetype().equals(DhcpOption.INT)) {
 					StringBuilder sb = new StringBuilder();
 
-					for (int j = 0; j < l; j++) {
+					int j = 0;
+					for (; j < l; j++) {
 						sb.append(data[i + j]);
-						i++;
+
 					}
-					option.addField(
-							new Field(new Entry(name, l), sb.toString(), Integer.parseInt(sb.toString(), 16) + ""));
+
+					i += j;
+
+					option.addField(new Field(new Entry(dOption.getName(), l),
+							Integer.toBinaryString(Integer.parseInt(sb.toString(), 16)),
+							Integer.parseInt(sb.toString(), 16) + ""));
 					options.addField(option);
 					continue;
 				}
 				if (dOption.getDecodetype().equals(DhcpOption.BYTE)) {
 					int j;
 					for (j = 0; j < l; j++) {
-						option.addField(
-								new Field(new Entry(name, 8), data[i + j], Integer.parseInt(data[i + j], 16) + ""));
+						option.addField(new Field(new Entry(dOption.getName(), 8),
+								Integer.toBinaryString(Integer.parseInt(data[i + j], 16)),
+								Integer.parseInt(data[i + j], 16) + ""));
 					}
+
 					i += j;
 
 					options.addField(option);
@@ -171,18 +197,21 @@ public class OptionsBuilder {
 				if (dOption.getDecodetype().equals(DhcpOption.TIME)) {
 					StringBuilder sb = new StringBuilder();
 
-					for (int j = 0; j < l; j++) {
+					int j = 0;
+					for (; j < l; j++)
 						sb.append(data[i + j]);
-						i++;
-					}
+
+					i += j;
+
 					int sec = Integer.parseInt(sb.toString(), 16);
 					int min = sec / 60;
 					sec %= 60;
 					int heure = min / 60;
 					min %= 60;
 
-					option.addField(
-							new Field(new Entry(name, l), sb.toString(), heure + " h " + min + " m " + sec + " s"));
+					option.addField(new Field(new Entry(dOption.getName(), l),
+							Integer.toBinaryString(Integer.parseInt(sb.toString(), 16)),
+							heure + " h " + min + " m " + sec + " s"));
 					options.addField(option);
 					continue;
 

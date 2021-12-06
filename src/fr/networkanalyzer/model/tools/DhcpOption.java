@@ -42,7 +42,7 @@ public enum DhcpOption {
 
 	public static DhcpOption getOptionByCode(String code) throws NetworkAnalyzerException {
 		int codeDecoded = Integer.parseInt(code, 16);
-		System.out.println("Hey " + codeDecoded);
+		System.out.println("Hey " + codeDecoded + "-" + code);
 		DhcpOption[] options = values();
 
 		for (int j = 0; j < options.length; j++)
@@ -55,13 +55,16 @@ public enum DhcpOption {
 	public static Entry getEntryTypeDhcp(int number) {
 		if (number == 1)
 			return DISCOVER;
+
 		if (number == 2) {
 			return OFFER;
 		}
 		if (number == 3)
 			return REQUEST;
+
 		if (number == 5)
 			return ACK;
+
 		return null;
 	}
 
