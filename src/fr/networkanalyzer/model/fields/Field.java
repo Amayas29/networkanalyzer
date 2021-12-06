@@ -9,6 +9,7 @@ public class Field implements IField {
 	private String valueDecoded;
 	private String content;
 	private int length;
+	private boolean isFlag;
 
 	public Field(Entry entry, String value, String valueDecoded) {
 		this.name = entry.getName();
@@ -16,13 +17,17 @@ public class Field implements IField {
 		this.valueDecoded = valueDecoded;
 		this.length = entry.getValue();
 		content = value;
+		isFlag = false;
 	}
 
-	public Field(Entry entry, String value, String valueDecoded, boolean hasContent) {
+	public Field(Entry entry, String value, String valueDecoded, boolean isFlag) {
 		this(entry, value, valueDecoded);
+		this.isFlag = isFlag;
+	}
 
-		if (!hasContent)
-			content = "";
+	public Field(Entry entry, String value, String valueDecoded, String content) {
+		this(entry, value, valueDecoded);
+		this.content = content;
 	}
 
 	@Override
@@ -61,11 +66,13 @@ public class Field implements IField {
 	}
 
 	@Override
-	public boolean isOption() {
-		// TODO Auto-generated method stub
+	public boolean isOptions() {
 		return false;
 	}
 
-	
+	@Override
+	public boolean isFlag() {
+		return isFlag;
+	}
 
 }

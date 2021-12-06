@@ -12,7 +12,7 @@ public class OptionsBuilder {
 
 	public static IField buildIpOptions(String header) throws NetworkAnalyzerException {
 
-		Fields options = new Fields(Ip.OPTIONS.getName());
+		Fields options = new Fields(Ip.OPTIONS.getName(), true);
 
 		String data[] = header.trim().split(" ");
 		for (int i = 0; i < data.length;) {
@@ -29,7 +29,7 @@ public class OptionsBuilder {
 				continue;
 			}
 
-			Fields option = new Fields(String.valueOf(typeDecoded));
+			Fields option = new Fields(String.valueOf(typeDecoded), true);
 			option.addField(new Field(typeEnty, type, String.valueOf(typeDecoded)));
 
 			String len = data[i++];
@@ -43,14 +43,14 @@ public class OptionsBuilder {
 			}
 
 			lenDecoded -= 2;
-			Fields fieldsAdresses = null;
+			Fields fieldsAdresses = new Fields(Ip.IPS_ADRESSES.getName(), true);
 			for (int j = 3; j < lenDecoded; j += 4) {
-				fieldsAdresses = new Fields(Ip.IPS_ADRESSES.getName());
 				String ips = String.format("%s %s %s %s", data[j], data[j + 1], data[j + 2], data[j + 3]);
 				fieldsAdresses
 						.addField(new Field(new Entry("address", 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));
 				i += 4;
 			}
+
 			option.addField(fieldsAdresses);
 			options.addField(option);
 
@@ -60,7 +60,7 @@ public class OptionsBuilder {
 	}
 
 	public static IField buildDhcpOptions(String header) throws NetworkAnalyzerException {
-		Fields options = new Fields(Dhcp.OPTIONS.getName());
+		Fields options = new Fields(Dhcp.OPTIONS.getName(), true);
 
 		String data[] = header.split(" ");
 
@@ -68,20 +68,18 @@ public class OptionsBuilder {
 			DhcpOption dOption = DhcpOption.getOptionByCode(data[i]);
 
 			if (dOption == DhcpOption.PAD) {
-				options.addField(new Field(new Entry(dOption.getName(), 0),
-						Integer.toBinaryString(Integer.parseInt(data[i++], 16)), "0"));
+				options.addField(new Field(new Entry(dOption.getName(), 0), data[i++], "0"));
 				continue;
 			}
 
 			if (dOption == DhcpOption.END) {
-				options.addField(new Field(new Entry(dOption.getName(), 255),
-						Integer.toBinaryString(Integer.parseInt(data[i++], 16)), "255"));
+				options.addField(new Field(new Entry(dOption.getName(), 255), data[i++], "255"));
 				continue;
 			}
 
 			if (dOption.hasLength()) {
-				Fields option = new Fields(dOption.getName());
-				String name = Integer.toBinaryString(Integer.parseInt(data[i++], 16));
+				Fields option = new Fields(dOption.getName(), true);
+				String name = data[i++];
 				String length = data[i++];
 				int l = Integer.parseInt(length, 16);
 				Field type = new Field(new Entry("Type", 0), name, dOption.getCode() + "");
@@ -107,9 +105,9 @@ public class OptionsBuilder {
 
 				if (dOption.getDecodetype().equals(DhcpOption.IP)) {
 					Fields valuesOption;
-					valuesOption = new Fields("IP ADDRESSES");
+					valuesOption = new Fields(Ip.IPS_ADRESSES.getName(), true);
+
 					for (int j = 0; j < l; j += 4) {
-						valuesOption = new Fields(Ip.IPS_ADRESSES.getName());
 						String ips = String.format("%s %s %s %s", data[j + i], data[j + 1 + i], data[j + 2 + i],
 								data[j + 3 + i]);
 						valuesOption.addField(new Field(new Entry(dOption.getName(), 32), ips,
@@ -132,7 +130,7 @@ public class OptionsBuilder {
 					}
 
 					i += j;
-					option.addField(new Field(new Entry(dOption.getName(), l), sby.toString(),
+					option.addField(new Field(new Entry(dOption.getName(), l), sb.toString(),
 							NetworkanalyzerTools.toAscii(sb.toString())));
 					options.addField(option);
 					continue;
@@ -155,8 +153,7 @@ public class OptionsBuilder {
 						e = new Entry(dOption.getName(), l);
 					}
 
-					option.addField(
-							new Field(e, sby.toString(), e.getName()));
+					option.addField(new Field(e, sb.toString(), e.getName()));
 					options.addField(option);
 
 					continue;
@@ -168,14 +165,13 @@ public class OptionsBuilder {
 
 					int j = 0;
 					for (; j < l; j++) {
-						sb.append(data[i + j]);
+						sb.append(data[i + j]).append(" ");
 
 					}
 
 					i += j;
 
-					option.addField(new Field(new Entry(dOption.getName(), l),
-							Integer.toBinaryString(Integer.parseInt(sb.toString(), 16)),
+					option.addField(new Field(new Entry(dOption.getName(), l), sb.toString(),
 							Integer.parseInt(sb.toString(), 16) + ""));
 					options.addField(option);
 					continue;
@@ -183,8 +179,7 @@ public class OptionsBuilder {
 				if (dOption.getDecodetype().equals(DhcpOption.BYTE)) {
 					int j;
 					for (j = 0; j < l; j++) {
-						option.addField(new Field(new Entry(dOption.getName(), 8),
-								Integer.toBinaryString(Integer.parseInt(data[i + j], 16)),
+						option.addField(new Field(new Entry(dOption.getName(), 8), data[i + j],
 								Integer.parseInt(data[i + j], 16) + ""));
 					}
 
@@ -199,18 +194,17 @@ public class OptionsBuilder {
 
 					int j = 0;
 					for (; j < l; j++)
-						sb.append(data[i + j]);
+						sb.append(data[i + j]).append(" ");
 
 					i += j;
 
-					int sec = Integer.parseInt(sb.toString(), 16);
+					int sec = Integer.parseInt(sb.toString().replace(" ", ""), 16);
 					int min = sec / 60;
 					sec %= 60;
 					int heure = min / 60;
 					min %= 60;
 
-					option.addField(new Field(new Entry(dOption.getName(), l),
-							Integer.toBinaryString(Integer.parseInt(sb.toString(), 16)),
+					option.addField(new Field(new Entry(dOption.getName(), l), sb.toString(),
 							heure + " h " + min + " m " + sec + " s"));
 					options.addField(option);
 					continue;

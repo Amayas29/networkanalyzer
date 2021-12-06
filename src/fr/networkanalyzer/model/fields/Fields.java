@@ -3,7 +3,7 @@ package fr.networkanalyzer.model.fields;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class Fields implements IField {
+public class Fields implements IField {
 
 	private String name;
 	private boolean isOption;
@@ -14,10 +14,9 @@ public  class Fields implements IField {
 	}
 
 	public Fields(String name, boolean isOption) {
-		super();
 		this.name = name;
 		fields = new ArrayList<>();
-		isOption = false;
+		this.isOption = isOption;
 	}
 
 	@Override
@@ -39,7 +38,8 @@ public  class Fields implements IField {
 	public String getValue() {
 
 		StringBuilder sb = new StringBuilder();
-		if (!isOption()) {
+
+		if (!isOptions()) {
 
 			int l = 0;
 			for (IField f : fields) {
@@ -68,11 +68,12 @@ public  class Fields implements IField {
 
 			return sb.toString();
 		}
+
 		for (IField iField : fields) {
 			String s[] = iField.getValue().split(" ");
-		
+
 			for (int i = 0; i < s.length; i++) {
-				if(s[i].length() == 1)
+				if (s[i].length() == 1)
 					sb.append(s[i]);
 				else
 					sb.append(s[i]).append(" ");
@@ -80,6 +81,7 @@ public  class Fields implements IField {
 			sb.append(" ");
 
 		}
+
 		return sb.toString();
 
 	}
@@ -131,11 +133,13 @@ public  class Fields implements IField {
 	}
 
 	@Override
-	public boolean isOption() {
-		// TODO Auto-generated method stub
+	public boolean isOptions() {
 		return isOption;
 	}
 
+	@Override
+	public boolean isFlag() {
+		return false;
+	}
 
-	
 }

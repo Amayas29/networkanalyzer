@@ -402,17 +402,26 @@ public class ProcessingController {
 		TreeItem<String> fieldItem = new TreeItem<>(field.display());
 		root.getChildren().add(fieldItem);
 
-		if (field.isFlags())
+		System.out.println(field.getName() + " " + field.isOptions() + " " + field.isFlag());
+		if (!field.isOptions() && !field.isFlag()) {
+			System.out.println("Enter");
 			addLabel(field, fieldItem);
+		}
+
+		System.out.println("");
 
 		if (field.getChildrens() == null)
 			return fieldItem;
 
-		for (IField f : field.getChildrens())
-			childrens.put(addTreeField(f, fieldItem), childrens.get(fieldItem));
+		List<Label> labels = new ArrayList<>();
+		for (IField f : field.getChildrens()) {
+			List<Label> l = childrens.get(fieldItem);
+			labels.addAll(l);
+			childrens.put(addTreeField(f, fieldItem), l);
+		}
 
-		if (!field.isFlags())
-			setChildren(fieldItem);
+		if (!(!field.isOptions() && !field.isFlag()))
+			childrens.put(fieldItem, labels);
 
 		return fieldItem;
 	}
@@ -420,8 +429,10 @@ public class ProcessingController {
 	private void setChildren(TreeItem<String> tree) {
 		List<Label> childs = new ArrayList<>();
 
-		for (TreeItem<String> c : tree.getChildren())
-			childs.addAll(childrens.get(c));
+		for (TreeItem<String> c : tree.getChildren()) {
+			if (c.getChildren() == null)
+				childs.addAll(childrens.get(c));
+		}
 
 		childrens.put(tree, childs);
 	}

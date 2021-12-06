@@ -1,7 +1,6 @@
 package fr.networkanalyzer.model.layers.protocols;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
