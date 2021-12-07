@@ -28,5 +28,21 @@ public class Analyzer {
 	public List<String> getErrors() {
 		return errors;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("correct frames :\n");
+		for (Frame f : frames) {
+			sb.append(f.toString()).append("\n");
+		}
+		
+		sb.append(" Errors :\n");
+		
+		for (String string : errors) {
+			sb.append(string).append("\n");
+		}
+		return sb.toString();
+	}
 
 }
