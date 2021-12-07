@@ -2,6 +2,7 @@ package fr.networkanalyzer.model.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
@@ -419,7 +420,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.getName(),
 				new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING, padding, NetworkanalyzerTools.toInteger(padding), ""));
 
-
 		String serverHostName = parseField(Dhcp.SERVER_HOST_NAME);
 		incIndex(Dhcp.SERVER_HOST_NAME);
 
@@ -460,22 +460,38 @@ public class LayerParserVisitor implements ILayerVisitor {
 		return i;
 	}
 
-	private String getDnsName(String data[], int i) {
-		StringBuilder sb = new StringBuilder();
 
-		while (!data[i].equals("00")) {
-			sb.append(data[i]).append(" ");
-			int len = Integer.parseInt(data[i++], 16);
+	private int getDnsName(String data[], int curr, Fields q, StringBuilder sb, boolean first) {
 
-			while (len != 0) {
-				sb.append(data[i++]).append(" ");
+		if (data[curr].equals("00"))
+			return curr ;
+		
+		int i = findName(data, curr);
+		int j = i;
+		sb.append(data[i]).append(" ");
+		int len = Integer.parseInt(data[i++], 16);
 
-				len--;
-
-			}
+		while (len != 0) {
+			sb.append(data[i++]).append(" ");
+			len--;
 
 		}
-		return sb.toString();
+		
+		getDnsName(data, i, q, sb, false);
+
+		if (first) {
+			String qName = sb.toString().trim();
+			String qNameDecoded = getDnsNameDecoded(qName);
+
+			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
+			q.addField(qN);
+		}
+		if(j != curr) {
+			return curr + 2;
+		}else {
+			return curr + sb.toString().trim().split(" ").length +1;
+		}
+		
 	}
 
 	public String getDnsNameDecoded(String name) {
@@ -498,99 +514,83 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		return sb.toString().substring(0, sb.length() - 1);
 	}
-	private int parseDnsNames(int number,String data[],int curr,Fields answers) {
+
+	private int parseDnsNames(int number, String data[], int curr, Fields answers, boolean isQuestions) {
 		int i = 0;
-		boolean pointer = false;
 		for (int j = 0; j < number; j++) {
-			i = curr;
-			pointer = false;
-
+			StringBuilder sb = new StringBuilder();
 			
-			i = findName(data, i);
-
-			pointer = i != curr;
-			if (pointer)
-				curr += 2;
-
-			String qName = getDnsName(data, i).trim();
-
-			if (!pointer)
-				curr += qName.split(" ").length + 1;
-
-			String qNameDecoded = getDnsNameDecoded(qName);
-
+			curr = getDnsName(data, curr, answers, sb, true);
+			
 			String qType = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
 
 			String qClass = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
+			
 
-			String ttl = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2], data[curr + 3]);
-			curr += 4;
-
-			String rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
-			curr += 2;
-			int numberData = Integer.parseInt(NetworkanalyzerTools.toInteger(rdataLength));
-
-			Fields answer = new Fields(String.format("%s %d", "Answers ", j), true);
-
-			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
 			Field qT = new Field(new Entry("QTYPE", 16), qType, qType);
 			Field qC = new Field(new Entry("QCLASS", 16), qClass, "0x" + qClass.replace(" ", ""));
-			Field qTtl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
-
-			Field qRdata = new Field(new Entry("RDATA LENGTH", 16), rdataLength, numberData + "");
-
-			answer.addField(qN);
-			answer.addField(qT);
-			answer.addField(qC);
-			answer.addField(qTtl);
-			answer.addField(qRdata);
-
-			String decQType = "0x" + qType.replace(" ", "").toLowerCase();
-			String ipAddress;
-			Field qIp;
-			System.out.println(decQType);
-			if (decQType.equals("0x0001")) {
-				ipAddress = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2], data[curr + 3]);
+			answers.addField(qT);
+			answers.addField(qC);
+			int numberData = 0;
+			if (!isQuestions) {
+				String ttl = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2], data[curr + 3]);
 				curr += 4;
-				qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress,
-						NetworkanalyzerTools.decodeAddressIp(ipAddress));
-				answer.addField(qIp);
-			} else if (decQType.equals("0x001c")) {
-				ipAddress = String.format("%s %s %s %s %s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
-						data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6], data[curr + 7]);
-				String decIp = String.format("%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s", data[curr], data[curr + 1],
-						data[curr + 2], data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6], data[curr + 7]);
-				curr += 6;
-				qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress, decIp);
-				answer.addField(qIp);
-			} else {
-				Fields dataRf = new Fields("DATA R");
-				for (int k = 0; k < numberData; k++) {
-					i = curr;
-					pointer = false;
 
-				
-					i = findName(data, i);
-
-					pointer = i != curr;
-					qName = getDnsName(data, i).trim();
-
-					if (!pointer)
-						curr += qName.split(" ").length + 1;
-					qNameDecoded = getDnsNameDecoded(qName);
-
-					Field rdata = new Field(new Entry("RDATA", qName.replace(" ", "").length() * 8), qName,
-							qNameDecoded);
-
-					dataRf.addField(rdata);
-
-				}
-				answer.addField(dataRf);
+				String rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
+				curr += 2;
+			
+				Field qTtl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
+				numberData = Integer.parseInt(NetworkanalyzerTools.toInteger(rdataLength));
+				Field qRdata = new Field(new Entry("RDATA LENGTH", 16), rdataLength, numberData + "");
+				answers.addField(qTtl);
+				answers.addField(qRdata);
 			}
 
-			answers.addField(answer);
+
+			
+			
+			Fields answer = new Fields(String.format("%s %d", "Answers ", j), true);
+			if (!isQuestions) {
+
+				String decQType = "0x" + qType.replace(" ", "").toLowerCase();
+				String ipAddress;
+				Field qIp;
+			
+				if (decQType.equals("0x0001")) {
+					ipAddress = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
+							data[curr + 3]);
+					curr += 4;
+					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress,
+							NetworkanalyzerTools.decodeAddressIp(ipAddress));
+					answer.addField(qIp);
+				} else if (decQType.equals("0x001c")) {
+					ipAddress = String.format("%s %s %s %s %s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
+							data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6], data[curr + 7]);
+					String decIp = String.format("%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s", data[curr], data[curr + 1],
+							data[curr + 2], data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6],
+							data[curr + 7]);
+					curr += 6;
+					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress, decIp);
+					answer.addField(qIp);
+				} else {
+					Fields dataRf = new Fields("DATA R");
+					for (int k = 0; k < numberData; k++) {
+						i = curr;
+						
+
+						i = findName(data, i);
+
+						sb = new StringBuilder();
+						curr = getDnsName(data, curr, dataRf, sb, true);
+
+					}
+					answer.addField(dataRf);
+				}
+
+				answers.addField(answer);
+			}
 		}
 		return curr;
 	}
@@ -600,7 +600,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		header = getHeader(line.length()).trim();
 		String[] data = header.split(" ");
-		Fields dhcps = new Fields("DHCP");
 		index = 0;
 
 		String identifier = parseField(Dns.IDENTIFIER);
@@ -654,76 +653,30 @@ public class LayerParserVisitor implements ILayerVisitor {
 //        if(1 == 1)
 //        	return;
 		int curr = 12;
-		int i = 12;
 
 		int number = Integer.parseInt(decodedNumberQst);
 		Dns.QUESTIONS.setValue(number);
-
 		Fields questions = new Fields(Dns.QUESTIONS.getName(), true);
-		boolean pointer;
-
-		for (int j = 0; j < number; j++) {
-			i = curr;
-			pointer = false;
-
-			i = findName(data, i);
-
-			pointer = i != curr;
-			if (pointer)
-				curr += 2;
-
-			String qName = getDnsName(data, i).trim();
-
-			if (!pointer)
-				curr += qName.split(" ").length + 1;
-
-			String qNameDecoded = getDnsNameDecoded(qName);
-
-			System.out.println("curr =" + curr + " " + qName.length() + "\n*" + qName + "*");
-
-			String qType = String.format("%s %s", data[curr], data[curr + 1]);
-			curr += 2;
-
-			String qClass = String.format("%s %s", data[curr], data[curr + 1]);
-			curr += 2;
-
-			Fields question = new Fields(String.format("%s %d", "Question ", j), true);
-
-			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
-			Field qT = new Field(new Entry("QTYPE", 16), qType, "");
-			Field qC = new Field(new Entry("QCLASS", 16), qClass, "0x" + qClass.replace(" ", ""));
-
-			question.addField(qN);
-			question.addField(qT);
-			question.addField(qC);
-
-			questions.addField(question);
-
-		}
-
+		curr = parseDnsNames(number, data, curr, questions, true);
 		incIndex(Dns.QUESTIONS);
-
 		
-
 		number = Integer.parseInt(decodedNumberAns);
 		Dns.ANSWER.setValue(number);
 		Fields answers = new Fields(Dns.ANSWER.getName(), true);
-		curr = parseDnsNames(number, data, curr, answers);
+		curr = parseDnsNames(number, data, curr, answers, false);
 		incIndex(Dns.ANSWER);
-		
-	
+
 		number = Integer.parseInt(decodedNumberAuth);
 		Dns.AUTHORITY.setValue(number);
 		Fields authentifications = new Fields(Dns.AUTHORITY.getName(), true);
-		curr = parseDnsNames(number, data, curr, authentifications);
-		
+		curr = parseDnsNames(number, data, curr, authentifications, false);
 		incIndex(Dns.AUTHORITY);
 
 		number = Integer.parseInt(decodedNumberAdd);
 		Dns.ADDITIONAL_INFO.setValue(number);
 
 		Fields addInfo = new Fields(Dns.ADDITIONAL_INFO.getName(), true);
-		curr = parseDnsNames(number, data, curr, addInfo);
+		curr = parseDnsNames(number, data, curr, addInfo, false);
 
 		incIndex(Dns.ADDITIONAL_INFO);
 
@@ -744,7 +697,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dns.addField(Dns.ANSWER.getName(), answers);
 		dns.addField(Dns.AUTHORITY.getName(), authentifications);
 		dns.addField(Dns.ADDITIONAL_INFO.getName(), addInfo);
-		
+
 	}
 
 	@Override
