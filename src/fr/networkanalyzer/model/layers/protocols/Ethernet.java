@@ -16,9 +16,9 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	public static final String ARP = "08 06";
 	public static final String IP = "08 00";
 
-	public static final Entry DEST_ADDRESS = new Entry("Destination Address", 48);
-	public static final Entry SRC_ADDRESS = new Entry("Source Address", 48);
-	public static final Entry TYPE = new Entry("Type", 16);
+	public static final Entry<String, Integer> DEST_ADDRESS = new Entry<>("Destination Address", 48);
+	public static final Entry<String, Integer> SRC_ADDRESS = new Entry<>("Source Address", 48);
+	public static final Entry<String, Integer> TYPE = new Entry<>("Type", 16);
 
 	private ILayerNetwork included;
 
@@ -45,9 +45,9 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(DEST_ADDRESS.getName()));
-		fs.add(getField(SRC_ADDRESS.getName()));
-		fs.add(getField(TYPE.getName()));
+		fs.add(getField(DEST_ADDRESS.getKey()));
+		fs.add(getField(SRC_ADDRESS.getKey()));
+		fs.add(getField(TYPE.getKey()));
 		return fs;
 	}
 

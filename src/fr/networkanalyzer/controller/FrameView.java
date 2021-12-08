@@ -20,8 +20,8 @@ public class FrameView {
 		this.frame = frame;
 
 		no = new SimpleIntegerProperty(frame.getId());
-		src = new SimpleStringProperty(frame.getFieldNetwork(Ip.SRC_ADDRESS.getName()).getValueDecoded());
-		dest = new SimpleStringProperty(frame.getFieldNetwork(Ip.DEST_ADDRESS.getName()).getValueDecoded());
+		src = new SimpleStringProperty(frame.getFieldNetwork(Ip.SRC_ADDRESS.getKey()).getValueDecoded());
+		dest = new SimpleStringProperty(frame.getFieldNetwork(Ip.DEST_ADDRESS.getKey()).getValueDecoded());
 		protocol = new SimpleStringProperty(frame.getEncapsulatedProtocol());
 		lenght = new SimpleIntegerProperty(frame.getTotalLength());
 	}

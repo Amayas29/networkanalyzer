@@ -42,7 +42,7 @@ public enum DhcpOption {
 		return UNKNOW;
 	}
 
-	public static Entry getEntryTypeDhcp(int number) {
+	public static Entry<String, Integer> getEntryTypeDhcp(int number) {
 		return TypeDhcp.getEntryByCode(number);
 	}
 

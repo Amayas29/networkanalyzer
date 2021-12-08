@@ -1,23 +1,24 @@
 package fr.networkanalyzer.model.fields;
 
-public class Entry {
+public class Entry<k, v> {
 
-	private final String name;
-	private int value;
-	
+	private final k key;
+	private v value;
 
-	public Entry(String name, int length) {
-		this.name = name;
-		value = length;	
+	public Entry(k key, v length) {
+		this.key = key;
+		value = length;
 	}
-	public int getValue() {
+
+	public v getValue() {
 		return value;
 	}
-	
-	public void setValue(int value) {
+
+	public void setValue(v value) {
 		this.value = value;
 	}
-	public String getName() {
-		return name;
+
+	public k getKey() {
+		return key;
 	}
 }

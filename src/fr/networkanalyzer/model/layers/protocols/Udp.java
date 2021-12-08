@@ -17,10 +17,10 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	public static final int DHCP_1 = 67;
 	public static final int DHCP_2 = 68;
 
-	public static final Entry SRC_PORT = new Entry("Source Port", 16);
-	public static final Entry DEST_PORT = new Entry("Destination Port", 16);
-	public static final Entry LENGTH = new Entry("Length", 16);
-	public static final Entry CHECKSUM = new Entry("Checksum", 16);
+	public static final Entry<String, Integer> SRC_PORT = new Entry<>("Source Port", 16);
+	public static final Entry<String, Integer> DEST_PORT = new Entry<>("Destination Port", 16);
+	public static final Entry<String, Integer> LENGTH = new Entry<>("Length", 16);
+	public static final Entry<String, Integer> CHECKSUM = new Entry<>("Checksum", 16);
 
 	private ILayerApplication included;
 
@@ -42,10 +42,10 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	@Override
 	public List<IField> getFields() {
 		List<IField> fs = new ArrayList<>();
-		fs.add(getField(SRC_PORT.getName()));
-		fs.add(getField(DEST_PORT.getName()));
-		fs.add(getField(LENGTH.getName()));
-		fs.add(getField(CHECKSUM.getName()));
+		fs.add(getField(SRC_PORT.getKey()));
+		fs.add(getField(DEST_PORT.getKey()));
+		fs.add(getField(LENGTH.getKey()));
+		fs.add(getField(CHECKSUM.getKey()));
 		return fs;
 	}
 

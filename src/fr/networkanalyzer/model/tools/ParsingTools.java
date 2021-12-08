@@ -25,24 +25,20 @@ public class ParsingTools {
 			String[] data;
 			String oldOffset = "0";
 			int index = 0;
-			int inc = 0;
 			int lengthLine = 0;
 			int indexLine = 0;
 
 			while ((line = bufferedReader.readLine()) != null) {
 
 				data = line.split(" ");
+				indexLine++;
 
-				if (data.length == 0) {
-					indexLine++;
+				if (data.length == 0)
 					continue;
-				}
 
 				if (checkOffset(data[0], "0", 0)) {
-					if (sb.length() != 0) {
+					if (sb.length() != 0)
 						bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
-						inc++;
-					}
 
 					lengthLine = 0;
 					oldOffset = "0";
@@ -50,14 +46,12 @@ public class ParsingTools {
 					indexs.setLength(0);
 				}
 
-				if (!checkOffset(oldOffset, data[0], lengthLine)) {
+				if (!checkOffset(oldOffset, data[0], lengthLine))
 					continue;
-				}
-				
-				oldOffset = data[0];
-				index += lengthLine;
 
-				indexs.append(addPattern(indexLine, index * 2 + index + inc).concat(" "));
+				oldOffset = data[0];
+				indexs.append(addPattern(indexLine, index * 2 + index).concat(" "));
+
 				lengthLine = 0;
 
 				for (int i = 1; i < data.length; i++) {
@@ -70,16 +64,13 @@ public class ParsingTools {
 
 					sb.append(data[i].concat(" "));
 					lengthLine++;
+					index++;
 				}
-
-				indexLine++;
 			}
 
-			if (sb.length() != 0) {
+			if (sb.length() != 0)
 				bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
-				inc++;
-				;
-			}
+
 		} catch (
 
 		IOException e) {

@@ -11,8 +11,8 @@ public class Field implements IField {
 	private int length;
 	private boolean isFlag;
 
-	public Field(Entry entry, String value, String valueDecoded) {
-		this.name = entry.getName();
+	public Field(Entry<String, Integer> entry, String value, String valueDecoded) {
+		this.name = entry.getKey();
 		this.value = value;
 		this.valueDecoded = valueDecoded;
 		this.length = entry.getValue();
@@ -20,12 +20,12 @@ public class Field implements IField {
 		isFlag = false;
 	}
 
-	public Field(Entry entry, String value, String valueDecoded, boolean isFlag) {
+	public Field(Entry<String, Integer> entry, String value, String valueDecoded, boolean isFlag) {
 		this(entry, value, valueDecoded);
 		this.isFlag = isFlag;
 	}
 
-	public Field(Entry entry, String value, String valueDecoded, String content) {
+	public Field(Entry<String, Integer> entry, String value, String valueDecoded, String content) {
 		this(entry, value, valueDecoded);
 		this.content = content;
 	}
