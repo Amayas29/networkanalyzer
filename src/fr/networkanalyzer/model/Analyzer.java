@@ -28,7 +28,7 @@ public class Analyzer {
 	public List<String> getErrors() {
 		return errors;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -36,12 +36,15 @@ public class Analyzer {
 		for (Frame f : frames) {
 			sb.append(f.toString()).append("\n");
 		}
-		
+
 		sb.append(" Errors :\n");
-		
-		for (String string : errors) {
+
+		for (String string : errors)
 			sb.append(string).append("\n");
-		}
+
+		if (errors.isEmpty())
+			sb.append("\t\tEmpty");
+
 		return sb.toString();
 	}
 
