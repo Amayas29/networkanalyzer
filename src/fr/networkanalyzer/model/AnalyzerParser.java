@@ -48,7 +48,8 @@ public class AnalyzerParser {
 				try {
 					ethernet.accept(parser);
 				} catch (NetworkAnalyzerException e) {
-					analyzer.addError(e.getMessage());
+					Frame f = new Frame();
+					analyzer.addError(String.format("Frame %d : %s", f.getId(), e.getMessage()));
 					System.out.println(e.getMessage());
 					continue;
 				}
@@ -61,7 +62,7 @@ public class AnalyzerParser {
 		} catch (IOException e) {
 			throw new NetworkAnalyzerException(e.getMessage());
 		} finally {
-			file.delete();
+//			file.delete();
 		}
 
 		return analyzer;

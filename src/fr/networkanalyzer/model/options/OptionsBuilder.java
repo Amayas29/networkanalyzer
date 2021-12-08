@@ -22,17 +22,17 @@ public class OptionsBuilder {
 			int typeDecoded = Integer.parseInt(type, 16);
 
 			Entry typeEnty = IpOptions.getEntryByCode(typeDecoded);
-
+			Entry t = new Entry("Option "+ typeEnty.getName(), 8);
 			if (typeDecoded == 68)
 				continue;
 
 			if (typeDecoded == 1 || typeDecoded == 0) {
-				options.addField(new Field(typeEnty, type, String.valueOf(typeDecoded)));
+				options.addField(new Field(t, type, String.valueOf(typeDecoded)));
 				continue;
 			}
 
-			Fields option = new Fields(String.valueOf(typeDecoded), true);
-			option.addField(new Field(typeEnty, type, String.valueOf(typeDecoded)));
+			Fields option = new Fields(String.format("%s %d",typeEnty.getName(),typeDecoded), true);
+			option.addField(new Field(new Entry("Type", 8), type, String.valueOf(typeDecoded)));
 
 			String len = data[i++];
 			int lenDecoded = Integer.parseInt(len, 16);
@@ -40,17 +40,19 @@ public class OptionsBuilder {
 
 			if (typeDecoded == 7) {
 				String ptr = data[i++];
-				option.addField(new Field(typeEnty, ptr, String.valueOf(Integer.parseInt(ptr, 16))));
+				option.addField(new Field(new Entry("Pointer",8), ptr, String.valueOf(Integer.parseInt(ptr, 16))));
 				lenDecoded -= 1;
 			}
 
 			lenDecoded -= 2;
 			Fields fieldsAdresses = new Fields("Address", true);
-			for (int j = 3; j < lenDecoded; j += 4) {
+			
+			for (int j = 3,k = 1; j < lenDecoded; j += 4,k+=1) {
 				String ips = String.format("%s %s %s %s", data[j], data[j + 1], data[j + 2], data[j + 3]);
 				fieldsAdresses
-						.addField(new Field(new Entry("address", 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));
+						.addField(new Field(new Entry("address "+ k, 32), ips, NetworkanalyzerTools.decodeAddressIp(ips)));
 				i += 4;
+				
 			}
 
 			option.addField(fieldsAdresses);
@@ -70,12 +72,12 @@ public class OptionsBuilder {
 			DhcpOption dOption = DhcpOption.getOptionByCode(data[i]);
 
 			if (dOption == DhcpOption.PAD) {
-				options.addField(new Field(new Entry(dOption.getName(), 0), data[i++], "0"));
+				options.addField(new Field(new Entry(dOption.getName(), 16), data[i++], "0"));
 				continue;
 			}
 
 			if (dOption == DhcpOption.END) {
-				options.addField(new Field(new Entry(dOption.getName(), 255), data[i++], "255"));
+				options.addField(new Field(new Entry(dOption.getName(), 16), data[i++], "255"));
 				continue;
 			}
 
@@ -83,9 +85,9 @@ public class OptionsBuilder {
 			String name = data[i++];
 			String length = data[i++];
 			int l = Integer.parseInt(length, 16);
-			Field type = new Field(new Entry("Type", 0), name, dOption.getCode() + "");
+			Field type = new Field(new Entry("Type", 16), name, dOption.getCode() + "");
 
-			Field len = new Field(new Entry("Length", 0), length, l + "");
+			Field len = new Field(new Entry("Length", 16), length, l + "");
 			option.addField(type);
 			option.addField(len);
 

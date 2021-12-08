@@ -24,6 +24,8 @@ public class ParsingTools {
 			StringBuilder indexs = new StringBuilder();
 			String[] data;
 			String oldOffset = "0";
+			int index = 0;
+			int inc = 0;
 			int lengthLine = 0;
 			int indexLine = 0;
 
@@ -31,12 +33,16 @@ public class ParsingTools {
 
 				data = line.split(" ");
 
-				if (data.length == 0)
+				if (data.length == 0) {
+					indexLine++;
 					continue;
+				}
 
 				if (checkOffset(data[0], "0", 0)) {
-					if (sb.length() != 0)
+					if (sb.length() != 0) {
 						bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
+						inc++;
+					}
 
 					lengthLine = 0;
 					oldOffset = "0";
@@ -48,9 +54,9 @@ public class ParsingTools {
 					continue;
 
 				oldOffset = data[0];
+				index += lengthLine;
 
-				int oldOffsetParsed = Integer.parseInt(oldOffset, 16);
-				indexs.append(addPattern(indexLine, oldOffsetParsed * 2 + oldOffsetParsed).concat(" "));
+				indexs.append(addPattern(indexLine, index * 2 + index + inc).concat(" "));
 				lengthLine = 0;
 
 				for (int i = 1; i < data.length; i++) {
@@ -68,10 +74,14 @@ public class ParsingTools {
 				indexLine++;
 			}
 
-			if (sb.length() != 0)
+			if (sb.length() != 0) {
 				bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
+				inc++;
+				;
+			}
+		} catch (
 
-		} catch (IOException e) {
+		IOException e) {
 			throw new NetworkAnalyzerFileErrorsException(e.getMessage());
 		} finally {
 			if (bufferedWriter != null)

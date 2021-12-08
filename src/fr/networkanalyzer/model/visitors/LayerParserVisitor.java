@@ -40,8 +40,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	public void setLine(String line) {
 		String data[] = line.split(" ");
-		listIndex.clear();
-		currentIndex = 0;
+//		listIndex.clear();
+//		currentIndex = 0;
 		index = 0;
 		header = null;
 
@@ -170,9 +170,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
-//			layer = new Icmp();
-//			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
-//			break;
 
 			throw new NetworkanalyzerParseErrorException(getLine(), "ICMP protocol is not supported");
 
@@ -184,9 +181,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		}
 
 		case Ip.TCP: {
-//			layer = new Tcp();
-//			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
-//			break;
 
 			throw new NetworkanalyzerParseErrorException(getLine(), "TCP protocol is not supported");
 		}
@@ -411,9 +405,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.getName(),
 				new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
 
-		Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING
-				.setValue(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.getValue() - Dhcp.CLIENT_MAC_ADDRESS.getValue());
-
+		Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.setValue(128 - Dhcp.CLIENT_MAC_ADDRESS.getValue());
 		String padding = parseField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING);
 		incIndex(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING);
 
@@ -726,7 +718,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 	}
 
 	private int getLine() {
-
+		System.out.println(currentIndex);
+		System.out.println(listIndex);
 		for (int i = 0; i < listIndex.size(); i++) {
 			if (currentIndex < listIndex.get(i))
 				return i - 1;
