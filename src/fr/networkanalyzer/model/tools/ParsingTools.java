@@ -50,9 +50,10 @@ public class ParsingTools {
 					indexs.setLength(0);
 				}
 
-				if (!checkOffset(oldOffset, data[0], lengthLine))
+				if (!checkOffset(oldOffset, data[0], lengthLine)) {
 					continue;
-
+				}
+				
 				oldOffset = data[0];
 				index += lengthLine;
 

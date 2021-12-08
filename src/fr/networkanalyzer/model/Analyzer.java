@@ -33,6 +33,7 @@ public class Analyzer {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("correct frames :\n");
+		sb.append(String.format("\t\t %4s \t %30s \t %30s \t %10s \t %10s \n","N°","IP SOURCE","IP DESTINATION","PROTOCOL","LENGTH"));
 		for (Frame f : frames) {
 			sb.append(f.toString()).append("\n");
 		}
