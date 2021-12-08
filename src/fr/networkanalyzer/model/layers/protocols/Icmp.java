@@ -13,11 +13,11 @@ import fr.networkanalyzer.model.visitors.ILayerVisitor;
 public class Icmp extends AbstractLayer implements ILayerTransport {
 
 	public static final Entry<String,Integer> TYPE = new Entry<>("Type", 8);
-	public static final Entry<String,Integer> Code = new Entry<>("Code", 8);
+	public static final Entry<String,Integer> CODE = new Entry<>("Code", 8);
 	public static final Entry<String,Integer> CHECKSUM = new Entry<>("Checksum", 16);
 	public static final Entry<String,Integer> IDENTIFIER = new Entry<>("Identifier", 16);
-	public static final Entry<String,Integer> SEQUENCE_NUMBER = new Entry<>("Sequence number", 8);
-
+	public static final Entry<String,Integer> SEQUENCE_NUMBER = new Entry<>("Sequence number", 16);
+	public static final Entry<String,Integer> DATA = new Entry<>("Data",0);
 	@Override
 	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
 		visitor.visit(this);
@@ -27,7 +27,7 @@ public class Icmp extends AbstractLayer implements ILayerTransport {
 	public List<IField> getFields() {
 		List<IField> fields = new ArrayList<>();
 		fields.add(getField(TYPE.getKey()));
-		fields.add(getField(Code.getKey()));
+		fields.add(getField(CODE.getKey()));
 		fields.add(getField(CHECKSUM.getKey()));
 		fields.add(getField(IDENTIFIER.getKey()));
 		fields.add(getField(SEQUENCE_NUMBER.getKey()));

@@ -657,6 +657,38 @@ public class LayerParserVisitor implements ILayerVisitor {
 	}
 	@Override
 	public void visit(Icmp icmp) throws NetworkAnalyzerException {
+		header = getHeader(line.length()).trim();
+		String type = parseField(Icmp.TYPE);
+		int typeDecoded = Integer.parseInt(type, 16);
+		if(typeDecoded != 0 || typeDecoded != 8)
+			throw new NetworkAnalyzerException("ICMP type is not supported");
+		
+		incIndex(Icmp.TYPE);
+
+		String code = parseField(Icmp.CODE);
+		incIndex(Icmp.CODE);
+		
+		String checksum = parseField(Icmp.CHECKSUM);
+		incIndex(Icmp.CHECKSUM);
+		
+		String sequenceNumber = parseField(Icmp.SEQUENCE_NUMBER);
+		incIndex(Icmp.SEQUENCE_NUMBER);
+		
+		String data = getHeader(index);
+		
+		Entry<String,Integer> dataEntry = Icmp.DATA.setValue(data.split(" ").length * 8);
+		incIndex(dataEntry);
+		
+		icmp.addField(Icmp.TYPE.getKey(), new Field(Icmp.TYPE,type,typeDecoded+""));
+
+		icmp.addField(Icmp.CODE.getKey(), new Field(Icmp.CODE,code,Integer.parseInt(code, 16)+""));
+
+		icmp.addField(Icmp.CHECKSUM.getKey(), new Field(Icmp.CHECKSUM,checksum,Integer.parseInt(checksum, 16)+""));
+		icmp.addField(Icmp.SEQUENCE_NUMBER.getKey(), new Field(Icmp.SEQUENCE_NUMBER,sequenceNumber,Integer.parseInt(sequenceNumber, 16)+""));
+		
+		icmp.addField(dataEntry.getKey(), new Field(dataEntry, data, data,dataEntry.getValue()/8 + "bytes"));
+		
+		
 		
 		
 	}
