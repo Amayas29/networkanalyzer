@@ -1,0 +1,71 @@
+		FRAME : 1
+
+ETHERNET
+	Destination Address : f0 18 98 59 ae 32 (f0:18:98:59:ae:32) | 48 bits
+	Source Address : 50 64 2b 77 1e 81 (50:64:2b:77:1e:81) | 48 bits
+	Type : 08 00 (IP) | 16 bits
+
+
+IP
+	Version : 4 (IP) | 4 bits
+	IHL : 5 (5) | 4 bits
+	TOS : 00 (00) | 8 bits
+	Total Length : 00 5b (91) | 16 bits
+	Identification : 00 00 (0) | 16 bits
+	Fragments : 
+		R : 0 (0) | 1 bits
+		DF : 1 (1) | 1 bits
+		MF : 0 (0) | 1 bits
+		Fragment Offset : 0000000000000 (0) | 13 bits
+	TTL : 40 (64) | 8 bits
+	Protocol : 11 (UDP) | 8 bits
+	Header Checksum : 7a ef (7a ef) | 16 bits
+	Source Address : c0 a8 1f 01 (192.168.31.1) | 32 bits
+	Destination Address : c0 a8 1f 51 (192.168.31.81) | 32 bits
+
+
+UDP
+	Source Port : 00 35 (53) | 16 bits
+	Destination Port : cc e2 (52450) | 16 bits
+	Length : 00 47 (71) | 16 bits
+	Checksum : d5 cc (54732) | 16 bits
+
+
+DNS
+	Identification : 37 e5 (37 e5) | 16 bits
+	Flags : 
+		Response : 1 (1) | 1 bits
+		Opcode : 1001 (1001) | 4 bits
+		Authoritative : 1 (1) | 1 bits
+		Truncated : 0 (0) | 1 bits
+		Recursion Desired : 0 (0) | 1 bits
+		Recursion available : 0 (0) | 1 bits
+		Z : 1 (1) | 1 bits
+		Answer authenticated : 0 (0) | 1 bits
+		Non authenticated data : 1 (1) | 1 bits
+		Reply code : 010010 (010010) | 4 bits
+	Questions number : 00 01 (1) | 16 bits
+	# Answer RRS : 00 02 (2) | 16 bits
+	# Authority RRs : 00 00 (0) | 16 bits
+	# Additional RRs : 00 00 (0) | 16 bits
+	Questions : 
+		QNAME : 03 77 77 77 04 75 70 6d 63 02 56 72 (www.upmc.Vr) | 192 bits
+		QTYPE : 00 01 (00 01) | 16 bits
+		QCLASS : 00 01 (0x0001) | 16 bits
+	Answer : 
+		QNAME : 03 77 77 77 04 75 70 6d 63 02 56 72 (www.upmc.Vr) | 192 bits
+		QTYPE : 00 05 (00 05) | 16 bits
+		QCLASS : 00 01 (0x0001) | 16 bits
+		TTL : 00 00 00 1e (30) | 32 bits
+		RDATA LENGTH : 00 06 (6) | 16 bits
+		QNAME : 03 77 65 62 04 75 70 6d 63 02 56 72 (web.upmc.Vr) | 192 bits
+		QNAME : 03 77 65 62 04 75 70 6d 63 02 56 72 (web.upmc.Vr) | 192 bits
+		QTYPE : 00 01 (00 01) | 16 bits
+		QCLASS : 00 01 (0x0001) | 16 bits
+		TTL : 00 00 00 1e (30) | 32 bits
+		RDATA LENGTH : 00 04 (4) | 16 bits
+		IP ADDRESS : 86 9d fa 3b (134.157.250.59) | 32 bits
+	Authority : 
+	Additional info : 
+
+
