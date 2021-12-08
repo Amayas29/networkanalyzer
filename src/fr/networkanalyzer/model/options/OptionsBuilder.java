@@ -106,7 +106,7 @@ public class OptionsBuilder {
 				continue;
 			}
 
-			if (dOption.getType() == DhcpOptionTypes.IP_OPTION) {
+			if (dOption.getType() == DhcpOptionType.IP_OPTION) {
 				Fields valuesOption;
 				valuesOption = new Fields("Address", true);
 
@@ -123,7 +123,7 @@ public class OptionsBuilder {
 				continue;
 			}
 
-			if (dOption.getType() == DhcpOptionTypes.ASCII_OPTION) {
+			if (dOption.getType() == DhcpOptionType.ASCII_OPTION) {
 				StringBuilder sb = new StringBuilder();
 				int j;
 
@@ -137,7 +137,7 @@ public class OptionsBuilder {
 				continue;
 			}
 
-			if (dOption.getType() == DhcpOptionTypes.HEXA_OPTION) {
+			if (dOption.getType() == DhcpOptionType.HEXA_OPTION) {
 				StringBuilder sb = new StringBuilder();
 
 				int j;
@@ -149,6 +149,7 @@ public class OptionsBuilder {
 				Entry<String, Integer> e;
 				try {
 					e = DhcpOption.getEntryTypeDhcp(Integer.parseInt(sb.toString().replace(" ", ""), 16));
+					e = e.setValue(l);
 				} catch (Exception x) {
 					e = new Entry<>(dOption.getName(), l);
 				}
@@ -160,7 +161,7 @@ public class OptionsBuilder {
 
 			}
 
-			if (dOption.getType() == DhcpOptionTypes.INT_OPTION) {
+			if (dOption.getType() == DhcpOptionType.INT_OPTION) {
 				StringBuilder sb = new StringBuilder();
 
 				int j = 0;
@@ -178,7 +179,7 @@ public class OptionsBuilder {
 				continue;
 			}
 
-			if (dOption.getType() == DhcpOptionTypes.LISTE_OPTION) {
+			if (dOption.getType() == DhcpOptionType.LISTE_OPTION) {
 				int j;
 				for (j = 0; j < l; j++) {
 					option.addField(new Field(new Entry<>(dOption.getName(), 8), data[i + j],
@@ -191,7 +192,7 @@ public class OptionsBuilder {
 				continue;
 
 			}
-			if (dOption.getType() == DhcpOptionTypes.TIME_OPTION) {
+			if (dOption.getType() == DhcpOptionType.TIME_OPTION) {
 				StringBuilder sb = new StringBuilder();
 
 				int j = 0;

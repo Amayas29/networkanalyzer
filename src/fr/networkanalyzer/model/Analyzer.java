@@ -36,10 +36,12 @@ public class Analyzer {
 		StringBuilder sb = new StringBuilder();
 		sb.append("correct frames :\n");
 		String s = "\t\t %-4s \t %-30s \t %-30s \t %-15s \t %-10s \n";
-		sb.append(String.format(s,"N°","IP SOURCE","IP DESTINATION","PROTOCOL","LENGTH"));
-		for (Frame f : frames) {
-			sb.append(String.format(s,f.getId(),f.getFieldNetwork(Ip.SRC_ADDRESS.getName()).getValueDecoded(),f.getFieldNetwork(Ip.SRC_ADDRESS.getName()).getValueDecoded(),f.getEncapsulatedProtocol(),f.getTotalLength()+""));
-		}
+		sb.append(String.format(s, "N°", "IP SOURCE", "IP DESTINATION", "PROTOCOL", "LENGTH"));
+
+		for (Frame f : frames)
+			sb.append(String.format(s, f.getId(), f.getFieldNetwork(Ip.SRC_ADDRESS.getKey()).getValueDecoded(),
+					f.getFieldNetwork(Ip.SRC_ADDRESS.getKey()).getValueDecoded(), f.getEncapsulatedProtocol(),
+					String.valueOf(f.getTotalLength())));
 
 		sb.append(" Errors :\n");
 

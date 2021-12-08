@@ -14,9 +14,9 @@ public class Entry<k, v> {
 		return value;
 	}
 
-	public void setValue(v value) {
-		this.value = value;
-	}
+//	public Entry<k, v> setValue(v value) {
+//		return new Entry<k, v>(key, value);
+//	}
 
 	public k getKey() {
 		return key;

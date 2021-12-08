@@ -410,17 +410,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dhcp.addField(Dhcp.RELAY_AGENT_IP_ADDRESS.getKey(),
 				new Field(Dhcp.RELAY_AGENT_IP_ADDRESS, relayAgent, NetworkanalyzerTools.decodeAddressIp(relayAgent)));
 
-		Dhcp.CLIENT_MAC_ADDRESS.setValue(Integer.parseInt(NetworkanalyzerTools.toInteger(hardwareAddressLenght)) * 8);
+		Entry<String, Integer> cma = Dhcp.CLIENT_MAC_ADDRESS
+				.setValue(Integer.parseInt(NetworkanalyzerTools.toInteger(hardwareAddressLenght)) * 8);
 
-		String clientMac = parseField(Dhcp.CLIENT_MAC_ADDRESS);
+		String clientMac = parseField(cma);
 		incIndex(Dhcp.CLIENT_MAC_ADDRESS);
 
 		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.getKey(),
 				new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
 
-		Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.setValue(128 - Dhcp.CLIENT_MAC_ADDRESS.getValue());
-		String padding = parseField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING);
-		incIndex(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING);
+		Entry<String, Integer> chpa = Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.setValue(128 - cma.getValue());
+
+		String padding = parseField(chpa);
+
+		incIndex(chpa);
 
 		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.getKey(),
 				new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING, padding, NetworkanalyzerTools.toInteger(padding), ""));
@@ -451,7 +454,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 			return;
 		}
 
-		dhcp.addField(Dhcp.OPTIONS.getKey(), OptionsBuilder.buildDhcpOptions(header));
+		IField opt = OptionsBuilder.buildDhcpOptions(header);
+		Entry<String, Integer> os = Dhcp.OPTIONS.setValue(opt.getLength());
+
+		dhcp.addField(Dhcp.OPTIONS.getKey(), opt);
+		incIndex(Dhcp.OPTIONS);
 		System.out.println("dhcp apres : " + currentIndex + " -> " + getLine());
 	}
 
@@ -734,11 +741,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 		int n = Integer.parseInt(number);
 
 		if (n > 0) {
-			dns.addField(entry.getKey(), fields);
 			int oldCurr = curr;
 			curr = parseDnsNames(n, data, curr, fields, isQst);
-			entry.setValue((curr - oldCurr) * 8);
+			entry = entry.setValue((curr - oldCurr) * 8);
 			incIndex(entry);
+			dns.addField(entry.getKey(), fields);
 		}
 
 		return curr;
