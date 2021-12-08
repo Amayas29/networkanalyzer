@@ -2,7 +2,6 @@ package fr.networkanalyzer.model.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
@@ -460,24 +459,23 @@ public class LayerParserVisitor implements ILayerVisitor {
 		return i;
 	}
 
-
 	private int getDnsName(String data[], int curr, Fields q, StringBuilder sb, boolean first) {
 
 		if (data[curr].equals("00"))
-			return curr ;
-		
+			return curr + 1;
 		int i = findName(data, curr);
+
 		int j = i;
+
 		sb.append(data[i]).append(" ");
 		int len = Integer.parseInt(data[i++], 16);
 
 		while (len != 0) {
 			sb.append(data[i++]).append(" ");
 			len--;
-
 		}
-		
-		getDnsName(data, i, q, sb, false);
+
+		i = getDnsName(data, i, q, sb, false);
 
 		if (first) {
 			String qName = sb.toString().trim();
@@ -486,12 +484,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
 			q.addField(qN);
 		}
-		if(j != curr) {
+		if (j != curr) {
 			return curr + 2;
-		}else {
-			return curr + sb.toString().trim().split(" ").length +1;
+		} else {
+			return i;
 		}
-		
+
 	}
 
 	public String getDnsNameDecoded(String name) {
@@ -505,9 +503,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 			while (len != 0) {
 				sb.append(NetworkanalyzerTools.toAscii(data[i++]));
-
 				len--;
-
 			}
 			sb.append(".");
 		}
@@ -516,18 +512,18 @@ public class LayerParserVisitor implements ILayerVisitor {
 	}
 
 	private int parseDnsNames(int number, String data[], int curr, Fields answers, boolean isQuestions) {
-		int i = 0;
+
 		for (int j = 0; j < number; j++) {
 			StringBuilder sb = new StringBuilder();
-			
+			System.out.println(
+					curr + " " + data[curr] + " " + data[curr + 1] + " " + data[curr + 2] + " " + data[curr + 3]);
 			curr = getDnsName(data, curr, answers, sb, true);
-			
 			String qType = String.format("%s %s", data[curr], data[curr + 1]);
+
 			curr += 2;
 
 			String qClass = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
-			
 
 			Field qT = new Field(new Entry("QTYPE", 16), qType, qType);
 			Field qC = new Field(new Entry("QCLASS", 16), qClass, "0x" + qClass.replace(" ", ""));
@@ -540,7 +536,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 				String rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
 				curr += 2;
-			
+
 				Field qTtl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
 				numberData = Integer.parseInt(NetworkanalyzerTools.toInteger(rdataLength));
 				Field qRdata = new Field(new Entry("RDATA LENGTH", 16), rdataLength, numberData + "");
@@ -548,23 +544,19 @@ public class LayerParserVisitor implements ILayerVisitor {
 				answers.addField(qRdata);
 			}
 
-
-			
-			
-			Fields answer = new Fields(String.format("%s %d", "Answers ", j), true);
 			if (!isQuestions) {
 
 				String decQType = "0x" + qType.replace(" ", "").toLowerCase();
 				String ipAddress;
 				Field qIp;
-			
+
 				if (decQType.equals("0x0001")) {
 					ipAddress = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
 							data[curr + 3]);
 					curr += 4;
 					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress,
 							NetworkanalyzerTools.decodeAddressIp(ipAddress));
-					answer.addField(qIp);
+					answers.addField(qIp);
 				} else if (decQType.equals("0x001c")) {
 					ipAddress = String.format("%s %s %s %s %s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
 							data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6], data[curr + 7]);
@@ -573,23 +565,16 @@ public class LayerParserVisitor implements ILayerVisitor {
 							data[curr + 7]);
 					curr += 6;
 					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress, decIp);
-					answer.addField(qIp);
+					answers.addField(qIp);
+
 				} else {
-					Fields dataRf = new Fields("DATA R");
-					for (int k = 0; k < numberData; k++) {
-						i = curr;
-						
-
-						i = findName(data, i);
-
-						sb = new StringBuilder();
-						curr = getDnsName(data, curr, dataRf, sb, true);
-
-					}
-					answer.addField(dataRf);
+					
+					sb = new StringBuilder();
+					System.out.println(data[curr] + " " + curr);
+					curr = getDnsName(data, curr, answers, sb, true);
+					System.out.println(answers);
+					
 				}
-
-				answers.addField(answer);
 			}
 		}
 		return curr;
@@ -659,26 +644,28 @@ public class LayerParserVisitor implements ILayerVisitor {
 		Fields questions = new Fields(Dns.QUESTIONS.getName(), true);
 		curr = parseDnsNames(number, data, curr, questions, true);
 		incIndex(Dns.QUESTIONS);
-		
+		System.out.println(questions);
+
 		number = Integer.parseInt(decodedNumberAns);
 		Dns.ANSWER.setValue(number);
 		Fields answers = new Fields(Dns.ANSWER.getName(), true);
 		curr = parseDnsNames(number, data, curr, answers, false);
 		incIndex(Dns.ANSWER);
+		System.out.println(answers);
 
 		number = Integer.parseInt(decodedNumberAuth);
 		Dns.AUTHORITY.setValue(number);
 		Fields authentifications = new Fields(Dns.AUTHORITY.getName(), true);
 		curr = parseDnsNames(number, data, curr, authentifications, false);
 		incIndex(Dns.AUTHORITY);
+		System.out.println(authentifications);
 
 		number = Integer.parseInt(decodedNumberAdd);
 		Dns.ADDITIONAL_INFO.setValue(number);
-
 		Fields addInfo = new Fields(Dns.ADDITIONAL_INFO.getName(), true);
 		curr = parseDnsNames(number, data, curr, addInfo, false);
-
 		incIndex(Dns.ADDITIONAL_INFO);
+		System.out.println(addInfo);
 
 		dns.addField(Dns.IDENTIFIER.getName(), new Field(Dns.IDENTIFIER, identifier, identifier));
 
@@ -777,7 +764,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 	}
 
 	private boolean isPointer(String b) {
-		System.out.println(NetworkanalyzerTools.toBinary(b).startsWith("11"));
+
 		return b.startsWith("11");
 	}
 }
