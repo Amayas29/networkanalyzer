@@ -3,6 +3,8 @@ package fr.networkanalyzer.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.networkanalyzer.model.layers.protocols.Ip;
+
 public class Analyzer {
 
 	private List<Frame> frames;
@@ -33,9 +35,10 @@ public class Analyzer {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("correct frames :\n");
-		sb.append(String.format("\t\t %4s \t %30s \t %30s \t %10s \t %10s \n","N°","IP SOURCE","IP DESTINATION","PROTOCOL","LENGTH"));
+		String s = "\t\t %-4s \t %-30s \t %-30s \t %-15s \t %-10s \n";
+		sb.append(String.format(s,"N°","IP SOURCE","IP DESTINATION","PROTOCOL","LENGTH"));
 		for (Frame f : frames) {
-			sb.append(f.toString()).append("\n");
+			sb.append(String.format(s,f.getId(),f.getFieldNetwork(Ip.SRC_ADDRESS.getName()).getValueDecoded(),f.getFieldNetwork(Ip.SRC_ADDRESS.getName()).getValueDecoded(),f.getEncapsulatedProtocol(),f.getTotalLength()+""));
 		}
 
 		sb.append(" Errors :\n");
