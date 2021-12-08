@@ -1,8 +1,8 @@
 		FRAME : 1
 
 ETHERNET
-	Destination Address : f0 18 98 59 ae 32 (f0:18:98:59:ae:32) | 48 bits
-	Source Address : 50 64 2b 77 1e 81 (50:64:2b:77:1e:81) | 48 bits
+	Destination Address : 64 6c 80 35 0e 0f (64:6c:80:35:0e:0f) | 48 bits
+	Source Address : 5a 06 6e c6 7f c9 (5a:06:6e:c6:7f:c9) | 48 bits
 	Type : 08 00 (IP) | 16 bits
 
 
@@ -10,8 +10,8 @@ IP
 	Version : 4 (IP) | 4 bits
 	IHL : 5 (5) | 4 bits
 	TOS : 00 (00) | 8 bits
-	Total Length : 00 5b (91) | 16 bits
-	Identification : 00 00 (0) | 16 bits
+	Total Length : 01 5a (346) | 16 bits
+	Identification : 16 60 (5728) | 16 bits
 	Fragments : 
 		R : 0 (0) | 1 bits
 		DF : 1 (1) | 1 bits
@@ -19,53 +19,87 @@ IP
 		Fragment Offset : 0000000000000 (0) | 13 bits
 	TTL : 40 (64) | 8 bits
 	Protocol : 11 (UDP) | 8 bits
-	Header Checksum : 7a ef (7a ef) | 16 bits
-	Source Address : c0 a8 1f 01 (192.168.31.1) | 32 bits
-	Destination Address : c0 a8 1f 51 (192.168.31.81) | 32 bits
+	Header Checksum : f0 90 (f0 90) | 16 bits
+	Source Address : c0 a8 d8 ae (192.168.216.174) | 32 bits
+	Destination Address : c0 a8 d8 a2 (192.168.216.162) | 32 bits
 
 
 UDP
-	Source Port : 00 35 (53) | 16 bits
-	Destination Port : cc e2 (52450) | 16 bits
-	Length : 00 47 (71) | 16 bits
-	Checksum : d5 cc (54732) | 16 bits
+	Source Port : 00 43 (67) | 16 bits
+	Destination Port : 00 44 (68) | 16 bits
+	Length : 01 46 (326) | 16 bits
+	Checksum : db 39 (56121) | 16 bits
 
 
-DNS
-	Identification : 37 e5 (37 e5) | 16 bits
+DHCP
+	Message Type : 02 (2) | 8 bits
+	Hardware Type : 01 (1) | 8 bits
+	Hardware Address Length : 06 (6) | 8 bits
+	Hops : 00 (0) | 8 bits
+	Transaction Id : 0c de 07 ad (215877549) | 32 bits
+	Seconds Elapsed : 00 00 (0) | 16 bits
 	Flags : 
-		Response : 1 (1) | 1 bits
-		Opcode : 1001 (1001) | 4 bits
-		Authoritative : 1 (1) | 1 bits
-		Truncated : 0 (0) | 1 bits
-		Recursion Desired : 0 (0) | 1 bits
-		Recursion available : 0 (0) | 1 bits
-		Z : 1 (1) | 1 bits
-		Answer authenticated : 0 (0) | 1 bits
-		Non authenticated data : 1 (1) | 1 bits
-		Reply code : 010010 (010010) | 4 bits
-	Questions number : 00 01 (1) | 16 bits
-	# Answer RRS : 00 02 (2) | 16 bits
-	# Authority RRs : 00 00 (0) | 16 bits
-	# Additional RRs : 00 00 (0) | 16 bits
-	Questions : 
-		QNAME : 03 77 77 77 04 75 70 6d 63 02 56 72 (www.upmc.Vr) | 192 bits
-		QTYPE : 00 01 (00 01) | 16 bits
-		QCLASS : 00 01 (0x0001) | 16 bits
-	Answer : 
-		QNAME : 03 77 77 77 04 75 70 6d 63 02 56 72 (www.upmc.Vr) | 192 bits
-		QTYPE : 00 05 (00 05) | 16 bits
-		QCLASS : 00 01 (0x0001) | 16 bits
-		TTL : 00 00 00 1e (30) | 32 bits
-		RDATA LENGTH : 00 06 (6) | 16 bits
-		QNAME : 03 77 65 62 04 75 70 6d 63 02 56 72 (web.upmc.Vr) | 192 bits
-		QNAME : 03 77 65 62 04 75 70 6d 63 02 56 72 (web.upmc.Vr) | 192 bits
-		QTYPE : 00 01 (00 01) | 16 bits
-		QCLASS : 00 01 (0x0001) | 16 bits
-		TTL : 00 00 00 1e (30) | 32 bits
-		RDATA LENGTH : 00 04 (4) | 16 bits
-		IP ADDRESS : 86 9d fa 3b (134.157.250.59) | 32 bits
-	Authority : 
-	Additional info : 
+		Broadcast Flag : 0 (false) | 1 bits
+		Reserved Flag :  (0) | 15 bits
+	Client Ip Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Your Ip Address : c0 a8 d8 a2 (192.168.216.162) | 32 bits
+	Next Server Ip Address : c0 a8 d8 ae (192.168.216.174) | 32 bits
+	Gateway Ip Address : 00 00 00 00 (0.0.0.0) | 32 bits
+	Client Mac Address : 64 6c 80 35 0e 0f (64:6c:80:35:0e:0f) | 48 bits
+	Client Hardware Address Padding :  (0) | 80 bits
+	Server Host Name :  (not given) | 512 bits
+	Boot File :  (not given) | 1024 bits
+	Magic Cookie : 63 82 53 63 (DHCP) | 32 bits
+	DHCP Msg Type : 
+		Type : 35 (53) | 0 bits
+		Length : 01 (1) | 0 bits
+		DHCP Msg Type : 05  (DHCP Msg Type) | 1 bits
+	DHCP Server Id : 
+		Type : 36 (54) | 0 bits
+		Length : 04 (4) | 0 bits
+		Ips adresses option : 
+		DHCP Server Id : c0 a8 d8 ae (192.168.216.174) | 32 bits
+	Address Time : 
+		Type : 33 (51) | 0 bits
+		Length : 04 (4) | 0 bits
+		Address Time : 00 00 0e 0f  (0 h 59 m 59 s) | 4 bits
+	Renewal Time : 
+		Type : 3a (58) | 0 bits
+		Length : 04 (4) | 0 bits
+		Renewal Time : 00 00 07 07  (0 h 29 m 59 s) | 4 bits
+	Rebinding Time : 
+		Type : 3b (59) | 0 bits
+		Length : 04 (4) | 0 bits
+		Rebinding Time : 00 00 0c 4d  (0 h 52 m 29 s) | 4 bits
+	Subnet Mask : 
+		Type : 01 (1) | 0 bits
+		Length : 04 (4) | 0 bits
+		Ips adresses option : 
+		Subnet Mask : ff ff ff 00 (255.255.255.0) | 32 bits
+	Broadcast Address : 
+		Type : 1c (28) | 0 bits
+		Length : 04 (4) | 0 bits
+		Ips adresses option : 
+		Broadcast Address : c0 a8 d8 ff (192.168.216.255) | 32 bits
+	Router : 
+		Type : 03 (3) | 0 bits
+		Length : 04 (4) | 0 bits
+		Ips adresses option : 
+		Router : c0 a8 d8 ae (192.168.216.174) | 32 bits
+	Domain Server : 
+		Type : 06 (6) | 0 bits
+		Length : 04 (4) | 0 bits
+		Ips adresses option : 
+		Domain Server : c0 a8 d8 ae (192.168.216.174) | 32 bits
+	Hostname : 
+		Type : 0c (12) | 0 bits
+		Length : 06 (6) | 0 bits
+		Hostname : 61 6d 61 79 61 73  (amayas) | 6 bits
+	Vendor Specific : 
+		Type : 2b (43) | 0 bits
+		Length : 0f (15) | 0 bits
+		Vendor Specific : 41 4e 44 52 4f 49 44 5f 4d 45 54 45 52 45 44  (Vendor Specific) | 15 bits
+	End : ff (255) | 255 bits
+	Pad : 00 (0) | 0 bits
 
 
