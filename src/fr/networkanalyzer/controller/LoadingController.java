@@ -113,6 +113,8 @@ public class LoadingController {
 	private void throwProcessingStage(Analyzer analyzer) throws NetworkAnalyzerException {
 
 		Stage stage = (Stage) errorsLabel.getScene().getWindow();
+		stage.close();
+		stage = new Stage();
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/networkanalyzer/view/fxml/processing.fxml"));
 		ProcessingController pc = new ProcessingController(analyzer);
@@ -128,6 +130,7 @@ public class LoadingController {
 
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
+		stage.show();
 	}
 
 	private void displayError(String errorMessage) {

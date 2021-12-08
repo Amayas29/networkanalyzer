@@ -83,7 +83,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			throw new NetworkanalyzerParseErrorException(getLine(),
 					"The source MAC address must not be a broadcast address");
 
-		if (destMacAddress.equals(srcMacAddress))
+		if (destMacAddress.equals(srcMacAddress) && !destMacAddress.equals("00 00 00 00 00 00"))
 			throw new NetworkanalyzerParseErrorException(getLine(), "Mac addresses are equal");
 
 		incIndex(Ethernet.SRC_ADDRESS);
@@ -152,9 +152,12 @@ public class LayerParserVisitor implements ILayerVisitor {
 		incIndex(Ip.IHL, true);
 
 		String tos = parseField(Ip.TOS);
+		if (Integer.parseInt(tos, 16) != 0)
+			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
 		incIndex(Ip.TOS);
 
 		String totalLength = parseField(Ip.TOTAL_LENGTH);
+
 		incIndex(Ip.TOTAL_LENGTH);
 
 		String identification = parseField(Ip.IDENTIFICATION);
@@ -166,9 +169,14 @@ public class LayerParserVisitor implements ILayerVisitor {
 			fr = "0".concat(fr);
 
 		String r = fr.substring(0, 1);
+		if (Integer.parseInt(r, 2) != 0)
+			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
 		String df = fr.substring(1, 2);
 		String mf = fr.substring(2, 3);
 		String fragmentOffset = fr.substring(3);
+		if ((Integer.parseInt(mf, 2) == 1 && (Integer.parseInt(df, 2) == 1)
+				|| Integer.parseInt(fragmentOffset, 2) == 1))
+			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
 
 		incIndex(Ip.FRAGMENTS);
 
@@ -262,9 +270,10 @@ public class LayerParserVisitor implements ILayerVisitor {
 		if (options != null)
 			ip.addField(Ip.OPTIONS.getKey(), options);
 
-		System.out.println("Ip apres : " + currentIndex + " -> " + getLine());
 		layer.accept(this);
 		ip.setIncluded(layer);
+		if (ip.getLength() != Integer.parseInt(ip.getField(Ip.TOTAL_LENGTH.getKey()).getValueDecoded()))
+			throw new NetworkanalyzerParseErrorException(getLine(), "IP length is incorrect");
 	}
 
 	@Override
@@ -326,6 +335,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		System.out.println("udp apres : " + currentIndex + " -> " + getLine());
 		layer.accept(this);
 		udp.setIncluded(layer);
+		if (udp.getLength() != Integer.parseInt(udp.getField(Udp.LENGTH.getKey()).getValueDecoded()))
+			throw new NetworkanalyzerParseErrorException(getLine(), "Udp length is incorrect");
 	}
 
 	@Override
