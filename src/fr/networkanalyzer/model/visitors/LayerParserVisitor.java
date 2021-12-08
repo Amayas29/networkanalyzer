@@ -414,10 +414,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 				.setValue(Integer.parseInt(NetworkanalyzerTools.toInteger(hardwareAddressLenght)) * 8);
 
 		String clientMac = parseField(cma);
-		incIndex(Dhcp.CLIENT_MAC_ADDRESS);
+		incIndex(cma);
 
-		dhcp.addField(Dhcp.CLIENT_MAC_ADDRESS.getKey(),
-				new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(" ", ":")));
+		dhcp.addField(cma.getKey(), new Field(cma, clientMac, clientMac.replace(" ", ":")));
 
 		Entry<String, Integer> chpa = Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.setValue(128 - cma.getValue());
 
@@ -425,8 +424,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		incIndex(chpa);
 
-		dhcp.addField(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING.getKey(),
-				new Field(Dhcp.CLIENT_HARDWARE_ADDRESS_PADDING, padding, NetworkanalyzerTools.toInteger(padding), ""));
+		dhcp.addField(chpa.getKey(), new Field(chpa, padding, NetworkanalyzerTools.toInteger(padding), ""));
 
 		String serverHostName = parseField(Dhcp.SERVER_HOST_NAME);
 		incIndex(Dhcp.SERVER_HOST_NAME);
@@ -457,8 +455,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		IField opt = OptionsBuilder.buildDhcpOptions(header);
 		Entry<String, Integer> os = Dhcp.OPTIONS.setValue(opt.getLength());
 
-		dhcp.addField(Dhcp.OPTIONS.getKey(), opt);
-		incIndex(Dhcp.OPTIONS);
+		dhcp.addField(os.getKey(), opt);
+		incIndex(os);
 		System.out.println("dhcp apres : " + currentIndex + " -> " + getLine());
 	}
 
