@@ -17,6 +17,7 @@ import fr.networkanalyzer.model.layers.protocols.Dns;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import fr.networkanalyzer.model.layers.protocols.Udp;
+import fr.networkanalyzer.model.options.DnsDecoder;
 import fr.networkanalyzer.model.options.OptionsBuilder;
 import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
 import fr.networkanalyzer.model.tools.ParsingTools;
@@ -536,18 +537,23 @@ public class LayerParserVisitor implements ILayerVisitor {
 			String cls = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
 
-			Field t = new Field(new Entry("QTYPE", 16), type, type);
-			Field c = new Field(new Entry("QCLASS", 16), cls, "0x" + cls.replace(" ", ""));
+			Field t = new Field(new Entry(isQuestions ? "QTYPE" : "TYPE", 16), type,
+					DnsDecoder.getTypeName(Integer.parseInt(type.replace(" ", ""), 16)));
+
+			Field c = new Field(new Entry(isQuestions ? "QCLASS" : "CLASS", 16), cls,
+					DnsDecoder.getClassName(Integer.parseInt(cls.replace(" ", ""), 16)));
 
 			item.addField(t);
 			item.addField(c);
 
+			String rdataLength = "0";
 			int numberData = 0;
+
 			if (!isQuestions) {
 				String ttl = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2], data[curr + 3]);
 				curr += 4;
 
-				String rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
+				rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
 				curr += 2;
 
 				Field tl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
@@ -589,10 +595,21 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 				}
 
-				else {
+				else if (decType.equals("0x0005") || decType.equals("0x0002") || decType.equals("0x000F")) {
 
 					sb = new StringBuilder();
 					curr = getDnsName(data, curr, item, sb, true, isQuestions);
+				}
+
+				else {
+
+					int l = Integer.parseInt(rdataLength.replace(" ", ""), 16);
+
+					sb = new StringBuilder();
+					for (int k = 0; k < l; k++)
+						sb.append(data[curr++]).append(" ");
+
+					item.addField(new Field(new Entry("Data", l), sb.toString(), "Uknown data"));
 				}
 			}
 		}
