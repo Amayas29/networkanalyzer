@@ -4,6 +4,7 @@ import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.layers.protocols.Dhcp;
 import fr.networkanalyzer.model.layers.protocols.Dns;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
+import fr.networkanalyzer.model.layers.protocols.Icmp;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import fr.networkanalyzer.model.layers.protocols.Udp;
 
@@ -18,5 +19,7 @@ public interface ILayerVisitor {
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException;
 
 	public void visit(Dns dns) throws NetworkAnalyzerException;
+	
+	public void visit(Icmp icmp) throws NetworkAnalyzerException;
 
 }

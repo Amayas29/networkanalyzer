@@ -17,6 +17,7 @@ import fr.networkanalyzer.model.layers.ILayerTransport;
 import fr.networkanalyzer.model.layers.protocols.Dhcp;
 import fr.networkanalyzer.model.layers.protocols.Dns;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
+import fr.networkanalyzer.model.layers.protocols.Icmp;
 import fr.networkanalyzer.model.layers.protocols.Ip;
 import fr.networkanalyzer.model.layers.protocols.Udp;
 import fr.networkanalyzer.model.options.DnsDecoder;
@@ -152,8 +153,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		incIndex(Ip.IHL, true);
 
 		String tos = parseField(Ip.TOS);
-		if (Integer.parseInt(tos, 16) != 0)
-			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
 		incIndex(Ip.TOS);
 
 		String totalLength = parseField(Ip.TOTAL_LENGTH);
@@ -656,6 +655,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		return curr;
 	}
+	@Override
+	public void visit(Icmp icmp) throws NetworkAnalyzerException {
+		
+		
+	}
 
 	@Override
 	public void visit(Dns dns) throws NetworkAnalyzerException {
@@ -829,4 +833,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 	private boolean isPointer(String b) {
 		return b.startsWith("11");
 	}
+
+	
 }
