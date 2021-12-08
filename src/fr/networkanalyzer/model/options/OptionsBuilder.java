@@ -94,12 +94,15 @@ public class OptionsBuilder {
 			if (dOption.getCode() == 61) {
 				String hardwareType = data[i];
 				i++;
-				option.addField(new Field(Dhcp.HARDWARE_TYPE, hardwareType, hardwareType));
+				Entry<String, Integer> ht = Dhcp.HARDWARE_TYPE.setValue(16);
+
+				option.addField(new Field(ht, hardwareType, hardwareType));
 
 				String clientMac = String.format("%s %s %s %s %s %s", data[i], data[i + 1], data[i + 2], data[i + 3],
 						data[i + 4], data[i + 5]);
 
-				option.addField(new Field(Dhcp.CLIENT_MAC_ADDRESS, clientMac, clientMac.replace(' ', ':')));
+				Entry<String, Integer> cma = Dhcp.CLIENT_MAC_ADDRESS.setValue(48);
+				option.addField(new Field(cma, clientMac, clientMac.replace(' ', ':')));
 				i += 6;
 
 				options.addField(option);
