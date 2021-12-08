@@ -49,21 +49,20 @@ public class Dns extends AbstractLayer implements ILayerApplication {
 
 		Fields flags = (Fields) getField(FLAGS.getName());
 
-		IField response = flags.getField(RESPONSE.getName());
-
-		if (response.getValueDecoded().equals("0")) {
-			flags.removeField(AUTHORITATIVE.getName());
-			flags.removeField(RECURSION_AVAILABLE.getName());
-			flags.removeField(ANSWER_AUTHENTICATED.getName());
-			flags.removeField(REPLY_CODE.getName());
-		}
+//		IField response = flags.getField(RESPONSE.getName());
+//		if (response.getValueDecoded().equals("0")) {
+//			flags.removeField(AUTHORITATIVE.getName());
+//			flags.removeField(RECURSION_AVAILABLE.getName());
+//			flags.removeField(ANSWER_AUTHENTICATED.getName());
+//			flags.removeField(REPLY_CODE.getName());
+//		}
 
 		fs.add(flags);
 		fs.add(getField(QUESTIONS_NUMBER.getName()));
 		fs.add(getField(ANSWER_RRS_NUMBER.getName()));
 		fs.add(getField(AUTHORITY_RRS_NUMBER.getName()));
 		fs.add(getField(ADDITIONAL_RRS_NUMBER.getName()));
-		
+
 		IField field = getField(QUESTIONS.getName());
 		if (field != null)
 			fs.add(field);

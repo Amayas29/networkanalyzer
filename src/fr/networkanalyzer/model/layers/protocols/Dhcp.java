@@ -3,14 +3,21 @@ package fr.networkanalyzer.model.layers.protocols;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.jdi.Value;
+
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.fields.Entry;
+import fr.networkanalyzer.model.fields.Fields;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.AbstractLayer;
 import fr.networkanalyzer.model.layers.ILayerApplication;
+import fr.networkanalyzer.model.options.DhcpOption;
 import fr.networkanalyzer.model.visitors.ILayerVisitor;
 
 public class Dhcp extends AbstractLayer implements ILayerApplication {
+
+	public static final Entry BOOT_REQUEST = new Entry("Boot Request", 1);
+	public static final Entry BOOT_REPLY = new Entry("Boot Reply", 2);
 
 	public static final Entry MESSAGE_TYPE = new Entry("Message Type", 8);
 	public static final Entry HARDWARE_TYPE = new Entry("Hardware Type", 8);
@@ -32,6 +39,14 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 
 	public static final Entry FLAGS = new Entry("Flags", 16);
 	public static final Entry OPTIONS = new Entry("Options", Integer.MAX_VALUE);
+
+	public static Entry getMessageType(int type) {
+		if (type == 1)
+			return BOOT_REQUEST;
+		if (type == 2)
+			return BOOT_REPLY;
+		return null;
+	}
 
 	@Override
 	public void accept(ILayerVisitor visitor) throws NetworkAnalyzerException {
@@ -69,7 +84,24 @@ public class Dhcp extends AbstractLayer implements ILayerApplication {
 
 	@Override
 	public String getEncapsulatedProtocol() {
-		return "DHCP";
+		DhcpOption o53 = DhcpOption.DHCP_MSG_TYPE;
+
+		IField value = null;
+		try {
+			Fields options = (Fields) getField(OPTIONS.getName());
+			Fields opt = (Fields) options.getField(o53.getName());
+
+			for (IField f : opt.getChildrens())
+				if (!f.getName().equals("Type") && !f.getName().equals("Length")) {
+					value = f;
+					break;
+				}
+
+		} catch (Exception e) {
+			return "DHCP";
+		}
+
+		return "DHCP (".concat(value.getValueDecoded()).concat(")");
 	}
 
 	@Override

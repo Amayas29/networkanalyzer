@@ -33,7 +33,7 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public static final Entry DEST_ADDRESS = new Entry("Destination Address", 32);
 	public static final Entry FRAGMENTS = new Entry("Fragments", 16);
 	public static final Entry OPTIONS = new Entry("Options", Integer.MAX_VALUE);
-	public static final Entry IPS_ADRESSES = new Entry("Ips adresses option", Integer.MAX_VALUE);
+
 	private ILayerTransport included;
 
 	@Override

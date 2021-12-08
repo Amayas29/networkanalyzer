@@ -11,7 +11,7 @@ public class NetworkanalyzerTools {
 	public static String toAscii(String bytes) {
 		StringBuilder sb = new StringBuilder();
 		String bytesTab[] = bytes.split(" ");
-	
+
 		for (String s : bytesTab)
 			sb.append((char) Integer.parseInt(s, 16));
 
@@ -26,16 +26,28 @@ public class NetworkanalyzerTools {
 		return String.valueOf(Integer.parseInt(value.replace(" ", ""), radix));
 	}
 
-	public static String toBinary(String value) {
-		return Integer.toBinaryString(Integer.parseInt(value.replace(" ", ""),16));
+	private static String toBinary(String value) {
+		return Integer.toBinaryString(Integer.parseInt(value.replace(" ", ""), 16));
 	}
-	
+
 	public static String toBinaryQuartet(char value) {
-		
-		String r = toBinary(value+"");
-		while(r.length() != 4)
-			r= "0"+r;
+
+		String r = toBinary(String.valueOf(value));
+
+		while (r.length() != 4)
+			r = "0" + r;
+
 		return r;
+	}
+
+	public static String hexToBinEncoded(String value) {
+		StringBuilder sb = new StringBuilder();
+		value = value.replace(" ", "");
+
+		for (int i = 0; i < value.length(); i++)
+			sb.append(toBinaryQuartet(value.charAt(i)));
+
+		return sb.toString();
 	}
 
 }

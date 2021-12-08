@@ -51,6 +51,7 @@ public class Fields implements IField {
 
 			int decimal = Integer.parseInt(sb.toString().replace(" ", ""), 2);
 			String hex = Integer.toString(decimal, 16);
+
 			l -= hex.length();
 
 			for (int i = 0; i < l; i++)
@@ -58,6 +59,7 @@ public class Fields implements IField {
 
 			int n = hex.length();
 			sb = new StringBuilder();
+
 			for (int i = 0; i < n; i += 2) {
 				sb.append(hex.charAt(i));
 				sb.append(hex.charAt(i + 1));

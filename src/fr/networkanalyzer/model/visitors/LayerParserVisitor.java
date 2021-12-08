@@ -12,18 +12,13 @@ import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.ILayerApplication;
 import fr.networkanalyzer.model.layers.ILayerNetwork;
 import fr.networkanalyzer.model.layers.ILayerTransport;
-import fr.networkanalyzer.model.layers.protocols.Arp;
 import fr.networkanalyzer.model.layers.protocols.Dhcp;
 import fr.networkanalyzer.model.layers.protocols.Dns;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
-import fr.networkanalyzer.model.layers.protocols.Http;
-import fr.networkanalyzer.model.layers.protocols.Icmp;
-import fr.networkanalyzer.model.layers.protocols.Imap;
 import fr.networkanalyzer.model.layers.protocols.Ip;
-import fr.networkanalyzer.model.layers.protocols.Tcp;
 import fr.networkanalyzer.model.layers.protocols.Udp;
+import fr.networkanalyzer.model.options.OptionsBuilder;
 import fr.networkanalyzer.model.tools.NetworkanalyzerTools;
-import fr.networkanalyzer.model.tools.OptionsBuilder;
 import fr.networkanalyzer.model.tools.ParsingTools;
 
 public class LayerParserVisitor implements ILayerVisitor {
@@ -96,9 +91,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 		}
 
 		case Ethernet.ARP: {
-			layer = new Arp();
-			type = new Field(Ethernet.TYPE, rdType, layer.getName());
-			break;
+//			layer = new Arp();
+//			type = new Field(Ethernet.TYPE, rdType, layer.getName());
+//			break;
+
+			throw new NetworkanalyzerParseErrorException(getLine(), "ARP protocol is not supported");
 		}
 
 		default:
@@ -150,7 +147,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String identification = parseField(Ip.IDENTIFICATION);
 		incIndex(Ip.IDENTIFICATION);
 
-		String fr = NetworkanalyzerTools.toBinary(parseField(Ip.FRAGMENTS));
+		String fr = NetworkanalyzerTools.hexToBinEncoded(parseField(Ip.FRAGMENTS));
 
 		while (fr.length() != 16)
 			fr = "0".concat(fr);
@@ -172,20 +169,27 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
-			layer = new Icmp();
-			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
-			break;
+//			layer = new Icmp();
+//			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
+//			break;
+
+			throw new NetworkanalyzerParseErrorException(getLine(), "ICMP protocol is not supported");
+
 		}
 		case Ip.UDP: {
 			layer = new Udp();
 			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
 			break;
 		}
+
 		case Ip.TCP: {
-			layer = new Tcp();
-			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
-			break;
+//			layer = new Tcp();
+//			proto = new Field(Ip.PROTOCOL, protocol, layer.getName());
+//			break;
+
+			throw new NetworkanalyzerParseErrorException(getLine(), "TCP protocol is not supported");
 		}
+
 		default:
 			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the IP protocol field");
 		}
@@ -256,10 +260,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		layer.accept(this);
 		ip.setIncluded(layer);
-	}
-
-	@Override
-	public void visit(Tcp tcp) throws NetworkAnalyzerException {
 	}
 
 	@Override
@@ -371,7 +371,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 				new Field(Dhcp.SECONDS_ELAPSED, secondsElapsed, NetworkanalyzerTools.toInteger(secondsElapsed)));
 
 		// Flags
-		String fls = NetworkanalyzerTools.toBinary(parseField(Dhcp.FLAGS));
+		String fls = NetworkanalyzerTools.hexToBinEncoded(parseField(Dhcp.FLAGS));
 		Fields flags = new Fields(Dhcp.FLAGS.getName());
 		char broadcast = fls.charAt(0);
 		flags.addField(new Field(Dhcp.BROADCAST, String.valueOf(broadcast), broadcast == '1' ? "true" : "false", true));
@@ -450,19 +450,21 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	private int findName(String data[], int i) {
 
-		while (isPointer(NetworkanalyzerTools.toBinaryQuartet(data[i].charAt(0)))) {
+		while (isPointer(NetworkanalyzerTools.toBinaryQuartet(data[i].charAt(0))))
 
 			i = Integer.parseInt(
-					NetworkanalyzerTools.toBinary(data[i].concat(data[i + 1]).replace(" ", "")).substring(3), 2);
+					NetworkanalyzerTools.hexToBinEncoded(data[i].concat(data[i + 1]).replace(" ", "")).substring(3), 2);
 
-		}
 		return i;
 	}
 
-	private int getDnsName(String data[], int curr, Fields q, StringBuilder sb, boolean first) {
+	private int getDnsName(String data[], int curr, Fields q, StringBuilder sb, boolean first, boolean isQst) {
 
-		if (data[curr].equals("00"))
+		if (data[curr].equals("00")) {
+			sb.append(data[curr]);
 			return curr + 1;
+		}
+
 		int i = findName(data, curr);
 
 		int j = i;
@@ -475,20 +477,25 @@ public class LayerParserVisitor implements ILayerVisitor {
 			len--;
 		}
 
-		i = getDnsName(data, i, q, sb, false);
+		i = getDnsName(data, i, q, sb, false, isQst);
 
 		if (first) {
 			String qName = sb.toString().trim();
 			String qNameDecoded = getDnsNameDecoded(qName);
 
-			Field qN = new Field(new Entry("QNAME", qName.replace(" ", "").length() * 8), qName, qNameDecoded);
+			String value = qName;
+			if (j != curr)
+				value = String.format("%s %s", data[curr], data[curr + 1]);
+
+			Field qN = new Field(new Entry(isQst ? "QNAME" : "NAME", qName.replace(" ", "").length() * 8), value,
+					qNameDecoded, qName);
 			q.addField(qN);
 		}
-		if (j != curr) {
+
+		if (j != curr)
 			return curr + 2;
-		} else {
-			return i;
-		}
+
+		return i;
 
 	}
 
@@ -505,30 +512,36 @@ public class LayerParserVisitor implements ILayerVisitor {
 				sb.append(NetworkanalyzerTools.toAscii(data[i++]));
 				len--;
 			}
-			sb.append(".");
+
+			if (i != data.length - 1)
+				sb.append(".");
 		}
 
 		return sb.toString().substring(0, sb.length() - 1);
 	}
 
-	private int parseDnsNames(int number, String data[], int curr, Fields answers, boolean isQuestions) {
+	private int parseDnsNames(int number, String data[], int curr, Fields container, boolean isQuestions) {
 
 		for (int j = 0; j < number; j++) {
 			StringBuilder sb = new StringBuilder();
-			System.out.println(
-					curr + " " + data[curr] + " " + data[curr + 1] + " " + data[curr + 2] + " " + data[curr + 3]);
-			curr = getDnsName(data, curr, answers, sb, true);
-			String qType = String.format("%s %s", data[curr], data[curr + 1]);
 
+			Fields item = new Fields(String.format("%s %d", "N° ", j), true);
+			container.addField(item);
+
+			curr = getDnsName(data, curr, item, sb, true, isQuestions);
+
+			String type = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
 
-			String qClass = String.format("%s %s", data[curr], data[curr + 1]);
+			String cls = String.format("%s %s", data[curr], data[curr + 1]);
 			curr += 2;
 
-			Field qT = new Field(new Entry("QTYPE", 16), qType, qType);
-			Field qC = new Field(new Entry("QCLASS", 16), qClass, "0x" + qClass.replace(" ", ""));
-			answers.addField(qT);
-			answers.addField(qC);
+			Field t = new Field(new Entry("QTYPE", 16), type, type);
+			Field c = new Field(new Entry("QCLASS", 16), cls, "0x" + cls.replace(" ", ""));
+
+			item.addField(t);
+			item.addField(c);
+
 			int numberData = 0;
 			if (!isQuestions) {
 				String ttl = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2], data[curr + 3]);
@@ -537,46 +550,53 @@ public class LayerParserVisitor implements ILayerVisitor {
 				String rdataLength = String.format("%s %s", data[curr], data[curr + 1]);
 				curr += 2;
 
-				Field qTtl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
+				Field tl = new Field(new Entry("TTL", 32), ttl, NetworkanalyzerTools.toInteger(ttl));
 				numberData = Integer.parseInt(NetworkanalyzerTools.toInteger(rdataLength));
-				Field qRdata = new Field(new Entry("RDATA LENGTH", 16), rdataLength, numberData + "");
-				answers.addField(qTtl);
-				answers.addField(qRdata);
+
+				Field rData = new Field(new Entry("RDATA LENGTH", 16), rdataLength, numberData + "");
+
+				item.addField(tl);
+				item.addField(rData);
 			}
 
 			if (!isQuestions) {
 
-				String decQType = "0x" + qType.replace(" ", "").toLowerCase();
+				String decType = "0x" + type.replace(" ", "").toLowerCase();
 				String ipAddress;
-				Field qIp;
+				Field ip;
 
-				if (decQType.equals("0x0001")) {
+				if (decType.equals("0x0001")) {
 					ipAddress = String.format("%s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
 							data[curr + 3]);
 					curr += 4;
-					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress,
+					ip = new Field(new Entry("IP ADDRESS", 32), ipAddress,
 							NetworkanalyzerTools.decodeAddressIp(ipAddress));
-					answers.addField(qIp);
-				} else if (decQType.equals("0x001c")) {
+					item.addField(ip);
+				}
+
+				else if (decType.equals("0x001c")) {
 					ipAddress = String.format("%s %s %s %s %s %s %s %s", data[curr], data[curr + 1], data[curr + 2],
 							data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6], data[curr + 7]);
+
 					String decIp = String.format("%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s:%s%s", data[curr], data[curr + 1],
 							data[curr + 2], data[curr + 3], data[curr + 4], data[curr + 5], data[curr + 6],
 							data[curr + 7]);
-					curr += 6;
-					qIp = new Field(new Entry("IP ADDRESS", 32), ipAddress, decIp);
-					answers.addField(qIp);
 
-				} else {
-					
+					curr += 6;
+
+					ip = new Field(new Entry("IP ADDRESS", 32), ipAddress, decIp);
+					item.addField(ip);
+
+				}
+
+				else {
+
 					sb = new StringBuilder();
-					System.out.println(data[curr] + " " + curr);
-					curr = getDnsName(data, curr, answers, sb, true);
-					System.out.println(answers);
-					
+					curr = getDnsName(data, curr, item, sb, true, isQuestions);
 				}
 			}
 		}
+
 		return curr;
 	}
 
@@ -590,7 +610,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String identifier = parseField(Dns.IDENTIFIER);
 		incIndex(Dns.IDENTIFIER);
 
-		String fls = NetworkanalyzerTools.toBinary(NetworkanalyzerTools.toInteger(parseField(Dns.FLAGS)));
+		String fls = NetworkanalyzerTools.hexToBinEncoded(parseField(Dns.FLAGS));
 
 		String response = fls.substring(0, 1);
 		String opcode = fls.substring(1, 5);
@@ -635,37 +655,43 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String decodedNumberAuth = NetworkanalyzerTools.toInteger(numberAuth);
 		String decodedNumberAdd = NetworkanalyzerTools.toInteger(numberAdd);
 
-//        if(1 == 1)
-//        	return;
 		int curr = 12;
 
 		int number = Integer.parseInt(decodedNumberQst);
 		Dns.QUESTIONS.setValue(number);
 		Fields questions = new Fields(Dns.QUESTIONS.getName(), true);
-		curr = parseDnsNames(number, data, curr, questions, true);
-		incIndex(Dns.QUESTIONS);
-		System.out.println(questions);
+		if (number > 0) {
+			dns.addField(Dns.QUESTIONS.getName(), questions);
+			curr = parseDnsNames(number, data, curr, questions, true);
+			incIndex(Dns.QUESTIONS);
+		}
 
 		number = Integer.parseInt(decodedNumberAns);
 		Dns.ANSWER.setValue(number);
 		Fields answers = new Fields(Dns.ANSWER.getName(), true);
-		curr = parseDnsNames(number, data, curr, answers, false);
-		incIndex(Dns.ANSWER);
-		System.out.println(answers);
+		if (number > 0) {
+			dns.addField(Dns.ANSWER.getName(), answers);
+			curr = parseDnsNames(number, data, curr, answers, false);
+			incIndex(Dns.ANSWER);
+		}
 
 		number = Integer.parseInt(decodedNumberAuth);
 		Dns.AUTHORITY.setValue(number);
 		Fields authentifications = new Fields(Dns.AUTHORITY.getName(), true);
-		curr = parseDnsNames(number, data, curr, authentifications, false);
-		incIndex(Dns.AUTHORITY);
-		System.out.println(authentifications);
+		if (number > 0) {
+			dns.addField(Dns.AUTHORITY.getName(), authentifications);
+			curr = parseDnsNames(number, data, curr, authentifications, false);
+			incIndex(Dns.AUTHORITY);
+		}
 
 		number = Integer.parseInt(decodedNumberAdd);
 		Dns.ADDITIONAL_INFO.setValue(number);
 		Fields addInfo = new Fields(Dns.ADDITIONAL_INFO.getName(), true);
-		curr = parseDnsNames(number, data, curr, addInfo, false);
-		incIndex(Dns.ADDITIONAL_INFO);
-		System.out.println(addInfo);
+		if (number > 0) {
+			dns.addField(Dns.ADDITIONAL_INFO.getName(), addInfo);
+			curr = parseDnsNames(number, data, curr, addInfo, false);
+			incIndex(Dns.ADDITIONAL_INFO);
+		}
 
 		dns.addField(Dns.IDENTIFIER.getName(), new Field(Dns.IDENTIFIER, identifier, identifier));
 
@@ -680,27 +706,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		dns.addField(Dns.ADDITIONAL_RRS_NUMBER.getName(),
 				new Field(Dns.ADDITIONAL_RRS_NUMBER, numberAdd, decodedNumberAdd));
-		dns.addField(Dns.QUESTIONS.getName(), questions);
-		dns.addField(Dns.ANSWER.getName(), answers);
-		dns.addField(Dns.AUTHORITY.getName(), authentifications);
-		dns.addField(Dns.ADDITIONAL_INFO.getName(), addInfo);
-
-	}
-
-	@Override
-	public void visit(Arp arp) throws NetworkAnalyzerException {
-	}
-
-	@Override
-	public void visit(Http http) throws NetworkAnalyzerException {
-	}
-
-	@Override
-	public void visit(Icmp icmp) throws NetworkAnalyzerException {
-	}
-
-	@Override
-	public void visit(Imap imap) throws NetworkAnalyzerException {
 	}
 
 	private int getLine() {
