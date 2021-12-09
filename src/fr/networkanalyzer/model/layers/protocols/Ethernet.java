@@ -14,7 +14,7 @@ import fr.networkanalyzer.model.visitors.ILayerVisitor;
 public class Ethernet extends AbstractLayer implements ILayerDataLink {
 
 	public static final String ARP = "08 06";
-	public static final String IP = "08 00";
+	public static final String IPV4 = "08 00";
 
 	public static final Entry<String, Integer> DEST_ADDRESS = new Entry<>("Destination Address", 48);
 	public static final Entry<String, Integer> SRC_ADDRESS = new Entry<>("Source Address", 48);

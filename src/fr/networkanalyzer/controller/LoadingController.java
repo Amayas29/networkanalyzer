@@ -2,6 +2,7 @@ package fr.networkanalyzer.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import fr.networkanalyzer.model.Analyzer;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
@@ -15,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextAlignment;
@@ -129,7 +131,14 @@ public class LoadingController {
 		}
 
 		Scene scene = new Scene(root);
+
+		try {
+			stage.getIcons().add(new Image(getClass().getResource("../application/app_icon.jpg").toURI().toString()));
+		} catch (URISyntaxException e) {
+		}
+
 		stage.setScene(scene);
+		stage.setResizable(false);
 		stage.show();
 	}
 

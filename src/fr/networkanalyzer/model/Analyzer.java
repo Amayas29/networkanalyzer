@@ -40,7 +40,7 @@ public class Analyzer {
 
 		for (Frame f : frames)
 			sb.append(String.format(s, f.getId(), f.getFieldNetwork(Ip.SRC_ADDRESS.getKey()).getValueDecoded(),
-					f.getFieldNetwork(Ip.SRC_ADDRESS.getKey()).getValueDecoded(), f.getEncapsulatedProtocol(),
+					f.getFieldNetwork(Ip.DEST_ADDRESS.getKey()).getValueDecoded(), f.getEncapsulatedProtocol(),
 					String.valueOf(f.getTotalLength())));
 
 		sb.append(" Errors :\n");

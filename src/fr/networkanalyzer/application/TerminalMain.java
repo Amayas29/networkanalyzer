@@ -86,6 +86,7 @@ public class TerminalMain {
 
 				} catch (Exception e) {
 					System.out.println("\t\t Invalid number \n");
+					e.printStackTrace();
 				}
 
 				System.out.println("\n\t*** Press ENTER to continue ***");
@@ -121,6 +122,7 @@ public class TerminalMain {
 						System.out.println("\t\t The frame doesn't exist");
 
 				} catch (Exception e) {
+					System.out.println(e.getMessage());
 					System.out.println("\t\t Invalid number \n");
 				}
 

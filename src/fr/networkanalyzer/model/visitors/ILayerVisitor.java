@@ -1,6 +1,8 @@
 package fr.networkanalyzer.model.visitors;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
+import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
+import fr.networkanalyzer.model.layers.protocols.Arp;
 import fr.networkanalyzer.model.layers.protocols.Dhcp;
 import fr.networkanalyzer.model.layers.protocols.Dns;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
@@ -19,7 +21,9 @@ public interface ILayerVisitor {
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException;
 
 	public void visit(Dns dns) throws NetworkAnalyzerException;
-	
+
 	public void visit(Icmp icmp) throws NetworkAnalyzerException;
+
+	public void visit(Arp arp) throws NetworkanalyzerParseErrorException;
 
 }

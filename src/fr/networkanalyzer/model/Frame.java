@@ -48,20 +48,38 @@ public class Frame {
 		return message.getTotalLength();
 	}
 
-	public List<IField> getFieldsDataLink() {
-		return message.getFields();
+	public List<IField> getFieldsDataLink() throws NetworkAnalyzerException {
+		try {
+			return message.getFields();
+		} catch (NullPointerException e) {
+			throw new NetworkAnalyzerException("Data link layer doesn't exist");
+		}
 	}
 
-	public List<IField> getFieldsNetwork() {
-		return message.getIncluded().getFields();
+	public List<IField> getFieldsNetwork() throws NetworkAnalyzerException {
+		try {
+			return message.getIncluded().getFields();
+		} catch (NullPointerException e) {
+			throw new NetworkAnalyzerException("Network layer doesn't exist");
+		}
 	}
 
-	public List<IField> getFieldsTransport() {
-		return message.getIncluded().getIncluded().getFields();
+	public List<IField> getFieldsTransport() throws NetworkAnalyzerException {
+		try {
+			return message.getIncluded().getIncluded().getFields();
+		} catch (NullPointerException | UnsupportedOperationException e) {
+			throw new NetworkAnalyzerException("Network layer doesn't exist");
+
+		}
 	}
 
-	public List<IField> getFieldsApplication() {
-		return message.getIncluded().getIncluded().getIncluded().getFields();
+	public List<IField> getFieldsApplication() throws NetworkAnalyzerException {
+
+		try {
+			return message.getIncluded().getIncluded().getIncluded().getFields();
+		} catch (NullPointerException | UnsupportedOperationException e) {
+			throw new NetworkAnalyzerException("Application layer doesn't exist");
+		}
 	}
 
 	public String getDataLinkName() throws NetworkAnalyzerException {

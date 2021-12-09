@@ -2,6 +2,8 @@ package fr.networkanalyzer.model.decodes;
 
 import java.util.Map;
 
+import fr.networkanalyzer.model.fields.Entry;
+
 public class DhcpDecoder extends Decode {
 
 	static {
@@ -19,5 +21,10 @@ public class DhcpDecoder extends Decode {
 		put(-1, "Unknow");
 
 	}
+	
+	public static Entry<String,Integer> getType(int i){
+		return Decode.getType(i);
+	}
+
 
 }

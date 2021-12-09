@@ -156,7 +156,7 @@ public class OptionsBuilder {
 					e = DhcpOption.getEntryTypeDhcp(Integer.parseInt(sb.toString().replace(" ", ""), 16));
 					e = e.setValue(8);
 				} catch (Exception x) {
-					e = new Entry<>(dOption.getName(), l);
+					e = new Entry<>(dOption.getName(), l * 8);
 				}
 
 				option.addField(new Field(e, sb.toString().strip(), e.getKey()));
