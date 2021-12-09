@@ -9,6 +9,9 @@ macos:
 
 windows:
 	scripts/windows.bat
+	
+terminal:
+	java -jar networkanalyzer-terminal.jar
 
 all:
 	linux
