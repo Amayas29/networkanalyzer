@@ -11,6 +11,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) {
 		try {
+			
 			stage.setTitle("networkanalyzer");
 			Parent root = FXMLLoader.load(getClass().getResource("/fr/networkanalyzer/view/fxml/main.fxml"));
 			Scene scene = new Scene(root);
