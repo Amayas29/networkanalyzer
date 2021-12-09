@@ -430,7 +430,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		incIndex(Dhcp.TRANSACTION_ID);
 
 		dhcp.addField(Dhcp.TRANSACTION_ID.getKey(),
-				new Field(Dhcp.TRANSACTION_ID, transactionId, NetworkanalyzerTools.toInteger(transactionId)));
+				new Field(Dhcp.TRANSACTION_ID, transactionId, String.format("Ox%s", transactionId.replace(" ", ""))));
 
 		// seconds elapsed
 		String secondsElapsed = parseField(Dhcp.SECONDS_ELAPSED);
