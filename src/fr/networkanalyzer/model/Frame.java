@@ -41,7 +41,8 @@ public class Frame {
 	public IField getFieldNetwork(String IField) {
 		if (message.getIncluded() != null)
 			return message.getIncluded().getField(IField);
-		return new Field(Ethernet.DATA,"0.0.0.0","0.0.0.0");
+
+		return new Field(Ethernet.DATA, "0.0.0.0", "0.0.0.0");
 	}
 
 	public IField getFieldTransport(String IField) {
@@ -77,7 +78,6 @@ public class Frame {
 			return message.getIncluded().getIncluded().getFields();
 		} catch (NullPointerException | UnsupportedOperationException e) {
 			throw new NetworkAnalyzerException("Network layer doesn't exist");
-
 		}
 	}
 

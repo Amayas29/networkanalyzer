@@ -26,9 +26,10 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 
 	@Override
 	public Integer getTotalLength() {
-		if(getIncluded()!= null)
+		if (getIncluded() != null)
 			return 14 + included.getTotalLength();
-		return 14 + getField(DATA.getKey()).getLength()/8;
+
+		return 14 + getField(DATA.getKey()).getLength() / 8;
 	}
 
 	@Override
@@ -52,9 +53,11 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 		fs.add(getField(DEST_ADDRESS.getKey()));
 		fs.add(getField(SRC_ADDRESS.getKey()));
 		fs.add(getField(TYPE.getKey()));
+
 		IField data = getField(DATA.getKey());
 		if (data != null)
 			fs.add(data);
+
 		return fs;
 	}
 
@@ -76,6 +79,5 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 			return super.toString().concat(included.toString());
 		return super.toString();
 	}
-	
-	
+
 }

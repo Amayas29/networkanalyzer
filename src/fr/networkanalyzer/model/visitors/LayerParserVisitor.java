@@ -126,21 +126,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 			break;
 		}
 
-		case Ethernet.IPV6:{
+		case Ethernet.IPV6: {
 			isData = true;
 			indexWarning = getLine();
 			moveToNextFrameIndex();
 			type = new Field(Ethernet.TYPE, rdType, "IPV6");
 			break;
 		}
-		
-		default :
-			
+
+		default:
+
 			int lineError = getLine();
 			moveToNextFrameIndex();
 			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the ethernet type field");
 		}
-		
 
 		incIndex(Ethernet.TYPE);
 
@@ -152,9 +151,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ethernet.addField(Ethernet.SRC_ADDRESS.getKey(), src);
 		ethernet.addField(Ethernet.DEST_ADDRESS.getKey(), dest);
 		ethernet.addField(Ethernet.TYPE.getKey(), type);
+
 		if (!isData) {
-			layer.accept(this);
 			ethernet.setIncluded(layer);
+			layer.accept(this);
+
 			return;
 		}
 
@@ -251,14 +252,13 @@ public class LayerParserVisitor implements ILayerVisitor {
 			moveToNextFrameIndex();
 			proto = new Field(Ip.PROTOCOL, protocol, "UNKNOW");
 			break;
-			
 		}
 
 		default:
 			int lineError = getLine();
 			moveToNextFrameIndex();
 			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the ethernet type field");
-			
+
 		}
 
 		incIndex(Ip.PROTOCOL);
@@ -330,15 +330,16 @@ public class LayerParserVisitor implements ILayerVisitor {
 			ip.addField(os.getKey(), options);
 			incIndex(os);
 		}
+
 		if (!isData) {
-			layer.accept(this);
 			ip.setIncluded(layer);
+			layer.accept(this);
+			return;
 		}
+
 		Entry<String, Integer> dataEntry = Ip.DATA.setValue(line.split(" ").length * 8);
 		ip.addField(dataEntry.getKey(), new Field(dataEntry, line, line));
 		throw new NetworkanalyzerParseWarningException(indexWarning, "TCP protocol is not supported");
-//		if (ip.getLength() != Integer.parseInt(ip.getField(Ip.TOTAL_LENGTH.getKey()).getValueDecoded()))
-//			throw new NetworkanalyzerParseErrorException(getLine(), "IP length is incorrect");
 	}
 
 	@Override
@@ -355,9 +356,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		int pDest = Integer.parseInt(destPort.replace(" ", ""), 16);
 		int pSrc = Integer.parseInt(srcPort.replace(" ", ""), 16);
-
-//		if (pDest == pSrc && pSrc < 1024)
-//			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the Udp port fields");
 
 		boolean isDataEcapculed = false;
 		switch (pSrc) {
@@ -407,11 +405,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 			return;
 		}
 
-		layer.accept(this);
 		udp.setIncluded(layer);
-
-//		if (udp.getLength() != Integer.parseInt(udp.getField(Udp.LENGTH.getKey()).getValueDecoded()))
-//			throw new NetworkanalyzerParseErrorException(getLine(), "Udp length is incorrect");
+		layer.accept(this);
 	}
 
 	@Override

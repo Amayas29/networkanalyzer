@@ -33,7 +33,7 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public static final Entry<String, Integer> DEST_ADDRESS = new Entry<>("Destination Address", 32);
 	public static final Entry<String, Integer> FRAGMENTS = new Entry<>("Fragments", 16);
 	public static final Entry<String, Integer> OPTIONS = new Entry<>("Options", Integer.MAX_VALUE);
-	public static final Entry<String,Integer> DATA = new Entry<String, Integer>("DATA", 0);
+	public static final Entry<String, Integer> DATA = new Entry<String, Integer>("DATA", 0);
 
 	private ILayerTransport included;
 
@@ -72,14 +72,15 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 		fs.add(getField(HEADER_CHECKSUM.getKey()));
 		fs.add(getField(SRC_ADDRESS.getKey()));
 		fs.add(getField(DEST_ADDRESS.getKey()));
+
 		IField options = getField(OPTIONS.getKey());
-		
 		if (options != null)
 			fs.add(options);
 
 		IField data = getField(DATA.getKey());
 		if (data != null)
 			fs.add(data);
+
 		return fs;
 	}
 
@@ -87,8 +88,10 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public String getEncapsulatedProtocol() {
 		if (included != null)
 			return included.getEncapsulatedProtocol();
+
 		return getName();
 	}
+
 	@Override
 	public String getName() {
 		return "IP";
@@ -98,6 +101,7 @@ public class Ip extends AbstractLayer implements ILayerNetwork {
 	public String toString() {
 		if (included != null)
 			return super.toString().concat(included.toString());
+
 		return super.toString();
 	}
 
