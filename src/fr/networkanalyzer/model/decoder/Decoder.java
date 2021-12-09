@@ -6,8 +6,8 @@ import java.util.Map;
 import fr.networkanalyzer.model.fields.Entry;
 
 public abstract class Decoder {
-	private static Map<Integer, String> types  = new HashMap<>();
-	
+	private static Map<Integer, String> types = new HashMap<>();
+
 	public static Entry<String, Integer> getType(int code) {
 
 		String type = types.get(code);
@@ -17,9 +17,9 @@ public abstract class Decoder {
 
 		return new Entry<String, Integer>(type, 16);
 	}
-	
-	public static void put(Integer i ,String s) {
+
+	public static void put(Integer i, String s) {
 		types.put(i, s);
 	}
-	
+
 }

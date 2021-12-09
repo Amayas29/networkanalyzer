@@ -1,7 +1,5 @@
 package fr.networkanalyzer.model.decoder;
 
-import java.util.Map;
-
 import fr.networkanalyzer.model.fields.Entry;
 
 public class DhcpDecoder extends Decoder {

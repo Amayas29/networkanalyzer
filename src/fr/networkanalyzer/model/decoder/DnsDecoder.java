@@ -34,8 +34,8 @@ public class DnsDecoder extends Decoder {
 
 		return name;
 	}
-	
-	public static Entry<String,Integer> getType(int i){
+
+	public static Entry<String, Integer> getType(int i) {
 		return Decoder.getType(i);
 	}
 
