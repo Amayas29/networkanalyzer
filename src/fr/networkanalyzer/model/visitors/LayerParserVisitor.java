@@ -129,7 +129,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		case Ethernet.IPV6: {
 			isData = true;
 			indexWarning = getLine();
-			moveToNextFrameIndex();
 			type = new Field(Ethernet.TYPE, rdType, "IPV6");
 			break;
 		}
@@ -159,6 +158,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			return;
 		}
 
+		moveToNextFrameIndex();
 		Entry<String, Integer> dataEntry = Ethernet.DATA.setValue(line.split(" ").length * 8);
 		ethernet.addField(dataEntry.getKey(), new Field(dataEntry, line, line));
 		throw new NetworkanalyzerParseWarningException(indexWarning, " IPV6 is not supported");
@@ -249,7 +249,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		case Ip.TCP: {
 			isData = true;
 			indexWarning = getLine();
-			moveToNextFrameIndex();
 			proto = new Field(Ip.PROTOCOL, protocol, "UNKNOW");
 			break;
 		}
@@ -337,6 +336,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			return;
 		}
 
+		moveToNextFrameIndex();
 		Entry<String, Integer> dataEntry = Ip.DATA.setValue(line.split(" ").length * 8);
 		ip.addField(dataEntry.getKey(), new Field(dataEntry, line, line));
 		throw new NetworkanalyzerParseWarningException(indexWarning, "TCP protocol is not supported");
