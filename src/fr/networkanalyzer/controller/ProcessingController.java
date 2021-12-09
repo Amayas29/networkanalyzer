@@ -216,7 +216,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsDataLink(), frame.getDataLinkName());
 		} catch (NetworkAnalyzerException e) {
-			System.out.println(e.getMessage());
+
 		}
 	}
 
@@ -224,7 +224,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsNetwork(), frame.getNetworkName());
 		} catch (NetworkAnalyzerException e) {
-			System.out.println(e.getMessage());
+
 		}
 	}
 
@@ -232,7 +232,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsTransport(), frame.getTransportName());
 		} catch (NetworkAnalyzerException e) {
-			System.out.println(e.getMessage());
+
 		}
 	}
 
@@ -240,7 +240,7 @@ public class ProcessingController {
 		try {
 			showLayer(frame, frame.getFieldsApplication(), frame.getApplicationName());
 		} catch (NetworkAnalyzerException e) {
-			System.out.println(e.getMessage());
+
 		}
 	}
 
@@ -331,8 +331,7 @@ public class ProcessingController {
 				continue;
 			}
 
-			offset = String
-					.valueOf(Integer.parseInt(offset, 10) + Integer.parseInt(Integer.toHexString(MAX_BYTES_LINE), 10));
+			offset = Integer.toHexString(Integer.parseInt(offset, 16) + MAX_BYTES_LINE);
 
 			for (; offset.length() < 4;)
 				offset = "0" + offset;

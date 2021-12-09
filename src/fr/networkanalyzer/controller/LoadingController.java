@@ -133,7 +133,7 @@ public class LoadingController {
 		Scene scene = new Scene(root);
 
 		try {
-			stage.getIcons().add(new Image(getClass().getResource("../application/app_icon.jpg").toURI().toString()));
+			stage.getIcons().add(new Image(getClass().getResource("app_icon.jpg").toURI().toString()));
 		} catch (URISyntaxException e) {
 		}
 

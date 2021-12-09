@@ -14,7 +14,7 @@
 
 #mainPanel {
 	-fx-font-family: monospace;
-  -fx-background-image: url("../../../../resources/images/main_background.png");
+  -fx-background-image: url("main_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
@@ -54,7 +54,7 @@
 #choose {
 	-fx-font-family: monospace;
   -fx-background-color: transparent;
-  -fx-background-image: url("../../../../resources/images/choose.png");
+  -fx-background-image: url("choose.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-style: solid;
@@ -91,7 +91,7 @@
 
 #aboutUsPanel {
 	-fx-font-family: monospace;
-  -fx-background-image: url("../../../../resources/images/aboutus_background.png");
+  -fx-background-image: url("aboutus_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
@@ -99,7 +99,7 @@
 
 #loadingPanel {
 	-fx-font-family: monospace;
-  -fx-background-image: url("../../../../resources/images/loading_background.png");
+  -fx-background-image: url("loading_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;
@@ -108,7 +108,7 @@
 /* Processing */
 #processingPanel {
 	-fx-font-family: monospace;
-  -fx-background-image: url("../../../../resources/images/processing_background.png");
+  -fx-background-image: url("processing_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
   -fx-border-radius: 10.0;

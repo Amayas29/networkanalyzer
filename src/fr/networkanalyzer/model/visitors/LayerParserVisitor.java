@@ -747,7 +747,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 	}
 
 	private int getDnsName(String data[], int curr, Fields fields) {
-		boolean jump = true;
+		boolean notJumped = true;
 		int i = curr;
 
 		StringBuilder sbV = new StringBuilder();
@@ -757,9 +757,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 			if (isPointer(NetworkanalyzerTools.hexToBinEncoded(data[i]))) {
 
-				if (jump) {
+				if (notJumped) {
 					sbV.append(String.format("%s %s ", data[i], data[i + 1]));
-					jump = false;
+					notJumped = false;
 					curr += 2;
 				}
 
@@ -771,7 +771,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 				sbN.append(data[i]).append(" ");
 
-				if (jump) {
+				if (notJumped) {
 					sbV.append(data[i]).append(" ");
 					curr++;
 				}
@@ -781,7 +781,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 				int k = i;
 				for (int j = 0; j < len; j++) {
 
-					if (jump) {
+					if (notJumped) {
 						sbV.append(data[k + j]).append(" ");
 						curr++;
 					}
@@ -793,7 +793,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 			}
 		}
 
-		if (jump) {
+		if (notJumped) {
 			sbV.append("00");
 			curr++;
 		}
@@ -811,6 +811,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 	public String getDnsNameDecoded(String name) {
 
 		StringBuilder sb = new StringBuilder();
+
+		if (name.trim().equals(""))
+			return "";
 
 		String data[] = name.trim().split(" ");
 

@@ -64,6 +64,7 @@ public class OptionsBuilder {
 	}
 
 	public static IField buildDhcpOptions(String header) throws NetworkAnalyzerException {
+
 		Fields options = new Fields(Dhcp.OPTIONS.getKey(), true);
 
 		String data[] = header.split(" ");
@@ -84,12 +85,27 @@ public class OptionsBuilder {
 			Fields option = new Fields(dOption.getName(), true);
 			String name = data[i++];
 			String length = data[i++];
+
 			int l = Integer.parseInt(length, 16);
 			Field type = new Field(new Entry<>("Type", 8), name, dOption.getCode() + "");
 
 			Field len = new Field(new Entry<>("Length", 8), length, l + "");
 			option.addField(type);
 			option.addField(len);
+
+			if (dOption == DhcpOption.UNKNOW) {
+
+				StringBuilder d = new StringBuilder();
+
+				for (int k = 0; k < l; k++)
+					d.append(data[k + i]).append(" ");
+
+				i += l;
+
+				option.addField(
+						new Field(new Entry<>("Data", l * 8), d.toString().trim(), DhcpOption.UNKNOW.getName()));
+				options.addField(option);
+			}
 
 			if (dOption.getCode() == 61) {
 				String hardwareType = data[i];
@@ -115,9 +131,10 @@ public class OptionsBuilder {
 				Fields valuesOption;
 				valuesOption = new Fields("Address", true);
 
+				int k = i;
 				for (int j = 0; j < l; j += 4) {
-					String ips = String.format("%s %s %s %s", data[j + i], data[j + 1 + i], data[j + 2 + i],
-							data[j + 3 + i]);
+					String ips = String.format("%s %s %s %s", data[j + k], data[j + 1 + k], data[j + 2 + k],
+							data[j + 3 + k]);
 					valuesOption.addField(new Field(new Entry<>(dOption.getName(), 32), ips,
 							NetworkanalyzerTools.decodeAddressIp(ips)));
 					i += 4;

@@ -48,7 +48,7 @@ public class AnalyzerParser {
 				ethernet = new Ethernet();
 				try {
 					ethernet.accept(parser);
-				} catch (NetworkAnalyzerException e) {
+				} catch (Exception e) {
 					Frame f = new Frame();
 					analyzer.addError(String.format("Frame %d : %s", f.getId(), e.getMessage()));
 					continue;
