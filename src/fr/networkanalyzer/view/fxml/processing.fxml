@@ -16,19 +16,15 @@
 
 <Pane id="processingPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1240.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<ScrollPane layoutX="57.0" layoutY="33.0" prefHeight="260.0" prefWidth="1127.0">
-         <content>
-            <TableView fx:id="frameTable" onMouseClicked="#showFrame" prefHeight="269.0" prefWidth="1127.0">
-               <columns>
-                  <TableColumn fx:id="noCol" prefWidth="75.0" text="No" />
-                  <TableColumn fx:id="srcCol" prefWidth="350.0" text="Source" />
-                  <TableColumn fx:id="destCol" prefWidth="350.0" text="Destination" />
-                  <TableColumn fx:id="protoCol" prefWidth="200.0" text="Protocol" />
-                  <TableColumn fx:id="lengthCol" prefWidth="150.0" text="Lenght" />
-               </columns>
-            </TableView>
-         </content>
-		</ScrollPane>
+      <TableView fx:id="frameTable" layoutX="36.0" layoutY="27.0" onMouseClicked="#showFrame" prefHeight="269.0" prefWidth="1152.0">
+         <columns>
+            <TableColumn fx:id="noCol" prefWidth="75.0" text="No" />
+            <TableColumn fx:id="srcCol" prefWidth="350.0" text="Source" />
+            <TableColumn fx:id="destCol" prefWidth="350.0" text="Destination" />
+            <TableColumn fx:id="protoCol" prefWidth="200.0" text="Protocol" />
+            <TableColumn fx:id="lengthCol" prefWidth="150.0" text="Lenght" />
+         </columns>
+      </TableView>
       <Separator layoutX="371.0" layoutY="315.0" prefWidth="500.0" />
       <Label layoutX="26.0" layoutY="318.0" prefHeight="26.0" prefWidth="292.0" styleClass="h1" stylesheets="@../styles.css" text="Erroneous frames" />
       <ListView fx:id="errorsListView" layoutX="26.0" layoutY="351.0" prefHeight="175.0" prefWidth="1189.0" />
