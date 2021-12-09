@@ -1,11 +1,11 @@
-package fr.networkanalyzer.model.decodes;
+package fr.networkanalyzer.model.decoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import fr.networkanalyzer.model.fields.Entry;
 
-public abstract class Decode {
+public abstract class Decoder {
 	private static Map<Integer, String> types  = new HashMap<>();
 	
 	public static Entry<String, Integer> getType(int code) {

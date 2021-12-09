@@ -1,8 +1,8 @@
-package fr.networkanalyzer.model.decodes;
+package fr.networkanalyzer.model.decoder;
 
 import fr.networkanalyzer.model.fields.Entry;
 
-public class HardwareDecoded extends Decode {
+public class HardwareDecoder extends Decoder {
 
 	static {
 
@@ -51,7 +51,7 @@ public class HardwareDecoded extends Decode {
 	}
 
 	public static Entry<String, Integer> getType(int i) {
-		return Decode.getType(i);
+		return Decoder.getType(i);
 	}
 
 }

@@ -6,11 +6,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import fr.networkanalyzer.model.decodes.ArpDecoded;
-import fr.networkanalyzer.model.decodes.DnsDecoder;
-import fr.networkanalyzer.model.decodes.HardwareDecoded;
+import fr.networkanalyzer.model.decoder.ArpDecoder;
+import fr.networkanalyzer.model.decoder.DnsDecoder;
+import fr.networkanalyzer.model.decoder.HardwareDecoder;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseErrorException;
+import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseWarningException;
 import fr.networkanalyzer.model.fields.Entry;
 import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.Fields;
@@ -107,9 +108,10 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String rdType = parseField(Ethernet.TYPE);
 
-		IField type;
+		IField type = null;
 		ILayerNetwork layer = null;
-
+		boolean isData = false;
+		int indexWarning = 0;
 		switch (rdType) {
 
 		case Ethernet.IPV4: {
@@ -124,12 +126,21 @@ public class LayerParserVisitor implements ILayerVisitor {
 			break;
 		}
 
-		default:
-
+		case Ethernet.IPV6:{
+			isData = true;
+			indexWarning = getLine();
+			moveToNextFrameIndex();
+			type = new Field(Ethernet.TYPE, rdType, "IPV6");
+			break;
+		}
+		
+		default :
+			
 			int lineError = getLine();
 			moveToNextFrameIndex();
 			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the ethernet type field");
 		}
+		
 
 		incIndex(Ethernet.TYPE);
 
@@ -141,9 +152,15 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ethernet.addField(Ethernet.SRC_ADDRESS.getKey(), src);
 		ethernet.addField(Ethernet.DEST_ADDRESS.getKey(), dest);
 		ethernet.addField(Ethernet.TYPE.getKey(), type);
+		if (!isData) {
+			layer.accept(this);
+			ethernet.setIncluded(layer);
+			return;
+		}
 
-		layer.accept(this);
-		ethernet.setIncluded(layer);
+		Entry<String, Integer> dataEntry = Ethernet.DATA.setValue(line.split(" ").length * 8);
+		ethernet.addField(dataEntry.getKey(), new Field(dataEntry, line, line));
+		throw new NetworkanalyzerParseWarningException(indexWarning, " IPV6 is not supported");
 	}
 
 	@Override
@@ -211,9 +228,10 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String protocol = parseField(Ip.PROTOCOL);
 
-		ILayerTransport layer;
-		IField proto;
-
+		ILayerTransport layer = null;
+		IField proto = null;
+		int indexWarning = 0;
+		boolean isData = false;
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
 			layer = new Icmp();
@@ -228,15 +246,19 @@ public class LayerParserVisitor implements ILayerVisitor {
 		}
 
 		case Ip.TCP: {
-			int lineError = getLine();
+			isData = true;
+			indexWarning = getLine();
 			moveToNextFrameIndex();
-			throw new NetworkanalyzerParseErrorException(lineError, "TCP protocol is not supported");
+			proto = new Field(Ip.PROTOCOL, protocol, "UNKNOW");
+			break;
+			
 		}
 
 		default:
 			int lineError = getLine();
 			moveToNextFrameIndex();
-			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the IP protocol field");
+			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the ethernet type field");
+			
 		}
 
 		incIndex(Ip.PROTOCOL);
@@ -308,9 +330,13 @@ public class LayerParserVisitor implements ILayerVisitor {
 			ip.addField(os.getKey(), options);
 			incIndex(os);
 		}
-
-		layer.accept(this);
-		ip.setIncluded(layer);
+		if (!isData) {
+			layer.accept(this);
+			ip.setIncluded(layer);
+		}
+		Entry<String, Integer> dataEntry = Ip.DATA.setValue(line.split(" ").length * 8);
+		ip.addField(dataEntry.getKey(), new Field(dataEntry, line, line));
+		throw new NetworkanalyzerParseWarningException(indexWarning, "TCP protocol is not supported");
 //		if (ip.getLength() != Integer.parseInt(ip.getField(Ip.TOTAL_LENGTH.getKey()).getValueDecoded()))
 //			throw new NetworkanalyzerParseErrorException(getLine(), "IP length is incorrect");
 	}
@@ -411,7 +437,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		incIndex(Dhcp.HARDWARE_TYPE);
 
 		dhcp.addField(Dhcp.HARDWARE_TYPE.getKey(), new Field(Dhcp.HARDWARE_TYPE, hardwareType,
-				HardwareDecoded.getType(Integer.parseInt(hardwareType.replace(" ", ""), 16)).getKey()));
+				HardwareDecoder.getType(Integer.parseInt(hardwareType.replace(" ", ""), 16)).getKey()));
 
 		// hardware address length---------------------------------
 		String hardwareAddressLenght = parseField(Dhcp.HARDWARE_ADDRESS_LENGTH);
@@ -661,7 +687,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String ht = parseField(Arp.HARDWARE_TYPE);
 		Field htf = new Field(Arp.HARDWARE_TYPE, ht,
-				HardwareDecoded.getType(Integer.parseInt(ht.replace(" ", ""), 16)).getKey());
+				HardwareDecoder.getType(Integer.parseInt(ht.replace(" ", ""), 16)).getKey());
 		arp.addField(Arp.HARDWARE_TYPE.getKey(), htf);
 		incIndex(Arp.HARDWARE_TYPE);
 
@@ -683,7 +709,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		incIndex(Arp.PROTOCOL_SIZE);
 
 		String op = parseField(Arp.OPCODE);
-		Field opf = new Field(Arp.OPCODE, op, ArpDecoded.getType(Integer.parseInt(op.replace(" ", ""), 16)).getKey());
+		Field opf = new Field(Arp.OPCODE, op, ArpDecoder.getType(Integer.parseInt(op.replace(" ", ""), 16)).getKey());
 		arp.addField(Arp.OPCODE.getKey(), opf);
 		incIndex(Arp.OPCODE);
 

@@ -15,16 +15,20 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 
 	public static final String ARP = "08 06";
 	public static final String IPV4 = "08 00";
+	public static final String IPV6 = "86 DD";
 
 	public static final Entry<String, Integer> DEST_ADDRESS = new Entry<>("Destination Address", 48);
 	public static final Entry<String, Integer> SRC_ADDRESS = new Entry<>("Source Address", 48);
 	public static final Entry<String, Integer> TYPE = new Entry<>("Type", 16);
+	public static final Entry<String, Integer> DATA = new Entry<String, Integer>("UNKNOW Data", 0);
 
 	private ILayerNetwork included;
 
 	@Override
 	public Integer getTotalLength() {
-		return 14 + included.getTotalLength();
+		if(getIncluded()!= null)
+			return 14 + included.getTotalLength();
+		return 14 + getField(DATA.getKey()).getLength()/8;
 	}
 
 	@Override
@@ -48,12 +52,17 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 		fs.add(getField(DEST_ADDRESS.getKey()));
 		fs.add(getField(SRC_ADDRESS.getKey()));
 		fs.add(getField(TYPE.getKey()));
+		IField data = getField(DATA.getKey());
+		if (data != null)
+			fs.add(data);
 		return fs;
 	}
 
 	@Override
 	public String getEncapsulatedProtocol() {
-		return included.getEncapsulatedProtocol();
+		if (included != null)
+			return included.getEncapsulatedProtocol();
+		return getName();
 	}
 
 	@Override
@@ -63,7 +72,10 @@ public class Ethernet extends AbstractLayer implements ILayerDataLink {
 
 	@Override
 	public String toString() {
-		return super.toString().concat(included.toString());
+		if (included != null)
+			return super.toString().concat(included.toString());
+		return super.toString();
 	}
-
+	
+	
 }

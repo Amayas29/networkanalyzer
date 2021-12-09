@@ -1,8 +1,8 @@
-package fr.networkanalyzer.model.decodes;
+package fr.networkanalyzer.model.decoder;
 
 import fr.networkanalyzer.model.fields.Entry;
 
-public class ArpDecoded extends Decode{
+public class ArpDecoder extends Decoder{
 static {
 	put(0,"Reserved");
 	put(1,"REQUEST");
@@ -35,6 +35,6 @@ static {
 }
 
 public static Entry<String,Integer> getType(int i){
-	return Decode.getType(i);
+	return Decoder.getType(i);
 }
 }

@@ -282,6 +282,12 @@ public class ProcessingController {
 			label.getStyleClass().add("errorFrameLabel");
 			labels.add(label);
 		}
+		
+		for (String warning : analyzer.getWarnings()) {
+			label = new Label(warning);
+			label.getStyleClass().add("warningFrameLabel");
+			labels.add(label);
+		}
 
 		ObservableList<Label> items = FXCollections.observableArrayList(labels);
 		errorsListView.setItems(items);

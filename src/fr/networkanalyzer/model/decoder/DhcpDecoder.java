@@ -1,10 +1,10 @@
-package fr.networkanalyzer.model.decodes;
+package fr.networkanalyzer.model.decoder;
 
 import java.util.Map;
 
 import fr.networkanalyzer.model.fields.Entry;
 
-public class DhcpDecoder extends Decode {
+public class DhcpDecoder extends Decoder {
 
 	static {
 
@@ -23,7 +23,7 @@ public class DhcpDecoder extends Decode {
 	}
 	
 	public static Entry<String,Integer> getType(int i){
-		return Decode.getType(i);
+		return Decoder.getType(i);
 	}
 
 

@@ -3,8 +3,10 @@ package fr.networkanalyzer.model;
 import java.util.List;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
+import fr.networkanalyzer.model.fields.Field;
 import fr.networkanalyzer.model.fields.IField;
 import fr.networkanalyzer.model.layers.ILayerDataLink;
+import fr.networkanalyzer.model.layers.protocols.Ethernet;
 
 public class Frame {
 	private static int cpt = 0;
@@ -37,7 +39,9 @@ public class Frame {
 	}
 
 	public IField getFieldNetwork(String IField) {
-		return message.getIncluded().getField(IField);
+		if (message.getIncluded() != null)
+			return message.getIncluded().getField(IField);
+		return new Field(Ethernet.DATA,"0.0.0.0","0.0.0.0");
 	}
 
 	public IField getFieldTransport(String IField) {

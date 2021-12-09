@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerException;
 import fr.networkanalyzer.model.exceptions.NetworkAnalyzerFileErrorsException;
+import fr.networkanalyzer.model.exceptions.NetworkanalyzerParseWarningException;
 import fr.networkanalyzer.model.layers.protocols.Ethernet;
 import fr.networkanalyzer.model.tools.ParsingTools;
 import fr.networkanalyzer.model.visitors.LayerParserVisitor;
@@ -48,7 +49,13 @@ public class AnalyzerParser {
 				ethernet = new Ethernet();
 				try {
 					ethernet.accept(parser);
-				} catch (Exception e) {
+				} catch (NetworkanalyzerParseWarningException e) {
+					Frame f = new Frame();
+					f.setLayerDataLink(ethernet);
+					analyzer.addFrame(f);
+					analyzer.addWarning(String.format("Frame %d : %s", f.getId(), e.getMessage()));
+					continue;
+				}catch (Exception e) {
 					Frame f = new Frame();
 					analyzer.addError(String.format("Frame %d : %s", f.getId(), e.getMessage()));
 					continue;

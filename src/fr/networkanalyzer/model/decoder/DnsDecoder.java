@@ -1,11 +1,11 @@
-package fr.networkanalyzer.model.decodes;
+package fr.networkanalyzer.model.decoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import fr.networkanalyzer.model.fields.Entry;
 
-public class DnsDecoder extends Decode {
+public class DnsDecoder extends Decoder {
 
 	private static Map<Integer, String> classes;
 
@@ -36,7 +36,7 @@ public class DnsDecoder extends Decode {
 	}
 	
 	public static Entry<String,Integer> getType(int i){
-		return Decode.getType(i);
+		return Decoder.getType(i);
 	}
 
 }
