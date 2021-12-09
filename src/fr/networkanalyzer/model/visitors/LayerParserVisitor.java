@@ -1,6 +1,7 @@
 package fr.networkanalyzer.model.visitors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -28,10 +29,11 @@ import fr.networkanalyzer.model.tools.ParsingTools;
 public class LayerParserVisitor implements ILayerVisitor {
 
 	private String line;
-	private List<Entry<Integer, Integer>> listIndex;
+	private List<List<Integer>> listIndex;
 	private int currentIndex;
 	private int index;
 	private String header;
+	private int lastIndex;
 
 	public LayerParserVisitor() {
 		listIndex = new ArrayList<>();
@@ -39,6 +41,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		line = null;
 		index = 0;
 		header = null;
+		lastIndex = 0;
 	}
 
 	public void setLine(String line) {
@@ -49,20 +52,25 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < data.length; i++) {
+		lastIndex = Integer.parseInt(data[data.length - 1]);
+
+		for (int i = 0; i < data.length - 1; i++) {
 			if (ParsingTools.isPattern(data[i])) {
-				listIndex.add(new Entry<>(ParsingTools.getIndexPattern(data[i]), ParsingTools.getLinePattern(data[i])));
+				listIndex.add(
+						Arrays.asList(ParsingTools.getIndexPattern(data[i]), ParsingTools.getLinePattern(data[i])));
+
 				continue;
 			}
 
 			sb.append(data[i].concat(" "));
 		}
 
-		Collections.sort(listIndex, new Comparator<Entry<Integer, Integer>>() {
+		Collections.sort(listIndex, new Comparator<List<Integer>>() {
 
 			@Override
-			public int compare(Entry<Integer, Integer> o1, Entry<Integer, Integer> o2) {
-				return o1.getKey() - o2.getKey();
+			public int compare(List<Integer> o1, List<Integer> o2) {
+
+				return o1.get(0) - o2.get(0);
 			}
 		});
 
@@ -71,8 +79,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	@Override
 	public void visit(Ethernet ethernet) throws NetworkAnalyzerException {
-
-		System.out.println("Ethernet debut : " + currentIndex + " -> " + getLine());
+		System.out.println(currentIndex + "------->" + lastIndex);
 		header = getHeader(42).trim();
 
 		String destMacAddress = parseField(Ethernet.DEST_ADDRESS);
@@ -80,12 +87,19 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String srcMacAddress = parseField(Ethernet.SRC_ADDRESS);
 
-		if (srcMacAddress.equals("FF FF FF FF FF FF"))
-			throw new NetworkanalyzerParseErrorException(getLine(),
-					"The source MAC address must not be a broadcast address");
+		if (srcMacAddress.equals("FF FF FF FF FF FF")) {
 
-		if (destMacAddress.equals(srcMacAddress) && !destMacAddress.equals("00 00 00 00 00 00"))
-			throw new NetworkanalyzerParseErrorException(getLine(), "Mac addresses are equal");
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError,
+					"The source MAC address must not be a broadcast address");
+		}
+
+		if (destMacAddress.equals(srcMacAddress) && !destMacAddress.equals("00 00 00 00 00 00")) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "Mac addresses are equal");
+		}
 
 		incIndex(Ethernet.SRC_ADDRESS);
 
@@ -107,11 +121,16 @@ public class LayerParserVisitor implements ILayerVisitor {
 //			type = new Field(Ethernet.TYPE, rdType, layer.getName());
 //			break;
 
-			throw new NetworkanalyzerParseErrorException(getLine(), "ARP protocol is not supported");
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "ARP protocol is not supported");
 		}
 
 		default:
-			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the ethernet type field");
+
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the ethernet type field");
 		}
 
 		incIndex(Ethernet.TYPE);
@@ -125,7 +144,6 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ethernet.addField(Ethernet.DEST_ADDRESS.getKey(), dest);
 		ethernet.addField(Ethernet.TYPE.getKey(), type);
 
-		System.out.println("Ethernet apres : " + currentIndex + " -> " + getLine());
 		layer.accept(this);
 		ethernet.setIncluded(layer);
 	}
@@ -133,22 +151,27 @@ public class LayerParserVisitor implements ILayerVisitor {
 	@Override
 	public void visit(Ip ip) throws NetworkAnalyzerException {
 
-		System.out.println("Ip debut : " + currentIndex + " -> " + getLine());
 		header = getHeader(60).trim();
 		index = 0;
 
 		String version = parseField(Ip.VERSION);
 
-		if (!version.equals("4"))
-			throw new NetworkanalyzerParseErrorException(getLine(), "The IP Vesion is not compatible");
+		if (!version.equals("4")) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "The IP Vesion is not compatible");
+		}
 
 		incIndex(Ip.VERSION);
 
 		String ihl = parseField(Ip.IHL);
 
 		int ihlDecoded = Integer.parseInt(ihl, 16);
-		if (ihlDecoded < 5)
-			throw new NetworkanalyzerParseErrorException(getLine(), "The IP IHL is not compatible");
+		if (ihlDecoded < 5) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "The IP IHL is not compatible");
+		}
 
 		incIndex(Ip.IHL, true);
 
@@ -168,14 +191,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 			fr = "0".concat(fr);
 
 		String r = fr.substring(0, 1);
-		if (Integer.parseInt(r, 2) != 0)
-			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
+		if (Integer.parseInt(r, 2) != 0) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "The TOS is not compatible");
+		}
 		String df = fr.substring(1, 2);
 		String mf = fr.substring(2, 3);
 		String fragmentOffset = fr.substring(3);
 		if ((Integer.parseInt(mf, 2) == 1 && (Integer.parseInt(df, 2) == 1)
-				|| Integer.parseInt(fragmentOffset, 2) == 1))
-			throw new NetworkanalyzerParseErrorException(getLine(), "The TOS is not compatible");
+				|| Integer.parseInt(fragmentOffset, 2) == 1)) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "The TOS is not compatible");
+		}
 
 		incIndex(Ip.FRAGMENTS);
 
@@ -189,8 +218,9 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		switch (Integer.parseInt(protocol, 16)) {
 		case Ip.ICMP: {
-
-			throw new NetworkanalyzerParseErrorException(getLine(), "ICMP protocol is not supported");
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "ICMP protocol is not supported");
 
 		}
 		case Ip.UDP: {
@@ -200,12 +230,15 @@ public class LayerParserVisitor implements ILayerVisitor {
 		}
 
 		case Ip.TCP: {
-
-			throw new NetworkanalyzerParseErrorException(getLine(), "TCP protocol is not supported");
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "TCP protocol is not supported");
 		}
 
 		default:
-			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the IP protocol field");
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the IP protocol field");
 		}
 
 		incIndex(Ip.PROTOCOL);
@@ -218,12 +251,18 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		String destAddress = parseField(Ip.DEST_ADDRESS);
 
-		if (srcAddress.equals("FF FF FF FF"))
-			throw new NetworkanalyzerParseErrorException(getLine(),
+		if (srcAddress.equals("FF FF FF FF")) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError,
 					"The source IP address must not be a broadcast address");
+		}
 
-		if (srcAddress.equals(destAddress))
-			throw new NetworkanalyzerParseErrorException(getLine(), "IP addresses are equal");
+		if (srcAddress.equals(destAddress)) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "IP addresses are equal");
+		}
 
 		incIndex(Ip.DEST_ADDRESS);
 
@@ -266,19 +305,20 @@ public class LayerParserVisitor implements ILayerVisitor {
 		ip.addField(Ip.TTL.getKey(), new Field(Ip.TTL, ttl, NetworkanalyzerTools.toInteger(ttl)));
 		ip.addField(Ip.HEADER_CHECKSUM.getKey(), new Field(Ip.HEADER_CHECKSUM, headerChecksum, headerChecksum));
 
-		if (options != null)
-			ip.addField(Ip.OPTIONS.getKey(), options);
+		if (options != null) {
+			Entry<String, Integer> os = Ip.OPTIONS.setValue(options.getLength());
+			ip.addField(os.getKey(), options);
+			incIndex(os);
+		}
 
 		layer.accept(this);
 		ip.setIncluded(layer);
-		if (ip.getLength() != Integer.parseInt(ip.getField(Ip.TOTAL_LENGTH.getKey()).getValueDecoded()))
-			throw new NetworkanalyzerParseErrorException(getLine(), "IP length is incorrect");
+//		if (ip.getLength() != Integer.parseInt(ip.getField(Ip.TOTAL_LENGTH.getKey()).getValueDecoded()))
+//			throw new NetworkanalyzerParseErrorException(getLine(), "IP length is incorrect");
 	}
 
 	@Override
 	public void visit(Udp udp) throws NetworkAnalyzerException {
-
-		System.out.println("Udp debut : " + currentIndex + " -> " + getLine());
 		ILayerApplication layer;
 
 		header = getHeader(24).trim();
@@ -307,9 +347,16 @@ public class LayerParserVisitor implements ILayerVisitor {
 				layer = new Dhcp();
 				break;
 			}
+			
+			String data = getHeader(index);
 
-			throw new NetworkanalyzerParseErrorException(getLine(),
-					"Unexpected value of the Udp port destination field");
+			Entry<String, Integer> dataEntry = Udp.DATA.setValue(data.split(" ").length * 8);
+			incIndex(dataEntry);
+
+			udp.addField(dataEntry.getKey(), new Field(dataEntry, data, data, dataEntry.getValue() / 8 + "bytes"));
+
+			moveToNextFrameIndex();
+			return;
 		}
 
 		incIndex(Udp.DEST_PORT);
@@ -331,17 +378,16 @@ public class LayerParserVisitor implements ILayerVisitor {
 		udp.addField(Udp.CHECKSUM.getKey(),
 				new Field(Udp.CHECKSUM, checksum, String.valueOf(Integer.parseInt(checksum.replace(" ", ""), 16))));
 
-		System.out.println("udp apres : " + currentIndex + " -> " + getLine());
 		layer.accept(this);
 		udp.setIncluded(layer);
-		if (udp.getLength() != Integer.parseInt(udp.getField(Udp.LENGTH.getKey()).getValueDecoded()))
-			throw new NetworkanalyzerParseErrorException(getLine(), "Udp length is incorrect");
+
+//		if (udp.getLength() != Integer.parseInt(udp.getField(Udp.LENGTH.getKey()).getValueDecoded()))
+//			throw new NetworkanalyzerParseErrorException(getLine(), "Udp length is incorrect");
 	}
 
 	@Override
 	public void visit(Dhcp dhcp) throws NetworkAnalyzerException {
 
-		System.out.println("dhcp debut : " + currentIndex + " -> " + getLine());
 		header = getHeader(720).trim();
 		index = 0;
 
@@ -349,9 +395,11 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String messageType = parseField(Dhcp.MESSAGE_TYPE);
 		String messageTypeDecoded = NetworkanalyzerTools.toInteger(messageType);
 
-		if (!messageTypeDecoded.equals("1") && !messageTypeDecoded.equals("2"))
-			throw new NetworkanalyzerParseErrorException(getLine(), "Unexpected value of the message type field");
-
+		if (!messageTypeDecoded.equals("1") && !messageTypeDecoded.equals("2")) {
+			int lineError = getLine();
+			moveToNextFrameIndex();
+			throw new NetworkanalyzerParseErrorException(lineError, "Unexpected value of the message type field");
+		}
 		incIndex(Dhcp.MESSAGE_TYPE);
 		dhcp.addField(Dhcp.MESSAGE_TYPE.getKey(), new Field(Dhcp.MESSAGE_TYPE, messageType, messageTypeDecoded));
 
@@ -467,7 +515,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		dhcp.addField(os.getKey(), opt);
 		incIndex(os);
-		System.out.println("dhcp apres : " + currentIndex + " -> " + getLine());
+		moveToNextFrameIndex();
 	}
 
 	private int findName(String data[], int i) {
@@ -655,48 +703,47 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 		return curr;
 	}
+
 	@Override
 	public void visit(Icmp icmp) throws NetworkAnalyzerException {
 		header = getHeader(line.length()).trim();
 		String type = parseField(Icmp.TYPE);
 		int typeDecoded = Integer.parseInt(type, 16);
-		if(typeDecoded != 0 || typeDecoded != 8)
+
+		if (typeDecoded != 0 || typeDecoded != 8)
 			throw new NetworkAnalyzerException("ICMP type is not supported");
-		
+
 		incIndex(Icmp.TYPE);
 
 		String code = parseField(Icmp.CODE);
 		incIndex(Icmp.CODE);
-		
+
 		String checksum = parseField(Icmp.CHECKSUM);
 		incIndex(Icmp.CHECKSUM);
-		
+
 		String sequenceNumber = parseField(Icmp.SEQUENCE_NUMBER);
 		incIndex(Icmp.SEQUENCE_NUMBER);
-		
+
 		String data = getHeader(index);
-		
-		Entry<String,Integer> dataEntry = Icmp.DATA.setValue(data.split(" ").length * 8);
+
+		Entry<String, Integer> dataEntry = Icmp.DATA.setValue(data.split(" ").length * 8);
 		incIndex(dataEntry);
-		
-		icmp.addField(Icmp.TYPE.getKey(), new Field(Icmp.TYPE,type,typeDecoded+""));
 
-		icmp.addField(Icmp.CODE.getKey(), new Field(Icmp.CODE,code,Integer.parseInt(code, 16)+""));
+		icmp.addField(Icmp.TYPE.getKey(), new Field(Icmp.TYPE, type, typeDecoded + ""));
 
-		icmp.addField(Icmp.CHECKSUM.getKey(), new Field(Icmp.CHECKSUM,checksum,Integer.parseInt(checksum, 16)+""));
-		icmp.addField(Icmp.SEQUENCE_NUMBER.getKey(), new Field(Icmp.SEQUENCE_NUMBER,sequenceNumber,Integer.parseInt(sequenceNumber, 16)+""));
-		
-		icmp.addField(dataEntry.getKey(), new Field(dataEntry, data, data,dataEntry.getValue()/8 + "bytes"));
-		
-		
-		
-		
+		icmp.addField(Icmp.CODE.getKey(), new Field(Icmp.CODE, code, Integer.parseInt(code, 16) + ""));
+
+		icmp.addField(Icmp.CHECKSUM.getKey(), new Field(Icmp.CHECKSUM, checksum, Integer.parseInt(checksum, 16) + ""));
+		icmp.addField(Icmp.SEQUENCE_NUMBER.getKey(),
+				new Field(Icmp.SEQUENCE_NUMBER, sequenceNumber, Integer.parseInt(sequenceNumber, 16) + ""));
+
+		icmp.addField(dataEntry.getKey(), new Field(dataEntry, data, data, dataEntry.getValue() / 8 + "bytes"));
+		moveToNextFrameIndex();
 	}
 
 	@Override
 	public void visit(Dns dns) throws NetworkAnalyzerException {
 
-		System.out.println("dns debut : " + currentIndex + " -> " + getLine());
 		header = getHeader(line.length()).trim();
 		String[] data = header.split(" ");
 		index = 0;
@@ -777,7 +824,8 @@ public class LayerParserVisitor implements ILayerVisitor {
 		dns.addField(Dns.ADDITIONAL_RRS_NUMBER.getKey(),
 				new Field(Dns.ADDITIONAL_RRS_NUMBER, numberAdd, decodedNumberAdd));
 
-		System.out.println("dns apres : " + currentIndex + " -> " + getLine());
+		moveToNextFrameIndex();
+
 	}
 
 	private int addDnsVariableFields(int curr, Entry<String, Integer> entry, Fields fields, String[] data,
@@ -798,17 +846,22 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	private int getLine() {
 
+		System.out.println(currentIndex + "!!!" + lastIndex);
 		for (int i = 0; i < listIndex.size(); i++) {
-			if (currentIndex < listIndex.get(i).getKey()) {
+			if (currentIndex < listIndex.get(i).get(0)) {
 				if (i == 0)
 					return 0;
 
-				return listIndex.get(i - 1).getValue();
+				return listIndex.get(i - 1).get(1);
 			}
 		}
 
-		throw new IndexOutOfBoundsException();
+		return listIndex.get(listIndex.size() - 1).get(1);
 
+	}
+
+	private void moveToNextFrameIndex() {
+		currentIndex = lastIndex;
 	}
 
 	private String getHeader(int endIndex) throws NetworkanalyzerParseErrorException {
@@ -866,5 +919,4 @@ public class LayerParserVisitor implements ILayerVisitor {
 		return b.startsWith("11");
 	}
 
-	
 }

@@ -21,6 +21,7 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 	public static final Entry<String, Integer> DEST_PORT = new Entry<>("Destination Port", 16);
 	public static final Entry<String, Integer> LENGTH = new Entry<>("Length", 16);
 	public static final Entry<String, Integer> CHECKSUM = new Entry<>("Checksum", 16);
+	public static final Entry<String, Integer> DATA = new Entry<>("Data", 0);
 
 	private ILayerApplication included;
 
@@ -46,6 +47,11 @@ public class Udp extends AbstractLayer implements ILayerTransport {
 		fs.add(getField(DEST_PORT.getKey()));
 		fs.add(getField(LENGTH.getKey()));
 		fs.add(getField(CHECKSUM.getKey()));
+
+		IField data = getField(DATA.getKey());
+		if (data != null)
+			fs.add(data);
+
 		return fs;
 	}
 

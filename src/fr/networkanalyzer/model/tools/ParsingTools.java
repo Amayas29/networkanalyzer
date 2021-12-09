@@ -38,7 +38,8 @@ public class ParsingTools {
 
 				if (checkOffset(data[0], "0", 0)) {
 					if (sb.length() != 0)
-						bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
+						bufferedWriter.write(indexs.toString()
+								.concat(sb.toString().concat(" ").concat(String.valueOf(index * 3)).concat("\n")));
 
 					lengthLine = 0;
 					oldOffset = "0";
@@ -69,7 +70,8 @@ public class ParsingTools {
 			}
 
 			if (sb.length() != 0)
-				bufferedWriter.write(indexs.toString().concat(sb.toString().concat("\n")));
+				bufferedWriter.write(
+						indexs.toString().concat(sb.toString().concat(" ").concat(String.valueOf(index * 3)).concat("\n")));
 
 		} catch (
 

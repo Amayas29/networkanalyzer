@@ -4,6 +4,7 @@
 }
 
 .h1 {
+	-fx-font-family: monospace;
 	-fx-font-weight: bold;
 	-fx-font-size: 20.0;
   	-fx-text-fill: black;
@@ -12,6 +13,7 @@
 /* Main */
 
 #mainPanel {
+	-fx-font-family: monospace;
   -fx-background-image: url("../../../../resources/images/main_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
@@ -19,6 +21,7 @@
 }
 
 #centredPanel {
+	-fx-font-family: monospace;
   -fx-background-color: #d2dfee;
   -fx-background-radius: 50.0;
   -fx-opacity: 0.85;
@@ -26,6 +29,7 @@
 
 
 .button {
+	-fx-font-family: monospace;
   -fx-font-size: 25.0;
   -fx-background-color: #83bffb;
   -fx-text-fill: white;
@@ -34,11 +38,13 @@
   -fx-background-radius: 25.0 10.0 25.0 10.0;
 }
 .button:hover {
+	-fx-font-family: monospace;
   -fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.8), 10.0, 0.0, 0.0, 0.0);
   -fx-text-fill: rgb(0.0, 0.0, 0.0, 0.5);
 }
 
 #load:hover {
+	-fx-font-family: monospace;
   -fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.8), 10.0, 0.0, 0.0, 0.0);
   -fx-font-weight: bold;
   -fx-font-size: 26.0;
@@ -46,6 +52,7 @@
 }
 
 #choose {
+	-fx-font-family: monospace;
   -fx-background-color: transparent;
   -fx-background-image: url("../../../../resources/images/choose.png");
   -fx-background-repeat: stretch;
@@ -55,29 +62,35 @@
 }
 
 #choose:hover {
+	-fx-font-family: monospace;
   -fx-effect: dropshadow(three-pass-box, rgba(0.0, 0.0, 0.0, 0.8), 5.0, 0.0, 0.0, 0.0);
 }
 
 #filename {
+	-fx-font-family: monospace;
   -fx-font-size: 15.0;
 }
 
 .infoLabel {
+	-fx-font-family: monospace;
   -fx-font-size: 15.0;
   -fx-text-fill: rgb(192.0, 49.0, 49.0);
   /*-fx-text-alignment: center;*/
 }
 .succesNotification{
+	-fx-font-family: monospace;
   -fx-text-fill: rgb(30.0, 200.0, 49.0);
 }
 
 .textfield {
+	-fx-font-family: monospace;
   -fx-background-radius: 10.0 25.0 10.0 25.0;
 }
 
 /* About us */
 
 #aboutUsPanel {
+	-fx-font-family: monospace;
   -fx-background-image: url("../../../../resources/images/aboutus_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
@@ -85,6 +98,7 @@
 }
 
 #loadingPanel {
+	-fx-font-family: monospace;
   -fx-background-image: url("../../../../resources/images/loading_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
@@ -93,6 +107,7 @@
 
 /* Processing */
 #processingPanel {
+	-fx-font-family: monospace;
   -fx-background-image: url("../../../../resources/images/processing_background.png");
   -fx-background-repeat: stretch;
   -fx-background-position: center center;
@@ -100,22 +115,25 @@
 }
 
 .labelByte {
-	-fx-font-family: "Roboto";
+	-fx-font-family: monospace;
   -fx-font-size:  17.0;
   -fx-padding: 2.0 0.0 2.0 0.0;
 }
 
 .labelOffset {
+	-fx-font-family: monospace;
  -fx-font-size:  17.0;
  -fx-text-fill: #A5A5A5;
   -fx-padding: 2.0 0.0 2.0 0.0;
 }
 
 .selected {
+	-fx-font-family: monospace;
 	-fx-background-color: #83bffb;
 }
 
 .errorFrameLabel {
+	-fx-font-family: monospace;
 	-fx-font-size: 16.0;
 	-fx-text-fill: rgb(192.0, 49.0, 49.0);
 }

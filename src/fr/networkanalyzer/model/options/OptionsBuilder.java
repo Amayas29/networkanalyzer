@@ -72,12 +72,12 @@ public class OptionsBuilder {
 			DhcpOption dOption = DhcpOption.getOptionByCode(data[i]);
 
 			if (dOption == DhcpOption.PAD) {
-				options.addField(new Field(new Entry<>(dOption.getName(), 16), data[i++], "0"));
+				options.addField(new Field(new Entry<>(dOption.getName(), 8), data[i++], "0"));
 				continue;
 			}
 
 			if (dOption == DhcpOption.END) {
-				options.addField(new Field(new Entry<>(dOption.getName(), 16), data[i++], "255"));
+				options.addField(new Field(new Entry<>(dOption.getName(), 8), data[i++], "255"));
 				continue;
 			}
 
@@ -85,22 +85,22 @@ public class OptionsBuilder {
 			String name = data[i++];
 			String length = data[i++];
 			int l = Integer.parseInt(length, 16);
-			Field type = new Field(new Entry<>("Type", 16), name, dOption.getCode() + "");
+			Field type = new Field(new Entry<>("Type", 8), name, dOption.getCode() + "");
 
-			Field len = new Field(new Entry<>("Length", 16), length, l + "");
+			Field len = new Field(new Entry<>("Length", 8), length, l + "");
 			option.addField(type);
 			option.addField(len);
 
 			if (dOption.getCode() == 61) {
 				String hardwareType = data[i];
 				i++;
-				Entry<String, Integer> ht = Dhcp.HARDWARE_TYPE.setValue(16);
+				Entry<String, Integer> ht = Dhcp.HARDWARE_TYPE.setValue(8);
 
 				option.addField(new Field(ht, hardwareType, hardwareType));
 				StringBuilder sb = new StringBuilder();
-				for (int j = 0; j < l - 1; j++) {
+				for (int j = 0; j < l - 1; j++)
 					sb.append(data[j + i]).append(" ");
-				}
+
 				String clientMac = sb.toString().strip();
 
 				Entry<String, Integer> cma = Dhcp.CLIENT_MAC_ADDRESS.setValue(48);
@@ -136,7 +136,7 @@ public class OptionsBuilder {
 					sb.append(data[i + j]).append(" ");
 
 				i += j;
-				option.addField(new Field(new Entry<>(dOption.getName(), l), sb.toString(),
+				option.addField(new Field(new Entry<>(dOption.getName(), l * 8), sb.toString().strip(),
 						NetworkanalyzerTools.toAscii(sb.toString())));
 				options.addField(option);
 				continue;
@@ -154,12 +154,12 @@ public class OptionsBuilder {
 				Entry<String, Integer> e;
 				try {
 					e = DhcpOption.getEntryTypeDhcp(Integer.parseInt(sb.toString().replace(" ", ""), 16));
-					e = e.setValue(l);
+					e = e.setValue(8);
 				} catch (Exception x) {
 					e = new Entry<>(dOption.getName(), l);
 				}
 
-				option.addField(new Field(e, sb.toString(), e.getKey()));
+				option.addField(new Field(e, sb.toString().strip(), e.getKey()));
 				options.addField(option);
 
 				continue;
@@ -170,14 +170,12 @@ public class OptionsBuilder {
 				StringBuilder sb = new StringBuilder();
 
 				int j = 0;
-				for (; j < l; j++) {
+				for (; j < l; j++)
 					sb.append(data[i + j]).append(" ");
-
-				}
 
 				i += j;
 
-				option.addField(new Field(new Entry<>(dOption.getName(), l), sb.toString(),
+				option.addField(new Field(new Entry<>(dOption.getName(), l * 8), sb.toString().strip(),
 						NetworkanalyzerTools.toInteger(sb.toString())));
 
 				options.addField(option);
@@ -212,7 +210,7 @@ public class OptionsBuilder {
 				int heure = min / 60;
 				min %= 60;
 
-				option.addField(new Field(new Entry<>(dOption.getName(), l), sb.toString(),
+				option.addField(new Field(new Entry<>(dOption.getName(), l * 8), sb.toString().strip(),
 						heure + " h " + min + " m " + sec + " s"));
 				options.addField(option);
 				continue;
