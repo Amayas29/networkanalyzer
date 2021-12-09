@@ -10,6 +10,10 @@ public class Frame {
 	private static int cpt = 0;
 	private int id;
 
+	public static void reset() {
+		cpt = 0;
+	}
+
 	public Frame() {
 		id = ++cpt;
 	}

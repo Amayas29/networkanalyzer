@@ -523,7 +523,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 
 	@Override
 	public void visit(Icmp icmp) throws NetworkAnalyzerException {
-		header = getHeader(line.length()).trim();
+		header = getHeader(192).trim();
 		index = 0;
 
 		String type = parseField(Icmp.TYPE);
@@ -978,15 +978,19 @@ public class LayerParserVisitor implements ILayerVisitor {
 		return header;
 	}
 
-	private String parseField(Entry<String, Integer> entry) {
+	private String parseField(Entry<String, Integer> entry) throws NetworkanalyzerParseErrorException {
 
-		int len = entry.getValue();
-		int inc = 1;
+		try {
+			int len = entry.getValue();
+			int inc = 1;
 
-		if (len % 8 == 0)
-			inc = len / 4 + len / 8 - 1;
+			if (len % 8 == 0)
+				inc = len / 4 + len / 8 - 1;
 
-		return header.substring(index, index + inc);
+			return header.substring(index, index + inc);
+		} catch (IndexOutOfBoundsException e) {
+			throw new NetworkanalyzerParseErrorException(getLine(), "The frame is not complete");
+		}
 	}
 
 	private void incIndex(Entry<String, Integer> entry, boolean end) {

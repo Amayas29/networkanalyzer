@@ -36,6 +36,7 @@ public class AnalyzerParser {
 		file = ParsingTools.reorganizeFile(file);
 
 		Analyzer analyzer = new Analyzer();
+		Frame.reset();
 		String line;
 		Frame frame;
 		Ethernet ethernet;
