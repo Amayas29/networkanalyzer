@@ -347,16 +347,19 @@ public class LayerParserVisitor implements ILayerVisitor {
 				layer = new Dhcp();
 				break;
 			}
-			
-			String data = getHeader(index);
 
-			Entry<String, Integer> dataEntry = Udp.DATA.setValue(data.split(" ").length * 8);
-			incIndex(dataEntry);
-
-			udp.addField(dataEntry.getKey(), new Field(dataEntry, data, data, dataEntry.getValue() / 8 + "bytes"));
-
+//			String data = getHeader(index);
+//
+//			Entry<String, Integer> dataEntry = Udp.DATA.setValue(data.split(" ").length * 8);
+//			incIndex(dataEntry);
+//
+//			udp.addField(dataEntry.getKey(), new Field(dataEntry, data, data, dataEntry.getValue() / 8 + "bytes"));
+//
+//			moveToNextFrameIndex();
+//			return;
+			int lineError = getLine();
 			moveToNextFrameIndex();
-			return;
+			throw new NetworkanalyzerParseErrorException(lineError, "Unexcepted value of the udp port field");
 		}
 
 		incIndex(Udp.DEST_PORT);
