@@ -1,16 +1,14 @@
-package fr.networkanalyzer.model.options;
+package fr.networkanalyzer.model.decodes;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DnsDecoder {
+public class DnsDecoder extends Decode {
 
 	private static Map<Integer, String> classes;
-	private static Map<Integer, String> types;
 
 	static {
 		classes = new HashMap<>();
-		types = new HashMap<>();
 
 		classes.put(0, "Reserved");
 		classes.put(1, "Internet");
@@ -19,11 +17,11 @@ public class DnsDecoder {
 		classes.put(254, "QCLASS NONE");
 		classes.put(255, "QCLASS ANY");
 
-		types.put(1, "A");
-		types.put(28, "AAAA");
-		types.put(5, "CNAME");
-		types.put(2, "NS");
-		types.put(15, "MX");
+		put(1, "A");
+		put(28, "AAAA");
+		put(5, "CNAME");
+		put(2, "NS");
+		put(15, "MX");
 	}
 
 	public static String getClassName(int code) {
@@ -35,12 +33,4 @@ public class DnsDecoder {
 		return name;
 	}
 
-	public static String getTypeName(int code) {
-		String name = types.get(code);
-
-		if (name == null)
-			return "UKNOWN";
-
-		return name;
-	}
 }

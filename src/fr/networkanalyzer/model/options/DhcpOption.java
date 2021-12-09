@@ -1,5 +1,6 @@
 package fr.networkanalyzer.model.options;
 
+import fr.networkanalyzer.model.decodes.DhcpDecoder;
 import fr.networkanalyzer.model.fields.Entry;
 
 public enum DhcpOption {
