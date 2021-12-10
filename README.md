@@ -1,19 +1,123 @@
+
 # networkanalyzer
 
-A network analyzer with java
+## Binome
+
+    Amayas SADI  28717408
+    Hamid KOLLI  28717594
+    Video  youtube : #TODO
+    Github : https://github.com/Amayas29/networkanalyzer
+    Language : java
+    interface graphique : javafx (MVC) ou terminal
+
+Une application d'analyse de trames ethernet
 
 ![logo](src/fr/networkanalyzer/application/app_icon.jpg)
 
-## Uml
+# Description du projet
 
-www.plantuml.com/plantuml/png/lP91IyD048Nl-HLxh8X_e8WKb89Gz21uNxFJT61tDcGc0Id-TpjC5idIIq5oQx_9Utdp9ZiMFyYOOjEqqJExFK8C3bCV8G49krSZvyOzEF89tDPzo83KkKRHvEDubRr0cmE4QjHc4Y2fQ0Jgv7I1I684UHzzTo5VEKVmfFI-Q3gGDqsokLEg8aK7Cr6uUFHJqrp79MGrbMm_2ZuWowFryAJIvnF6C01nfGl8VVJVXPReoE-zO2Qk1cL9fJ-B_lc60nJtlwwC7yrekqo_IerJnk1y21PyCozmjA7zK-aydhrqjPlghizahnqWvGaMrbR5FruAIM0u-XRACkwyGgqhVOOxe32c-0i0
+L'application Networkanalyzer prend en parametre un fichier de trames et l'analyse tout en decodant les trames.
 
-www.plantuml.com/plantuml/png/nLN1Qjmm4BtxAmPwSMdw0o6K1BA5XKqeTDlxL9fuHMJ9IBDfboN_tcXb8oKrYseSVB8qViEyzpmpllQCZlUjhgeAVtbsA1Y4Hk_Xfhzky40ELDjfQicmXtMC72lu00-AjFHm2NVONNrdfqnpiVuQWb-Wgk0Jn0iqnF5GHr1C_7Y2F5ab0QLy3J3OqiMGdg7xrspxGnt3od0eiY7JyEuKVAwgbo2v1nGqS8PZm6wKvwk1vS3CXwJP6IUq4DGnr978J-KLMmTFyPah2uLNHc3dzngPv3TdsGgheNwBkiUM_al-JTTf9P2LDK1_c8nC7tCCVukC6sKU_mK7cmnJGovKtLf6dKg7jn5vJ_pRkiU0MHkXzv8ar9afFe-_Jj7XCYuZGgQpsZeqlhEEotbbIMUO9T0Ojv6FK5u_JyiPzAFgkg7Y-R5DvXtBE_EygqK3StxYfZP-Ck1s9ueTo9oCBXmz8oln32l3xZ1iiLxpYUuTUOyDRGyTGHr6ZLzEfSFzhWwCByJC6ECd-xAijAHXnJjoXhXCI5fRGSLdKCCWNRwPW8BEBdLWjcstNAEiHLiyGMdDbVV9WigcxCQHlacgP-cScVz8othyGqvedd6RypLKREMSlzT5xRmc8_Uj_Wi0
+> les protocoles supportés par notre application :
 
-www.plantuml.com/plantuml/png/nLJ1QXin4BtlLynnIzr3UomXf9246an8QPjBwM4iZMt1QhH8ioQXzD-hrImhl75JSkf5NhzvepTlPj1L4emo-Avf70l57Hg2zGQVA3wuv2H4W5yDl8LZS1QE8mJjZHmeCWdGzF6cMLBMFRZ-EVpTzZ3OCu7hW-d1vkDCY1DOJcSqZCyg-NWU-XHxm3W6VZUDwJ0bA9xkCQRgpFc-8qyiQM4vEtu7dME2Z_1LekCzD0ebMREbnunlylT5ETOijATuUQaaCyH8FFCSY-9k2Hm8BSMb1APbwcGjaMp6abgbb_hK-SWpmVSOS_Ia90ZlLx10FcZI_nfedTihPbq7gfqKs3csT-ZdTlpu2HO5LoNeAczFaY_z6xCCQmMtZZgRO5T-L5ovDPskoGHBTcu_PwpAz1WJJSm4xGZnuBUKB_-NgWaiw7YaRaFe21bS-Z9G4XSuLGcqDWiyO7IuxMXARkjrDopnwKBLLlEuQKGN3fSrJN_dYgSfdDIJvAIdkeaAbJdvSAHluOuUvJQY9rtXYL1x-Rcil5PDR0lhX3FsKRr1-uAXAWoEZOgznAzMYErhavLVUt4VobCvRy9MdvahOZluxWy0
+Ethernet, IP, ARP, ICMP, UDP, DNS, DHCP
 
-www.plantuml.com/plantuml/png/jLFTRfim6BttKtoNYPQzm5H5TS1jh0IROITjTuDei58KGY8mR57KTvyTUw1etRHfwmtoiNr-lWFSDZghTRilqQRCcWPmVGpLvf2h6jGthQgyWH_uZE03dCrzNMnUWLIwFjq8NHVLTa8hhRQgdi9MQNawAXWLbOPYZD0hGjbpe-jiey4wNCbz7EIqOJNm2QBiUEFL9avy2kXlZQt1-9hL7OeSZgs6aQT0CG4d0etBwUEzRFvx0rwvQduZF7JXUlh3DjokTGqiYsNxgmx-AV0yg_ElMQtUfGvttqs-KoSpx0wG1LrMjih0patQMOdrPM_avd56kqatXQO_wXpFtTXPpiA8ZfoXgjhzvSNoeouEbJMDSOX0h6QCo3J2Oe4WuIj94WGXZp1bgI39si8v5vBXY22O9Ho70HOonM6O424Gh0aBUPAAc0JqZWO8_4cQaCyh8kIm8QcL2ET1d4RYFfLFiOVUAAMX3PKO9sdGabgokuuVBnH1lnXAGXXvm4kdPz2Cif2oUu-39JPUDBGhIfYyB0apZnLRCFxmHXdsxTX2Q9poM5BE-im35W6bFQ9CzclhseCvUSGzi0CCHoIAvLEFLZOAyx2FH7sW1iw6mFaI0UEncJ4nFi8e2hCGvj5_GVx-h2tAdpz7UbUeCeTdUpX8Z_p_yg8oGncZNr9SGM-JR89RLUNjllmE
+> les options et types decodés :
 
-www.plantuml.com/plantuml/png/bPHDR-8y4CVlV0eVWvxsyXnNgwfK2n8Is-rgaVQu6k99i6hiQ3oXfLM_-oQE6K588vP3I3o__xpCsBuF3CJrpax2it4L4EnKIRwkbcwBP1XSZkh_oIIt48AQER27DoJrFb6tgcXW3EgBMfd0NnVjrvsQj1OayYIMNqp6bT7qdzfxenLe7N6LTN_HqpJQJtsLo8ikHZOz4yzR_ohh77VHH2tnMda4HPvuzjrBNFxer_O456A5ZU0zCB39FzHYkPh_UPnzdpSr9V7a38YPxP5CSLWOYogBps9wJad_Ag0WKFEO3dWBiEyrw1heHZtKHO64-ZSPHbARbyL8W9crAfEq8BsSzgNp7GSkyhpYfX76SJTke-Nh8WXXG4u3Y4o9lDHneL7kC0GeiP4lLt10-WOCA-EUrScyuXnT3bMeBJ3g9_BiSs_FDaL0FdUGzHocI9rakJ1eTUiulWYKTbIo3xAFo2-UhaBN12vKdlWQU5PLrkJ0nhjXt36MI2s_zWnsXQxahSfEzds7tudB87MDKbBH62IrZ6DdLKnxGpocymWxlBIcD8QD4dxOV18s0kFdFVxIxavHZnj_xRqDlREVn1fpht6cDM48oqg6PAgqrZjY4dmMScC4tnmOFqNJa0NUWwtnd-2RUCO8j7cD9sn0zs0SqE6A6CB-h86uFSNv5cXCiCNNTQkPkxPN-YA6N2hj9TiOXjeTxqH2JoKuyuQdjsdp62uAj7u2PYIdihP-sxN1zBBSDE4Gd391wEJ06jShIUugf_7rUdpLM3wZRoypoRUOFpyS60NUZ94_YY8W2-kjxbPkZerm-79SYNr0LsvZJh7vz-XqlRD_0G00
+IP Options : 0, 1, 7, 131, 137
 
-www.plantuml.com/plantuml/png/lOyn2i9G343tVufSm0iuLR22I-cYpg66yZ7DboJ5QkdTBI885X51kYRXlPVC7DNRXaEe6CsW8ByaFQq4-NeZpRkApXwJ07LESZHuJVe02-X7WCTg02EDo7jI6tUxxHgMm4bg267umDv4fbmrgKqjRwV_anOjSvcYEEaCLdoIIbHx_3gxz80gKUgfzdlX3m7PY6mRlWC0
+DNS types : A, AAAA, CNAME, NS, MX
+
+DHCP Options : 0, 1, 3, 6, 12, 28, 43, 50, 51, 53, 54, 55, 57, 58, 59, 60 ,61,255
+
+DHCP messages types : les 10  premiers
+
+# Algorithme d'analyse
+
+l'analyse se deroule en 2 phases
+
+## Premiere phase
+
+Une phase ou l'application crée un autre fichier contenant l'ensemble des trames (qui commencent par l'offset 0 dans le fichier fourni) avec une liste de pattern qui permet de detecter les lignes contenant des erreurs, le patern est sous format [nombre de ligne, l'indice du premier caractere de la ligne]
+
+Cette premiere phase permet d'echappé les valeurs textuelles, les sauts de ligne et verifier l'offset s'il est valide
+
+l'algorithme en code :
+
+![reorganiseFile](./ressource/reorganizeFile)
+
+## Champs statiques des protocoles
+
+Pour les champs statiques, on les a analysé directement en extrant le nombre d'octets exacts et le decoder en utilisant les methodes statiques de la classe __NetworkanalyzerTools__ et en testant leurs valeurs (par exemple l'adresse mac source ne doit pas etre un broadcast)
+
+un exemple d'analyse des champs statiques
+
+![champsStatiquesProtocolEthernet](./ressource/champsStatiqus)
+
+un exemple d'analyse des flags
+![flags](./ressource/flags)
+
+## Champs dynamiques des protocoles
+
+pour les champs dynamiques on trouve 2 cas, soit pour les options de DHCP et IP, ou pour la decompression de DNS
+
+pour les options, on utilise les methodes statiques de OptionBuilder qui sont __buildIpOptions(String)__ et __buildDhcpOptions(String)__ ou on parcoure la liste des octets qui sont passés en parametre des methodes et on teste le champs type d'option, si c'est une option que notre analyser supporte on la decode selon sa taille sinon on ajoute dans les octets en brut
+
+un exemple d'analyse d'option
+
+![BuildeOptionIp](./ressource/buildOptionIp)
+
+Pour les champs variables de DNS (exemple __Questions__), on a bouclé le nombre lu dans le champs statique correspondant (exemple __Questions Number__) pour recuperer tout les champs variables
+
+la fonction utilisé
+
+![parseDnsNames](./ressource/parseDnsName)
+
+et pour decompresser les noms dans DNS, on a bouclé jusqu'a ce qu'on trouve l'octet **00** qui definit la fin du nom, et en testant si on doit sauter vers un label (si le champs qui remplace la taille commence par les bits **11** et les 14 autre bits correspondent au label)
+
+pour tester si le premier octet du champs nom est un label, on a utilisé cette methode
+
+![isPointeur](./ressource/isPointeur)
+
+et la fonction qui decompresse le name:
+
+![getDnsName](./ressource/getDnsName)
+
+## Recuperation dynamique des noms des options et des types
+
+Au lieu d'utiliser des __if else__ a chaque fois pour decoder le code des options , on a utilisé des __enum__ et la methode __getValue__ pour recuperer dynamiquement les noms des options par exmeple (le code 7 dans les options de IP correspant à **RECORD ROOT**)
+
+Exemple : DhcpOption
+![DhcpOption](./ressource/DhcpOption)
+
+On a utilisé le meme mecanisme pour les differents types, sauf qu'on a utilisé une table de hachage au lieu d'une enum (moins couteuse (O(1))), donc on a utilisé des classes __Decoder__
+
+Exemple : DhcpDecoder
+
+![DhcpDecoder](./ressource/DhcpDecoder)
+
+# Structure du projet
+
+## Le Diagramme UML
+
+- Les couches sont representés par des interface implementant l'interface __Layer__, et chaque protocole est representé par une classe qui implemente sa couche (par exemple la classe __Ethernet__ implemente __ILayerDataLink__) et qui herite __AbstractLayer__ qui est une classe qui factorise une table de hachage et ses methodes, la table de hachage contient les champs du protocole avec comme clé le nom du champs. Les protocoles qui ont un autre protocole a encapsulé, contiennent un attribut **include** (Exemple : __Ip__ contient un included de type __ILayerTransport__).
+
+![UML protocole](./ressource/layers.png)
+
+- Les champs sont representé par l'interface __IField__, les champs sont soit des champs simples donc des __Field__ ou des conteneurs d'autre champs comme les flags ou les options donc des __Fields__
+
+![UML IFiled](./ressource/fields.png)
+
+- Une trame est representé par la classe __Frame__, elle contient un seul attribut qui est de type __ILayerDataLink__, dans notre application on peut avoir que ethernet, et cette attribut encapsule toutes les autres couches
+- Notre projet utilise une classe principale qui est __Analyzer__ qui contient toutes les trames (list de __Frame__) et toutes les erreurs et les warnings de notre application.
+- La methode __Analyzer parse(File)__ de la classe __AnalyzerParser__ permet de faire les deux phase de l'analyse, d'abord elle fait appel a la methode statique __File reorganizeFile(File)__  de la classe __ParsingTools__ qui est une classe qui contient que des methodes statiques que l'application utilise pour faire la premiere phase du parse. Ensuite __AnalyzerParser__ lance la deuxieme phase du parse sur le nouveau fichier generé par __File reorganizeFile(File)__ en applant la methode __void accept(ILayerVisitor)__ (**DESIGN PATERN Visitor**)de l'objet du type __Ethernet__.
+
+![UML Analyzer](./ressource/analyzer.png)
+
+- L'application utilise le design pattern visitor pour faire la deuxieme phase de l'analyse, elle utilise une interface __ILayerVisitor__ qui a des methodes __void visit(-)__ avec des arguments des types des protocole, et la classe __LayerVisitor__ implement cette interface et permet d'analyser dans chaque methode __visit__ le protocole passée en parametre (Exemple __void visit(Ip)__ permet d'analyser l'entête IP et lancer l'analyse du transport en utilisant la methode __accept(ILayerVisitor)__ (qui est une methode definie dans chaque protocole et dans __ILayer__))
+
+![UML Parser](./ressource/parser.png)
+
+- Notre application utilise sa propre exception __NetworkanalyzerException__, et toutes les autres exceptions utilisés heritent de cette exception ou si on throw une autre exception propre a java on la capte et apres on throw une des __NetworkanalyzerException__
+
+![UML exceptions](./ressource/exceptions.png)
