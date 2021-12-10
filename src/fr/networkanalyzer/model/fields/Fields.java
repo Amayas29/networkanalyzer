@@ -112,7 +112,7 @@ public class Fields implements IField {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getName());
+		sb.append("~ " + getName());
 		sb.append(" : \n");
 
 		for (IField iField : getChildrens()) {
