@@ -823,7 +823,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 		String value = sbV.toString().strip();
 		String decoded = getDnsNameDecoded(name);
 
-		Field f = new Field(new Entry<>("NAME", 0), value, decoded, name);
+		Field f = new Field(new Entry<>("NAME", value.length() * 8), value, decoded, name);
 		fields.addField(f);
 
 		return curr;
@@ -939,7 +939,7 @@ public class LayerParserVisitor implements ILayerVisitor {
 					for (int k = 0; k < l; k++)
 						sb.append(data[curr++]).append(" ");
 
-					item.addField(new Field(new Entry<String, Integer>("Data", l), sb.toString(), "Uknown data"));
+					item.addField(new Field(new Entry<String, Integer>("Data", l * 8), sb.toString(), "Uknown data"));
 				}
 			}
 		}

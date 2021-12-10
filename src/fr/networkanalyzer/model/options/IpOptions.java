@@ -6,8 +6,8 @@ import fr.networkanalyzer.model.fields.Entry;
 public enum IpOptions {
 
 	EOOL(new Entry<>("End of Options List", 0)), NOP(new Entry<>("No Operation", 1)),
-	RR(new Entry<>("Record Route", 7)), TS(new Entry<>("Time Stamp", 68)), LSR(new Entry<>("Loose Source Route", 131)),
-	SSR(new Entry<>("Strict Source Route", 137));
+	RR(new Entry<>("Record Route", 7)), LSR(new Entry<>("Loose Source Route", 131)),
+	SSR(new Entry<>("Strict Source Route", 137)), UNKNOWN(new Entry<>("Unkown", -1));
 
 	private Entry<String, Integer> option;
 
@@ -21,6 +21,6 @@ public enum IpOptions {
 			if (code == options[j].option.getValue())
 				return options[j].option;
 
-		throw new NetworkAnalyzerException("Unexpected value of the option");
+		return UNKNOWN.option;
 	}
 }

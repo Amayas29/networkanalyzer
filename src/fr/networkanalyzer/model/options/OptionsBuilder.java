@@ -23,8 +23,6 @@ public class OptionsBuilder {
 
 			Entry<String, Integer> typeEnty = IpOptions.getEntryByCode(typeDecoded);
 			Entry<String, Integer> t = new Entry<>("Option " + typeEnty.getKey(), 8);
-			if (typeDecoded == 68)
-				continue;
 
 			if (typeDecoded == 1 || typeDecoded == 0) {
 				options.addField(new Field(t, type, String.valueOf(typeDecoded)));
@@ -37,6 +35,20 @@ public class OptionsBuilder {
 			String len = data[i++];
 			int lenDecoded = Integer.parseInt(len, 16);
 			option.addField(new Field(new Entry<>("Length", 8), len, String.valueOf(lenDecoded)));
+
+			if (typeDecoded == -1) {
+
+				StringBuilder sb = new StringBuilder();
+
+				int k = i;
+				for (int j = 0; j < lenDecoded; j++) {
+					sb.append(data[j + k]).append(" ");
+					i++;
+				}
+
+				option.addField(
+						new Field(new Entry<String, Integer>("Data", lenDecoded * 8), sb.toString().strip(), "Uknown"));
+			}
 
 			if (typeDecoded == 7) {
 				String ptr = data[i++];

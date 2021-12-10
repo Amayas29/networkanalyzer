@@ -55,7 +55,7 @@ public class AnalyzerParser {
 					analyzer.addFrame(f);
 					analyzer.addWarning(String.format("Frame %d : %s", f.getId(), e.getMessage()));
 					continue;
-				}catch (Exception e) {
+				} catch (Exception e) {
 					Frame f = new Frame();
 					analyzer.addError(String.format("Frame %d : %s", f.getId(), e.getMessage()));
 					continue;
@@ -69,7 +69,7 @@ public class AnalyzerParser {
 		} catch (IOException e) {
 			throw new NetworkAnalyzerException(e.getMessage());
 		} finally {
-			file.delete();
+//			file.delete();
 		}
 
 		return analyzer;
