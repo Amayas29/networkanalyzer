@@ -5,7 +5,6 @@
 
     Amayas SADI  28717408
     Hamid KOLLI  28717594
-    Video  youtube : #TODO
     Github : https://github.com/Amayas29/networkanalyzer
     Language : java
     interface graphique : javafx (MVC) ou terminal
