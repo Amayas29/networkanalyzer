@@ -69,7 +69,7 @@ public class AnalyzerParser {
 		} catch (IOException e) {
 			throw new NetworkAnalyzerException(e.getMessage());
 		} finally {
-//			file.delete();
+			file.delete();
 		}
 
 		return analyzer;
